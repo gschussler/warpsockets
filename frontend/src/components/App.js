@@ -20,7 +20,7 @@ const App = () => {
       console.log('Received message:', message);
 
       //need to handle incoming WebSocket messages, update message state
-      setReceivedMessages((message) => [...receivedMessages, message]);
+      // setReceivedMessages((message) => [...receivedMessages, message]);
     });
 
     socket.current.addEventListener('close', (e) => {
