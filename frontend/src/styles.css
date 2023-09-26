@@ -1,0 +1,178 @@
+body {
+  position: relative;
+  background-color: rgb(34, 35, 33);
+}
+
+.welcome-container {
+  display: grid;
+  grid-template-rows: repeat(3, auto);
+  justify-content: center;
+  align-items: center;
+  place-items: left;
+}
+
+.app-h {
+  display: grid;
+  justify-content: center;
+  color: rgb(226, 245, 218);
+  text-shadow: 0px 2px 4px rgb(56, 56, 56);
+  font-family: "GohuFont uni14 Nerd Font Mono";
+  font-size: 55px;
+  margin-top: 20vh;
+  margin-bottom: 0px;
+}
+
+.app-sh {
+  display: flex;
+  justify-content: center;
+  color: rgb(218, 240, 245);
+  text-shadow: 0px 2px 4px rgb(56, 56, 56);
+  font-family: "GohuFont uni14 Nerd Font Mono";
+  font-size: 40px;
+  margin-top: 15px;
+}
+
+.app-input {
+  display: grid;
+  grid-template-rows: repeat(3, auto);
+  justify-content: center;
+  align-items: center;
+  place-items: left;
+  font-family: "ProggyVector";
+}
+
+.app-user {
+  display: grid;
+  border: none;
+  outline: none;
+  justify-content: left;
+  align-items: center;
+  grid-template-columns: 120px 1fr;
+  gap: 20px;
+  color: rgb(226, 245, 218);
+  font-family: "DinaRemaster";
+  font-size: 25px;
+}
+
+.app-lobby {
+  display: grid;
+  border: none;
+  outline: none;
+  align-items: center;
+  grid-template-columns: 140px 1fr;
+  color: rgb(226, 245, 218);
+  font-family: "DinaRemaster";
+  font-size: 25px;
+  gap: 20px;
+}
+
+.app-j {
+  display: grid;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: none;
+  border-radius: 6px;
+  width: fit-content;
+  background-color: rgb(226, 245, 218);
+  color: rgb(34, 35, 33);
+  text-shadow: 0px 2px 4px rgb(218, 240, 245);
+  font-family: "GohuFont uni14 Nerd Font Mono";
+  font-weight: bold;
+  font-size: 25px;
+  place-self: center;
+  margin-top: 15px;
+}
+
+.lobby {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: rgb(218, 240, 245)
+}
+
+.lobby-h {
+  display: flex;
+  flex-direction: column;
+}
+
+.lobby-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.lobby-c {
+  display: flex;
+  border: 1px solid rgb(226, 245, 218);
+  border-radius: 4px;
+  background-color: rgb(34, 35, 33);
+  color: rgb(226, 245, 218);
+  text-shadow: 0px 2px 4px rgb(45, 46, 44);
+  font-family: "ProggyVector";
+}
+
+.welcome {
+  font-size: 35px;
+  font-family:"GohuFont uni14 Nerd Font Mono";
+  color: rgb(226, 245, 218);;
+  text-shadow: 0px 2px 4px rgb(56, 56, 56);
+}
+
+.message {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  color: antiquewhite;
+  margin: 20px;
+}
+
+.message-c {
+  font-family: "ProggyVector";
+}
+
+.message-info {
+  display: flex;
+  margin: 10px;
+  font-family: "ProggyClean Nerd Font Mono";
+  font-size: 15px;
+  color: rgba(250, 235, 215, 0.52);
+  margin: -10px;
+}
+
+.time {
+  display: flex;
+  margin-left: 5px;
+}
+
+.user {
+  display: flex;
+  margin-right: 5px;
+}
+
+.lobby-footer {
+  display: flex;
+  margin: 10px;
+  position: fixed;
+  top: 60vh;
+  right: 50px;
+}
+
+.text-input {
+  width: 40vh;
+  height: 30px;
+  border: 1px solid antiquewhite;
+  border-radius: 4px;
+  font-size: 16px;
+  font-family: "ProggyVector";
+}
+
+.send {
+  border: 1px solid rgb(229, 244, 240);
+  background-color: rgb(34, 35, 33);
+  color: rgb(229, 244, 240);
+  width: 80px;
+  border-radius: 5px;
+  margin-left: 10px;
+}

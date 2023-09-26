@@ -10,8 +10,8 @@ module.exports = {
 
   plugins: [
     new HTMLWebpackPlugin({
-      title: 'development',
-      template: './frontend/public/index.html', // Path to HTML template
+      title: 'Development',
+      template: '/src/index.html', // Path to HTML template
     }),
   ],
 
@@ -26,8 +26,8 @@ module.exports = {
       '/api': 'http://localhost:8080', // Proxy API requests to Go backend
     },
     static: {
-      directory: path.resolve(__dirname, 'frontend/dist'), // server React files
-      publicPath: '/',
+      directory: path.resolve(__dirname, '/dist'), // server React files
+      publicPath: '/dist',
     },
   },
 
