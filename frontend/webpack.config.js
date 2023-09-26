@@ -2,9 +2,9 @@ const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './frontend/src/index.js', // React entrypoint
+  entry: './src/index', // React entrypoint
   output: {
-    path: path.resolve(__dirname, 'frontend/dist'), // output dir of bundled frontend code
+    path: path.resolve(__dirname, '/dist'), // output dir of bundled frontend code
     filename: 'bundle.js',
   },
 

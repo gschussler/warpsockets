@@ -1,4 +1,4 @@
-import React, {useEffect , useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Lobby from './Lobby'
 
 const App = () => {
@@ -6,29 +6,30 @@ const App = () => {
   const [lobby, setLobby] = useState('');
   const [showLobby, setShowLobby] = useState(false);
   const [receivedMessages, setReceivedMessages] = useState([]); //store messages to be passed to Lobby
-
+  const socket = useRef(null);
+  
   useEffect(() => {
-    const socket = new WebSocket('ws://localhost:8080/ws');
+    socket.current = new WebSocket('ws://localhost:8080/ws');
 
-    socket.addEventListener('open', (e) => {
+    socket.current.addEventListener('open', (e) => {
       console.log('WebSocket connected');
     });
 
-    socket.addEventListener('message', (e) => {
+    socket.current.addEventListener('message', (e) => {
       const message = e.data;
       console.log('Received message:', message);
 
       //need to handle incoming WebSocket messages, update message state
-      setRecievedMessage((message) => [...receivedMessages, message]);
+      setReceivedMessages((message) => [...receivedMessages, message]);
     });
 
-    socket.addEventListener('close', (e) => {
+    socket.current.addEventListener('close', (e) => {
       console.log('WebSocket closed');
     });
 
     // clean up WebSocket connection when the component unmounts
     return () => {
-      socket.close();
+      socket.current.close();
     };
   }, []);
 

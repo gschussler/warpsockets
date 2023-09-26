@@ -12,7 +12,7 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
         message: message,
         time: new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
       };
-      await socket.send(JSON.stringify(messageContent));
+      await socket.current.send(JSON.stringify(messageContent));
       setMessageList((list) => [...list, messageContent]);
     }
   };
