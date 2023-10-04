@@ -2,16 +2,16 @@ const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index', // React entrypoint
+  entry: './src/index.js', // React entrypoint
   output: {
-    path: path.resolve(__dirname, '/dist'), // output dir of bundled frontend code
+    path: path.resolve(__dirname, 'dist'), // output dir of bundled frontend code
     filename: 'bundle.js',
   },
 
   plugins: [
     new HTMLWebpackPlugin({
       title: 'Development',
-      template: '/src/index.html', // Path to HTML template
+      template: './src/index.html', // Path to HTML template
     }),
   ],
 
@@ -23,7 +23,7 @@ module.exports = {
     compress: true,
     historyApiFallback: true,
     proxy: {
-      '/api': 'http://localhost:8080', // Proxy API requests to Go backend
+      '/api': 'http://localhost:8085', // Proxy API requests to Go backend
     },
     static: {
       directory: path.resolve(__dirname, '/dist'), // server React files

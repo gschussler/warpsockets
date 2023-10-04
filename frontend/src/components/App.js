@@ -9,7 +9,7 @@ const App = () => {
   const socket = useRef(null);
   
   useEffect(() => {
-    socket.current = new WebSocket('ws://localhost:8080/ws');
+    socket.current = new WebSocket('ws://localhost:8085/ws');
 
     socket.current.addEventListener('open', (e) => {
       console.log('WebSocket connected');
@@ -24,6 +24,7 @@ const App = () => {
     });
 
     socket.current.addEventListener('close', (e) => {
+      console.log(e);
       console.log('WebSocket closed');
     });
 
@@ -36,6 +37,9 @@ const App = () => {
   const joinLobby = (e) => {
     e.preventDefault();
     if(user !== "" && lobby !== "") {
+      // send lobby information to the server
+      socket.current.send(JSON.stringify({action: "join", user, lobby}));
+      // then switch display to lobby
       setShowLobby(true);
     }
   }
@@ -68,6 +72,12 @@ const App = () => {
                 onChange={(e) => {
                   setUser(e.target.value);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && user !== '' && lobby !== '') {
+                    e.preventDefault();
+                    joinLobby(e);
+                  }
+                }}
               />
             </div>
             <div className='app-lobby'>
@@ -79,13 +89,19 @@ const App = () => {
                 onChange={(e) => {
                   setLobby(e.target.value);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && user !== '' && lobby !== '') {
+                    e.preventDefault();
+                    joinLobby(e);
+                  }
+                }}
               />
             </div>
             <button className='app-j' onClick={joinLobby}>ENTER</button>
           </div>
         </div>
       )
-    : (
+    : ( 
       <Lobby
         socket={socket}
         user={user}

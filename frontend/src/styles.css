@@ -1,6 +1,7 @@
 body {
   position: relative;
   background-color: rgb(34, 35, 33);
+  overflow: hidden;
 }
 
 .welcome-container {
@@ -8,7 +9,6 @@ body {
   grid-template-rows: repeat(3, auto);
   justify-content: center;
   align-items: center;
-  place-items: left;
 }
 
 .app-h {
@@ -37,7 +37,6 @@ body {
   grid-template-rows: repeat(3, auto);
   justify-content: center;
   align-items: center;
-  place-items: left;
   font-family: "ProggyVector";
 }
 
@@ -86,7 +85,6 @@ body {
 .lobby {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   color: rgb(218, 240, 245)
 }
@@ -94,11 +92,26 @@ body {
 .lobby-h {
   display: flex;
   flex-direction: column;
+  align-self: center;
+}
+
+.lobby-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  width: 100%;
 }
 
 .lobby-body {
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  margin: 0 auto;
+  max-height: 80vh;
+  overflow-y: scroll;
+  /* border: 1px solid rgb(49, 50, 46);
+  border-radius: 10px; */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(68, 65, 60) rgb(34, 35, 33); /*thumb and track colors*/
 }
 
 .lobby-c {
@@ -118,6 +131,11 @@ body {
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
 }
 
+.message-list {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 .message {
   display: flex;
   flex-wrap: wrap;
@@ -125,7 +143,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   color: antiquewhite;
-  margin: 20px;
+  margin-top: 10px;
 }
 
 .message-c {
@@ -134,11 +152,9 @@ body {
 
 .message-info {
   display: flex;
-  margin: 10px;
   font-family: "ProggyClean Nerd Font Mono";
   font-size: 15px;
   color: rgba(250, 235, 215, 0.52);
-  margin: -10px;
 }
 
 .time {
@@ -153,19 +169,37 @@ body {
 
 .lobby-footer {
   display: flex;
-  margin: 10px;
+  flex-direction: row;
+  align-items: center;
   position: fixed;
-  top: 60vh;
-  right: 50px;
+  bottom: 50px;
+  resize: none;
 }
 
 .text-input {
-  width: 40vh;
+  width: 50vh;
   height: 30px;
   border: 1px solid antiquewhite;
   border-radius: 4px;
   font-size: 16px;
   font-family: "ProggyVector";
+  outline: none;
+}
+
+.text-input:focus {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    outline: 2px solid transparent;
+  }
+  50% {
+    outline: 2px solid rgb(226, 245, 218);
+  }
+  100% {
+    outline: 2px solid transparent;
+  }
 }
 
 .send {
@@ -175,4 +209,12 @@ body {
   width: 80px;
   border-radius: 5px;
   margin-left: 10px;
+  transition: .2s;
+}
+
+.send:hover {
+  opacity: .8;
+  transform: scale(1.05);
+  transition: .2s;
+
 }
