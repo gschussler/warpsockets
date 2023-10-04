@@ -98,7 +98,7 @@ func broadcastMessage(lobby string, msg []byte) {
 	for _, conn := range connections {
 		err := conn.WriteMessage(websocket.TextMessage, msg)
 		if err != nil {
-			log.Println("Error writing message: ", err)
+			log.Println("Error writing messages: ", err)
 		}
 	}
 }
