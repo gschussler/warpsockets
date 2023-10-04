@@ -106,12 +106,13 @@ body {
 .lobby-body {
   width: 100%;
   margin: 0 auto;
-  max-height: 80vh;
+  max-height: 71vh;
+  min-height: 71vh;
   overflow-y: scroll;
-  /* border: 1px solid rgb(49, 50, 46);
-  border-radius: 10px; */
+  /* border-bottom: 1px solid rgb(49, 50, 46); */
+  /* box-shadow: 0px 20px 0px rgba(49, 50, 46, 0.281); */
   scrollbar-width: thin;
-  scrollbar-color: rgb(68, 65, 60) rgb(34, 35, 33); /*thumb and track colors*/
+  scrollbar-color: rgb(68, 65, 60) rgba(34, 35, 33, 0); /*thumb and track colors*/
 }
 
 .lobby-c {
@@ -148,6 +149,16 @@ body {
 
 .message-c {
   font-family: "ProggyVector";
+}
+
+/* current user msg */
+.message-cr {
+  text-align: right;
+}
+
+/* other user in lobby msg */
+.message-cl {
+  text-align: left;
 }
 
 .message-info {

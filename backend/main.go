@@ -39,6 +39,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// used often in following code, assigned to variable
 	lobby := lobbyInfo.Lobby
 
 	// check if lobby name exists in lobbyConnections

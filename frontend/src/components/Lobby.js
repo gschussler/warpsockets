@@ -23,7 +23,9 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
   useEffect(() => {
     socket.current.addEventListener('message', (e) => {
       const messageContent = JSON.parse(e.data);
-      setMessageList((list) => [...list, messageContent]);
+
+      const isCurrentUser = messageContent.user === user || messageContent.userID === userID;
+      setMessageList((list) => [...list, { ...messageContent, isCurrentUser }]);
 
       if(lobbyRef.current) {
         lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
@@ -41,7 +43,7 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
           <div className='message-list'>
           {messageList.slice().reverse().map((messageContent, index) => {
             return (
-              <div className='message' key={index}>
+              <div className={`message ${messageContent.sender === 'current-user' ? 'message-cr' : 'message-cl'}`} key={index}>
                 <div className='message-c'>
                   <p>{messageContent.message}</p>
                 </div>

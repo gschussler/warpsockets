@@ -18,9 +18,6 @@ const App = () => {
     socket.current.addEventListener('message', (e) => {
       const message = e.data;
       console.log('Received message:', message);
-
-      //need to handle incoming WebSocket messages, update message state
-      // setReceivedMessages((message) => [...receivedMessages, message]);
     });
 
     socket.current.addEventListener('close', (e) => {
@@ -58,60 +55,59 @@ const App = () => {
   // }, [socket])
   return (
     <div className='App'>
-      {!showLobby ? (
-        <div className='welcome-container'>
-          <h1 className='app-h'>Welcome!</h1>
-          <h3 className='app-sh'>create or join a room!</h3>
-          <div className='app-input'>
-            <div className='app-user'>
-              <p>Username:</p>
-              <input
-                className='app-input'
-                type="text"
-                placeholder='Choose your username!'
-                onChange={(e) => {
-                  setUser(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && user !== '' && lobby !== '') {
-                    e.preventDefault();
-                    joinLobby(e);
-                  }
-                }}
-              />
+      {showLobby ? ( // show lobby when userID is received
+          <Lobby
+            socket={socket}
+            user={user}
+            lobby={lobby}
+            receivedMessages={receivedMessages}
+          />
+        ) : (
+          <div className='welcome-container'>
+            <h1 className='app-h'>Welcome!</h1>
+            <h3 className='app-sh'>create or join a room!</h3>
+            <div className='app-input'>
+              <div className='app-user'>
+                <p>Username:</p>
+                <input
+                  className='app-input'
+                  type="text"
+                  placeholder='Choose your username!'
+                  onChange={(e) => {
+                    setUser(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && user !== '' && lobby !== '') {
+                      e.preventDefault();
+                      joinLobby(e);
+                    }
+                  }}
+                />
+              </div>
+              <div className='app-lobby'>
+                <p>Lobby Name:</p>
+                <input
+                  className='app-input'
+                  type="text"
+                  placeholder='Create or join a lobby!'
+                  onChange={(e) => {
+                    setLobby(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && user !== '' && lobby !== '') {
+                      e.preventDefault();
+                      joinLobby(e);
+                    }
+                  }}
+                />
+              </div>
+              <button className='app-j' onClick={joinLobby}>ENTER</button>
             </div>
-            <div className='app-lobby'>
-              <p>Lobby Name:</p>
-              <input
-                className='app-input'
-                type="text"
-                placeholder='Create or join a lobby!'
-                onChange={(e) => {
-                  setLobby(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && user !== '' && lobby !== '') {
-                    e.preventDefault();
-                    joinLobby(e);
-                  }
-                }}
-              />
-            </div>
-            <button className='app-j' onClick={joinLobby}>ENTER</button>
           </div>
-        </div>
-      )
-    : ( 
-      <Lobby
-        socket={socket}
-        user={user}
-        lobby={lobby}
-        receivedMessages={receivedMessages}
-      />
-    )}
-    </div>
-  )
-};
+        )}
+      </div>
+    )
+  };
 
 // {/* <input
 //         placeholder="Message..."
