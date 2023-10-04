@@ -142,9 +142,11 @@ body {
   flex-wrap: wrap;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   color: antiquewhite;
   margin-top: 10px;
+  max-width: 50%;
+  overflow-wrap: break-word;
 }
 
 .message-c {
@@ -153,19 +155,27 @@ body {
 
 /* current user msg */
 .message-cr {
+  align-self: flex-end;
   text-align: right;
+  padding: 10px
 }
 
 /* other user in lobby msg */
 .message-cl {
+  color: rgb(34, 35, 33);
+  background-color: antiquewhite;
+  align-self: flex-start;
   text-align: left;
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .message-info {
   display: flex;
   font-family: "ProggyClean Nerd Font Mono";
   font-size: 15px;
-  color: rgba(250, 235, 215, 0.52);
+  font-style: italic;
+  opacity: 0.5;
 }
 
 .time {

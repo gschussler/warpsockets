@@ -24,7 +24,7 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
     socket.current.addEventListener('message', (e) => {
       const messageContent = JSON.parse(e.data);
 
-      const isCurrentUser = messageContent.user === user || messageContent.userID === userID;
+      const isCurrentUser = messageContent.user === user;
       setMessageList((list) => [...list, { ...messageContent, isCurrentUser }]);
 
       if(lobbyRef.current) {
@@ -42,8 +42,12 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
         <div className='lobby-body' ref={lobbyRef}>
           <div className='message-list'>
           {messageList.slice().reverse().map((messageContent, index) => {
+            const isCurrentUser = messageContent.user === user;
             return (
-              <div className={`message ${messageContent.sender === 'current-user' ? 'message-cr' : 'message-cl'}`} key={index}>
+              <div 
+                className={`message ${isCurrentUser ? 'message-cr' : 'message-cl'}`}
+                key={index}
+              >
                 <div className='message-c'>
                   <p>{messageContent.message}</p>
                 </div>
