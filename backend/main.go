@@ -1,9 +1,15 @@
+// main file of execution -- package main at the top of other packages removes requirement to import here
+// http server and WebSocket initialization
+
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -26,12 +32,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	// read lobby JSON info sent from the frontend
-	var lobbyInfo struct {
-		Action string `json:"action"`
-		User   string `json:"user"`
-		Lobby  string `json:"lobby"`
-	}
+	// import LobbyInfo struct from models.go
+	var lobbyInfo LobbyInfo
 
 	err = conn.ReadJSON(&lobbyInfo)
 	if err != nil {
@@ -51,23 +53,49 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	case "join":
 		// add the connection to the lobby's list of clients
 		lobbyConnections[lobby] = append(lobbyConnections[lobby], conn)
-		log.Printf("%s joined lobby %s", lobbyInfo.User, lobby)
+		log.Printf(`"%s" connected to Lobby "%s" -- Socket opened`, lobbyInfo.User, lobby)
+
+		// retrieve existing messages from Redis
+		existingMessages := getExistingMessages(lobby)
+		for _, message := range existingMessages {
+			// send each message to the connected client
+			msgJSON, err := json.Marshal(message)
+			if err != nil {
+				log.Printf("Error serializing existing message: %v", err)
+				continue
+			}
+			conn.WriteMessage(websocket.TextMessage, msgJSON)
+		}
 	default:
 		log.Printf("Unknown action: %s", lobbyInfo.Action)
 	}
-
-	log.Printf("socket connection started for lobby %s", lobby)
 
 	for {
 		// Read a message from the WebSocket
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("Error reading message: ", err)
+			// log.Println("Error reading message: ", err)
 			// remove connection from the lobby
 			removeUserFromLobby(lobby, conn)
-			log.Printf("socket connection ended for lobby %s", lobby)
+			log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
+
+			// check if lobby is empty in order to delete messages from Redis
+			if len(lobbyConnections[lobby]) == 0 {
+				deleteEmptyLobbies(lobby)
+			}
 			return
 		}
+
+		// build message from struct to be stored in Redis
+		message := Message{
+			ID:      generateMessageID(),
+			Lobby:   lobby,
+			User:    lobbyInfo.User,
+			Content: string(msg),
+			Time:    time.Now(),
+		}
+
+		storeMessage(message)
 
 		broadcastMessage(lobby, msg)
 	}
@@ -79,6 +107,11 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	// 		break
 	// 	}
 	// }
+}
+
+func generateMessageID() string {
+	id := uuid.New()
+	return id.String()
 }
 
 func removeUserFromLobby(lobby string, conn *websocket.Conn) {
@@ -98,7 +131,7 @@ func broadcastMessage(lobby string, msg []byte) {
 	for _, conn := range connections {
 		err := conn.WriteMessage(websocket.TextMessage, msg)
 		if err != nil {
-			log.Println("Error writing messages: ", err)
+			log.Println("Error writing message: ", err)
 		}
 	}
 }
@@ -109,10 +142,15 @@ func broadcastMessage(lobby string, msg []byte) {
 // }
 
 func main() {
+	// init Redis db
+	initRedis()
+
+	// start http server for homepage
+	// prepare WebSocket for incoming connections
 	log.Println("server started on port 8085")
 	http.Handle("/", http.FileServer(http.Dir("../frontend/dist")))
 	http.HandleFunc("/ws", handleWebSocket)
-	// start WebSocket server)
+
 	err := http.ListenAndServe(":8085", nil)
 	if err != nil {
 		log.Fatal("Error starting server: ", err)

@@ -5,7 +5,6 @@ const App = () => {
   const [user, setUser] = useState('');
   const [lobby, setLobby] = useState('');
   const [showLobby, setShowLobby] = useState(false);
-  const [receivedMessages, setReceivedMessages] = useState([]); //store messages to be passed to Lobby
   const socket = useRef(null);
   
   useEffect(() => {
@@ -13,11 +12,6 @@ const App = () => {
 
     socket.current.addEventListener('open', (e) => {
       console.log('WebSocket connected');
-    });
-
-    socket.current.addEventListener('message', (e) => {
-      const message = e.data;
-      console.log('Received message:', message);
     });
 
     socket.current.addEventListener('close', (e) => {
@@ -60,7 +54,6 @@ const App = () => {
             socket={socket}
             user={user}
             lobby={lobby}
-            receivedMessages={receivedMessages}
           />
         ) : (
           <div className='welcome-container'>

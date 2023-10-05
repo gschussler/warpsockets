@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-const Lobby = ({ socket, user, lobby, receivedMessages }) => {
+const Lobby = ({ socket, user, lobby }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const lobbyRef = useRef(null);
@@ -11,7 +11,7 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
       const messageContent = {
         lobby: lobby,
         user: user,
-        message: message,
+        content: message,
         time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
       };
       await socket.current.send(JSON.stringify(messageContent));
@@ -22,10 +22,23 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
 
   useEffect(() => {
     socket.current.addEventListener('message', (e) => {
-      const messageContent = JSON.parse(e.data);
+      // receive incoming message(s) -- can receive from backend in different order need to fix
+      let messageContent = JSON.parse(e.data);
+      console.log("received message: ", messageContent)
 
-      const isCurrentUser = messageContent.user === user;
-      setMessageList((list) => [...list, { ...messageContent, isCurrentUser }]);
+      // 'Content' is only a property in existing messages in Redis db
+      if(messageContent.Content) {
+        //additional parse unfortunately
+        messageContent = JSON.parse(messageContent.Content)
+        // 'User' also unique to existing messages
+        const isCurrentUser = messageContent.User === user;
+        // insert newest of the existing messages first to maintain normal order
+        setMessageList((list) => [{ ...messageContent, isCurrentUser }, ...list]);
+      } else {
+        // case if current user is the one who sent the message
+        const isCurrentUser = messageContent.user === user;
+        setMessageList((list) => [...list, { ...messageContent, isCurrentUser }]);
+      }
 
       if(lobbyRef.current) {
         lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
@@ -49,11 +62,11 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
                 key={index}
               >
                 <div className='message-c'>
-                  <p>{messageContent.message}</p>
+                  <p>{messageContent.content}</p>
                 </div>
                 <div className='message-info'>
-                  <p className='user'>{`sent by ${messageContent.user} at:`}</p>
-                  <p className='time'>{messageContent.time}</p>
+                  <p className='user'>{messageContent.user || messageContent.User}</p>
+                  <p className='time'>{`at: ${messageContent.time}`}</p>
                 </div>
               </div>
             );
