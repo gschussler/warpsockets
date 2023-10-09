@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-const Lobby = ({ socket, user, lobby, receivedMessages }) => {
+const Lobby = ({ socket, user, lobby }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const lobbyRef = useRef(null);
@@ -11,8 +11,7 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
       const messageContent = {
         lobby: lobby,
         user: user,
-        message: message,
-        time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+        content: message,
       };
       await socket.current.send(JSON.stringify(messageContent));
       // prepare a message to be appended to the message list
@@ -20,11 +19,15 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
     }
   };
 
+
+  // TIME is set up on the backend, figure out proper order of parsing here (current user message vs existing message)
   useEffect(() => {
     socket.current.addEventListener('message', (e) => {
-      const messageContent = JSON.parse(e.data);
-
-      const isCurrentUser = messageContent.user === user || messageContent.userID === userID;
+      // receive incoming message(s) -- can receive from backend in different order need to fix
+      let messageContent = JSON.parse(e.data);
+      console.log("received message: ", messageContent)
+      // case if current user is the one who sent the message
+      const isCurrentUser = messageContent.User === user;
       setMessageList((list) => [...list, { ...messageContent, isCurrentUser }]);
 
       if(lobbyRef.current) {
@@ -42,14 +45,18 @@ const Lobby = ({ socket, user, lobby, receivedMessages }) => {
         <div className='lobby-body' ref={lobbyRef}>
           <div className='message-list'>
           {messageList.slice().reverse().map((messageContent, index) => {
+            const isCurrentUser = messageContent.User === user;
             return (
-              <div className={`message ${messageContent.sender === 'current-user' ? 'message-cr' : 'message-cl'}`} key={index}>
+              <div 
+                className={`message ${isCurrentUser ? 'message-cr' : 'message-cl'}`}
+                key={index}
+              >
                 <div className='message-c'>
-                  <p>{messageContent.message}</p>
+                  <p>{messageContent.Content}</p>
                 </div>
                 <div className='message-info'>
-                  <p className='user'>{`sent by ${messageContent.user} at:`}</p>
-                  <p className='time'>{messageContent.time}</p>
+                  <p className='user'>{messageContent.User}</p>
+                  <p className='time'>{`at: ${messageContent.FormattedTime}`}</p>
                 </div>
               </div>
             );

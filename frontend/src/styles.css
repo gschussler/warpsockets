@@ -142,9 +142,11 @@ body {
   flex-wrap: wrap;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   color: antiquewhite;
   margin-top: 10px;
+  max-width: 50%;
+  overflow-wrap: break-word;
 }
 
 .message-c {
@@ -153,35 +155,59 @@ body {
 
 /* current user msg */
 .message-cr {
-  text-align: right;
+  align-self: flex-end;
+  align-items: flex-end;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.message-cr:hover {
+  background-color: rgb(46, 47, 44);
 }
 
 /* other user in lobby msg */
 .message-cl {
+  color: rgb(34, 35, 33);
+  background-color: antiquewhite;
+  align-self: flex-start;
+  align-items: flex-start;
   text-align: left;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.message-cl:hover {
+  background-color: rgb(202, 191, 175);
+  color: rgb(29, 30, 28);
+  transition: .3s
 }
 
 .message-info {
   display: flex;
+  align-items: center;
   font-family: "ProggyClean Nerd Font Mono";
-  font-size: 15px;
-  color: rgba(250, 235, 215, 0.52);
+  opacity: 0.5;
+  border-radius: 10px;
 }
 
 .time {
   display: flex;
-  margin-left: 5px;
+  padding-right: 5px;
+  font-size: 15px;
 }
 
 .user {
   display: flex;
   margin-right: 5px;
+  padding-left: 2px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .lobby-footer {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  /* align-items: center; */
   position: fixed;
   bottom: 50px;
   resize: none;
@@ -224,7 +250,6 @@ body {
 }
 
 .send:hover {
-  opacity: .8;
   transform: scale(1.05);
   transition: .2s;
 
