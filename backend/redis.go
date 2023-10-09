@@ -51,10 +51,11 @@ func getExistingMessages(lobbyID string) []Message {
 		return nil
 	}
 
+	// reverse messages here when sending to client for proper order
 	var messages []Message
-	for _, msgJSON := range messagesJSON {
+	for i := len(messagesJSON) - 1; i >= 0; i-- {
 		var message Message
-		err := json.Unmarshal([]byte(msgJSON), &message)
+		err := json.Unmarshal([]byte(messagesJSON[i]), &message)
 		if err != nil {
 			log.Printf("Error deserializing message: %v", err)
 			continue
@@ -68,14 +69,17 @@ func deleteEmptyLobbies(lobby string) {
 	// delete messages associated with the lobby
 	key := "lobby:" + lobby + ":messages"
 	err := redisClient.Del(context.Background(), key).Err()
-	if err != nil {
-		log.Printf("Error deleting messages for empty lobby %s: %v", lobby, err)
-	} else {
-		log.Printf("Deleted messages for empty lobby: %s", lobby)
-	}
+	// if err != nil {
+	// 	log.Printf("Error deleting messages for empty lobby %s: %v", lobby, err)
+	// } else {
+	// 	log.Printf("Deleted messages for empty lobby: %s", lobby)
+	// }
 
-	// key for the lobby as well
+	// delete the lobby's key store once the last user leaves
 	lobbyKey := "lobby:" + lobby
+	if lobbyKey == "lobby:" {
+		return
+	}
 	err = redisClient.Del(context.Background(), lobbyKey).Err()
 	if err != nil {
 		log.Printf("Error deleting lobby key %s %v", lobbyKey, err)

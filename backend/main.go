@@ -38,6 +38,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	err = conn.ReadJSON(&lobbyInfo)
 	if err != nil {
 		log.Println("Error reading lobby information", err)
+		deleteEmptyLobbies(lobbyInfo.Lobby)
 		return
 	}
 
@@ -86,18 +87,33 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		var ReceivedMessage struct {
+			Lobby   string `json:"lobby"`
+			User    string `json:"user"`
+			Content string `json:"content"`
+		}
+
+		if err := json.Unmarshal(msg, &ReceivedMessage); err != nil {
+			log.Printf("Error unmarshaling sent message content: %v", err)
+			return
+		}
+
+		log.Printf(`msg is -- %s`, ReceivedMessage.Content)
+
 		// build message from struct to be stored in Redis
 		message := Message{
 			ID:      generateMessageID(),
 			Lobby:   lobby,
 			User:    lobbyInfo.User,
-			Content: string(msg),
+			Content: ReceivedMessage.Content,
 			Time:    time.Now(),
 		}
 
+		message.FormattedTime = message.Time.Format("03:04 PM")
+
 		storeMessage(message)
 
-		broadcastMessage(lobby, msg)
+		broadcastMessage(lobby, message)
 	}
 
 	// 	// Optionally, you can send a response back to the client
@@ -125,11 +141,17 @@ func removeUserFromLobby(lobby string, conn *websocket.Conn) {
 	}
 }
 
-func broadcastMessage(lobby string, msg []byte) {
+func broadcastMessage(lobby string, message Message) {
+	// serialize message to JSON
+	msgJSON, err := json.Marshal(message)
+	if err != nil {
+		log.Println("Error serializing message to JSON: ", err)
+		return
+	}
 	// broadcast a message to all clients in the specified lobby
 	connections := lobbyConnections[lobby]
 	for _, conn := range connections {
-		err := conn.WriteMessage(websocket.TextMessage, msg)
+		err := conn.WriteMessage(websocket.TextMessage, msgJSON)
 		if err != nil {
 			log.Println("Error writing message: ", err)
 		}

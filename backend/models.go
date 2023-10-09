@@ -7,16 +7,17 @@ import (
 
 // Chat messages
 type Message struct {
-	ID      string
-	Lobby   string
-	User    string
-	Content string
-	Time    time.Time
+	ID            string
+	Lobby         string
+	User          string
+	Content       string
+	Time          time.Time
+	FormattedTime string
 }
 
 // read lobby JSON info sent from the frontend
 type LobbyInfo struct {
-	Action string `json:"action"`
-	User   string `json:"user"`
 	Lobby  string `json:"lobby"`
+	User   string `json:"user"`
+	Action string `json:"action"`
 }
