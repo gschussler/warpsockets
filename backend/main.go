@@ -7,11 +7,17 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
+
+// declare a channel to receive signals for graceful shutdown (ctrl + c)
+var shutdown = make(chan os.Signal, 1)
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -166,6 +172,30 @@ func broadcastMessage(lobby string, message Message) {
 func main() {
 	// init Redis db
 	initRedis()
+
+	// notify server of OS signals
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-shutdown
+		log.Println("SHUTDOWN SIGNAL -- Closing connections and cleaning up...")
+
+		// Delete information in the Redis key/store
+		if err := deleteRedisData(); err != nil {
+			log.Printf("Error deleting Redis data: %v", err)
+		}
+
+		// Close WebSocket connections to prevent errors
+		for lobby, connections := range lobbyConnections {
+			_ = lobby //empty usage to avoid linting error
+			for _, conn := range connections {
+				conn.Close()
+			}
+		}
+
+		log.Println("Shutting down...")
+		os.Exit(0)
+	}()
 
 	// start http server for homepage
 	// prepare WebSocket for incoming connections

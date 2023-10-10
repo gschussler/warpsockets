@@ -187,6 +187,7 @@ body {
   align-items: center;
   font-family: "ProggyClean Nerd Font Mono";
   opacity: 0.5;
+  margin-top: -20px;
   border-radius: 10px;
 }
 

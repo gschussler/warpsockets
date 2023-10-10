@@ -87,3 +87,21 @@ func deleteEmptyLobbies(lobby string) {
 		log.Printf("Deleted lobby key: %s", lobbyKey)
 	}
 }
+
+func deleteRedisData() error {
+	// perform the Redis data deletion
+	// need to create a context for the redis FlushDB method
+	ctx := context.Background()
+
+	err := redisClient.FlushDB(ctx).Err()
+	if err != nil {
+		return err
+	}
+
+	// close the Redis client
+	if err := redisClient.Close(); err != nil {
+		return err
+	}
+
+	return nil
+}
