@@ -65,10 +65,25 @@ body {
   gap: 20px;
 }
 
-.options {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.color-grid {
+  display: grid;
+  /* background-color: rgba(245, 245, 245, 0.079); */
+  grid-template-columns: repeat(auto-fill, 40px);
+  margin-top: 5px;
+  margin-bottom: 15px;
+  padding-left: 7px;
+
+}
+.color-option {
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.color-option.selected {
+  border-color: rgba(255, 255, 255, 0.151);
+  animation: pulse 1.5s infinite;
 }
 
 .color-box {
@@ -252,7 +267,7 @@ body {
   padding-right: 2px;
   font-size: 25px;
   font-weight: bold;
-  background-color: antiquewhite;
+  background-color: rgb(34, 35, 33);
   border-radius: 5px;
 }
 

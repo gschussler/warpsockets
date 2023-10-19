@@ -3,11 +3,15 @@ import Select from 'react-select';
 import Lobby from './Lobby'
 
 const colorList = [
-  'rgb(255, 87, 51)',
-  'rgb(51, 255, 87)',
-  'rgb(87, 51, 255)',
-  'rgb(255, 51, 166)',
-  'rgb(51, 166, 255)',
+  'rgb(255, 87, 51)',    // Reddish-Orange
+  'rgb(255, 0, 0)',      // Red
+  'rgb(255, 51, 166)',   // Pink
+  'rgb(0, 0, 255)',      // Blue
+  'rgb(51, 166, 255)',   // Sky Blue
+  'rgb(0, 128, 0)',      // Green
+  'rgb(128, 0, 128)',    // Purple
+  'rgb(0, 0, 0)',        // Black
+  'rgb(255, 255, 255)',  // White
 ]
 
 const App = () => {
@@ -39,8 +43,7 @@ const App = () => {
     e.preventDefault();
     if(user !== "" && lobby !== "") {
       // generate their color for the lobby
-      const color = userColor;
-      setUserColor(color)
+      setUserColor(userColor)
       // send lobby information to the server
       socket.current.send(JSON.stringify({action: "join", user, lobby}));
       // then switch display to lobby
@@ -87,8 +90,8 @@ const App = () => {
           />
         ) : (
           <div className='welcome-container'>
-            <h1 className='app-h'>Welcome!</h1>
-            <h3 className='app-sh'>create or join a room!</h3>
+            <h1 className='app-h'>Word Roulette Go!</h1>
+            <h3 className='app-sh'>create or join a lobby.</h3>
             <div className='app-input'>
               <div className='app-user'>
                 <p>Username:</p>
@@ -124,23 +127,19 @@ const App = () => {
                   }}
                 />
               </div>
-              <div className='options'>
-                <Select
-                  value={colorOptions.find((option) => option.value === userColor)}
-                  options={colorOptions}
-                  onChange={(selected) => setUserColor(selected.value)}
-                  styles={{
-                    control: (styles) => ({
-                      ...styles,
-                      width: '300px',
-                    }),
-                  }}
+              <div className='color-grid'>
+              {colorOptions.map((option) => (
+                <div
+                  key={option.value}
+                  className={`color-option ${userColor === option.value ? 'selected' : ''}`}
+                  style={{ backgroundColor: option.value }}
+                  onClick={() => setUserColor(option.value)}
                 />
-                {/* <div className='color-box' style={{ backgroundColor: userColor }}></div> */}
+              ))}
+              </div>
                 <button className='app-j' onClick={joinLobby}>ENTER</button>
               </div>
             </div>
-          </div>
         )}
       </div>
     )
