@@ -124,24 +124,7 @@ body {
   transition: 1s;
   animation: wiggle 2s infinite;
 }
-
-@keyframes wiggle {
-  0% { 
-    transform: rotate(0deg); 
-  }
-  80% {
-    transform: rotate(0deg);
-  }
-  85% {
-    transform: rotate(1deg);
-  }
-  95% {
-    transform: rotate(-1deg);
-  }
-  100% {
-    transform: rotate(0deg);
-  }
-} */
+*/
 
 .lobby {
   display: flex;
@@ -319,4 +302,41 @@ body {
 .send:hover {
   transform: scale(1.05);
   transition: .2s;
+}
+
+.new-messages {
+  position: absolute;
+  left: 50%;
+  bottom: 50px;
+  transform: translateX(-50%);
+  background-color: rgba(226, 245, 218, 0.204);
+  color: rgb(202, 191, 175);
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none;
+  /* animation: wiggle 1s infinite; */
+}
+
+.new-messages.visible {
+  display: block;
+}
+
+@keyframes wiggle {
+  0% { 
+    transform: rotate(0deg); 
+  }
+  80% {
+    transform: rotate(0deg);
+  }
+  85% {
+    transform: rotate(2deg);
+  }
+  95% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }

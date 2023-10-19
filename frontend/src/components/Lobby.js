@@ -103,7 +103,7 @@ useEffect(() => {
         <div className='lobby-footer'>
           {newMessagesButton && (
             <button
-              className='new-messages'
+              className={`new-messages ${newMessagesButton ? 'visible' : ''}`}
               onClick={() => {
                 if (lobbyRef.current) {
                   lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
@@ -111,7 +111,7 @@ useEffect(() => {
                 }
               }}
             >
-              New Messages
+              ↓ New Messages ↓
             </button>
           )}
           <input
