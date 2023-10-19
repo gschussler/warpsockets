@@ -25,7 +25,7 @@ const App = () => {
     });
 
     socket.current.addEventListener('close', (e) => {
-      console.log(e);
+      // console.log(e);
       console.log('WebSocket closed');
     });
 

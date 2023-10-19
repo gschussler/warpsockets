@@ -11,6 +11,7 @@ type Message struct {
 	Lobby         string
 	User          string
 	Content       string
+	Color         string
 	Time          time.Time
 	FormattedTime string
 }

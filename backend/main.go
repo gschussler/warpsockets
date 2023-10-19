@@ -131,6 +131,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				Lobby:   lobby,
 				User:    lobbyInfo.User,
 				Content: ReceivedMessage.Content,
+				Color:   ReceivedMessage.Color,
 				Time:    time.Now(),
 			}
 
