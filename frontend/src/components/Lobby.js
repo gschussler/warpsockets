@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-const Lobby = ({ socket, user, lobby }) => {
+const Lobby = ({ socket, user, lobby, userColor }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const lobbyRef = useRef(null);
-
 
   const sendMessage = async () => {
     if(message !== '') {
@@ -55,7 +54,7 @@ const Lobby = ({ socket, user, lobby }) => {
                   <p>{messageContent.Content}</p>
                 </div>
                 <div className='message-info'>
-                  <p className='user'>{messageContent.User}</p>
+                  <p className='user' style={{ color: userColor}}>{messageContent.User}</p>
                   <p className='time'>{`at: ${messageContent.FormattedTime}`}</p>
                 </div>
               </div>

@@ -65,6 +65,18 @@ body {
   gap: 20px;
 }
 
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+}
+
 .app-j {
   display: grid;
   padding-left: 15px;
@@ -72,9 +84,9 @@ body {
   border: none;
   border-radius: 6px;
   width: fit-content;
-  background-color: rgb(226, 245, 218);
+  background-color: rgb(226, 245, 218, 0.775);
   color: rgb(34, 35, 33);
-  text-shadow: 0px 2px 4px rgb(218, 240, 245);
+  text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
   font-family: "GohuFont uni14 Nerd Font Mono";
   font-weight: bold;
   font-size: 25px;
@@ -82,11 +94,44 @@ body {
   margin-top: 15px;
 }
 
+/* unsure about using .not-connected for pre-lobby just yet */
+/* .not-connected {
+  display: grid;
+  grid-template-rows: 30px;
+  background-color: rgba(226, 245, 218, 0.775);
+  color: rgb(34, 35, 33);
+  border-radius: 10px;
+  margin-top: 15px;
+  justify-content: center;
+  text-align: left;
+  font-family: "GohuFont uni14 Nerd Font Mono";
+  font-size: 25px;
+  transition: 1s;
+  animation: wiggle 2s infinite;
+}
+
+@keyframes wiggle {
+  0% { 
+    transform: rotate(0deg); 
+  }
+  80% {
+    transform: rotate(0deg);
+  }
+  85% {
+    transform: rotate(1deg);
+  }
+  95% {
+    transform: rotate(-1deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+} */
+
 .lobby {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: rgb(218, 240, 245)
 }
 
 .lobby-h {
@@ -128,7 +173,7 @@ body {
 .welcome {
   font-size: 35px;
   font-family:"GohuFont uni14 Nerd Font Mono";
-  color: rgb(226, 245, 218);;
+  color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
 }
 
@@ -139,7 +184,7 @@ body {
 
 .message {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
@@ -184,6 +229,7 @@ body {
 
 .message-info {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   font-family: "ProggyClean Nerd Font Mono";
   opacity: 0.5;
@@ -193,16 +239,21 @@ body {
 
 .time {
   display: flex;
+  justify-content: right;
   padding-right: 5px;
   font-size: 15px;
 }
 
 .user {
   display: flex;
+  justify-content: left;
   margin-right: 5px;
   padding-left: 2px;
-  font-size: 16px;
+  padding-right: 2px;
+  font-size: 25px;
   font-weight: bold;
+  background-color: antiquewhite;
+  border-radius: 5px;
 }
 
 .lobby-footer {
@@ -253,5 +304,4 @@ body {
 .send:hover {
   transform: scale(1.05);
   transition: .2s;
-
 }

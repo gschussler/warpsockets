@@ -30,98 +30,117 @@ var upgrader = websocket.Upgrader{
 var lobbyConnections = make(map[string][]*websocket.Conn)
 
 func handleWebSocket(w http.ResponseWriter, r *http.Request) {
-	// upgrade http connection to a WebSocket connection using upgrader struct
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Error upgrading to WebSocket: ", err)
-		return
-	}
-	defer conn.Close()
-
-	// import LobbyInfo struct from models.go
-	var lobbyInfo LobbyInfo
-
-	err = conn.ReadJSON(&lobbyInfo)
-	if err != nil {
-		log.Println("Error reading lobby information", err)
-		deleteEmptyLobbies(lobbyInfo.Lobby)
-		return
-	}
-
-	// used often in following code, assigned to variable
-	lobby := lobbyInfo.Lobby
-
-	// check if lobby name exists in lobbyConnections
-	if _, exists := lobbyConnections[lobby]; !exists {
-		lobbyConnections[lobby] = make([]*websocket.Conn, 0)
-	}
-
-	switch lobbyInfo.Action {
-	case "join":
-		// add the connection to the lobby's list of clients
-		lobbyConnections[lobby] = append(lobbyConnections[lobby], conn)
-		log.Printf(`"%s" connected to Lobby "%s" -- Socket opened`, lobbyInfo.User, lobby)
-
-		// retrieve existing messages from Redis
-		existingMessages := getExistingMessages(lobby)
-		for _, message := range existingMessages {
-			// send each message to the connected client
-			msgJSON, err := json.Marshal(message)
-			if err != nil {
-				log.Printf("Error serializing existing message: %v", err)
-				continue
-			}
-			conn.WriteMessage(websocket.TextMessage, msgJSON)
-		}
-	default:
-		log.Printf("Unknown action: %s", lobbyInfo.Action)
-	}
-
+	retries := 0
 	for {
-		// Read a message from the WebSocket
-		_, msg, err := conn.ReadMessage()
+		// upgrade http connection to a WebSocket connection using upgrader struct
+		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			// log.Println("Error reading message: ", err)
-			// remove connection from the lobby
-			removeUserFromLobby(lobby, conn)
-			log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
+			log.Println("Error upgrading to WebSocket: ", err)
 
-			// check if lobby is empty in order to delete messages from Redis
-			if len(lobbyConnections[lobby]) == 0 {
-				deleteEmptyLobbies(lobby)
+			if retries < 5 {
+				retries++
+				log.Printf("Retrying WebSocket connection...")
+				time.Sleep(time.Second * 5)
+				continue
+			} else {
+				log.Printf("Max retries exceeded. WebSocket connection failed.")
+				return
 			}
+		}
+
+		retries = 0
+		defer conn.Close()
+
+		// import LobbyInfo struct from models.go
+		var lobbyInfo LobbyInfo
+
+		err = conn.ReadJSON(&lobbyInfo)
+		if err != nil {
+			if websocket.IsCloseError(err, websocket.CloseGoingAway) {
+				log.Println("A user left before entering a lobby.")
+			} else {
+				log.Println("Error reading lobby information", err)
+			}
+			deleteEmptyLobbies(lobbyInfo.Lobby)
 			return
 		}
 
-		var ReceivedMessage struct {
-			Lobby   string `json:"lobby"`
-			User    string `json:"user"`
-			Content string `json:"content"`
+		// used often in following code, assigned to variable
+		lobby := lobbyInfo.Lobby
+
+		// check if lobby name exists in lobbyConnections
+		if _, exists := lobbyConnections[lobby]; !exists {
+			lobbyConnections[lobby] = make([]*websocket.Conn, 0)
 		}
 
-		if err := json.Unmarshal(msg, &ReceivedMessage); err != nil {
-			log.Printf("Error unmarshaling sent message content: %v", err)
-			return
+		switch lobbyInfo.Action {
+		case "join":
+			// add the connection to the lobby's list of clients
+			lobbyConnections[lobby] = append(lobbyConnections[lobby], conn)
+			log.Printf(`"%s" connected to Lobby "%s" -- Socket opened`, lobbyInfo.User, lobby)
+
+			// retrieve existing messages from Redis
+			existingMessages := getExistingMessages(lobby)
+			for _, message := range existingMessages {
+				// send each message to the connected client
+				msgJSON, err := json.Marshal(message)
+				if err != nil {
+					log.Printf("Error serializing existing message: %v", err)
+					continue
+				}
+				conn.WriteMessage(websocket.TextMessage, msgJSON)
+			}
+		default:
+			log.Printf("Unknown action: %s", lobbyInfo.Action)
 		}
 
-		log.Printf(`msg is -- %s`, ReceivedMessage.Content)
+		for {
+			// Read a message from the WebSocket
+			_, msg, err := conn.ReadMessage()
+			if err != nil {
+				// log.Println("Error reading message: ", err)
+				// remove connection from the lobby
+				removeUserFromLobby(lobby, conn)
+				log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
 
-		// build message from struct to be stored in Redis
-		message := Message{
-			ID:      generateMessageID(),
-			Lobby:   lobby,
-			User:    lobbyInfo.User,
-			Content: ReceivedMessage.Content,
-			Time:    time.Now(),
+				// check if lobby is empty in order to delete messages from Redis
+				if len(lobbyConnections[lobby]) == 0 {
+					deleteEmptyLobbies(lobby)
+				}
+				return
+			}
+
+			var ReceivedMessage struct {
+				Lobby   string `json:"lobby"`
+				User    string `json:"user"`
+				Content string `json:"content"`
+				Color   string `json:"color"`
+			}
+
+			if err := json.Unmarshal(msg, &ReceivedMessage); err != nil {
+				log.Printf("Error unmarshaling sent message content: %v", err)
+				return
+			}
+
+			// test if server is receiving messages
+			// log.Printf(`msg is -- %s`, ReceivedMessage.Content)
+
+			// build message from struct to be stored in Redis
+			message := Message{
+				ID:      generateMessageID(),
+				Lobby:   lobby,
+				User:    lobbyInfo.User,
+				Content: ReceivedMessage.Content,
+				Time:    time.Now(),
+			}
+
+			message.FormattedTime = message.Time.Format("03:04 PM")
+
+			storeMessage(message)
+
+			broadcastMessage(lobby, message)
 		}
-
-		message.FormattedTime = message.Time.Format("03:04 PM")
-
-		storeMessage(message)
-
-		broadcastMessage(lobby, message)
 	}
-
 	// 	// Optionally, you can send a response back to the client
 	// 	err = conn.WriteMessage(websocket.TextMessage, []byte("message sent"))
 	// 	if err != nil {
