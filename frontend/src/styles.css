@@ -217,6 +217,7 @@ body {
   align-items: flex-start;
   text-align: left;
   padding: 10px;
+  margin-left: 10px;
   border-radius: 10px;
 }
 
@@ -247,8 +248,8 @@ body {
   display: flex;
   justify-content: left;
   margin-right: 5px;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 3px;
+  padding-right: 3px;
   font-size: 25px;
   font-weight: bold;
   background-color: antiquewhite;
@@ -307,8 +308,8 @@ body {
 
 .new-messages {
   position: absolute;
-  left: 50%;
-  bottom: 50px;
+  left: 30%;
+  bottom: 60px;
   transform: translateX(-50%);
   background-color: rgba(226, 245, 218, 0.204);
   color: rgb(202, 191, 175);
@@ -317,6 +318,7 @@ body {
   border-radius: 5px;
   cursor: pointer;
   display: none;
+  font-size: 20px;
   animation: wiggle 1s infinite;
 }
 
