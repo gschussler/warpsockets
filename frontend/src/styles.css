@@ -201,6 +201,7 @@ body {
   align-self: flex-end;
   align-items: flex-end;
   padding: 10px;
+  margin-right: 10px;
   border-radius: 10px;
 }
 
@@ -250,7 +251,7 @@ body {
   padding-right: 2px;
   font-size: 25px;
   font-weight: bold;
-  background-color: rgb(34, 35, 33);
+  background-color: antiquewhite;
   border-radius: 5px;
 }
 
@@ -316,7 +317,7 @@ body {
   border-radius: 5px;
   cursor: pointer;
   display: none;
-  /* animation: wiggle 1s infinite; */
+  animation: wiggle 1s infinite;
 }
 
 .new-messages.visible {
