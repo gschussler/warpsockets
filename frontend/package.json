@@ -4,7 +4,8 @@
   "description": "React components compiled using webpack",
   "main": "index.js",
   "scripts": {
-    "start": "webpack server --mode development --open"
+    "dev": "webpack server --mode development --open",
+    "start": "webpack server --mode production --open"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +14,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",
-    "react-select": "^5.7.7",
     "websocket": "^1.0.34"
   },
   "devDependencies": {

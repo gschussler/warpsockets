@@ -26,7 +26,7 @@ module.exports = {
       '/api': 'http://localhost:8085', // Proxy API requests to Go backend
     },
     static: {
-      directory: path.resolve(__dirname, '/dist'), // server React files
+      directory: path.resolve(__dirname, 'dist'), // server React files
       publicPath: '/dist',
     },
   },

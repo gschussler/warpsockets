@@ -1,5 +1,5 @@
+// require('dotenv').config();
 import React, { useEffect, useRef, useState } from 'react';
-import Select from 'react-select';
 import Lobby from './Lobby'
 
 const colorList = [
@@ -67,18 +67,6 @@ const App = () => {
     ),
   }));
 
-  // const handleEnterPress = (e) => {
-  //   if(e.key === 'Enter') {
-  //     e.preventDefault();
-  //     joinLobby();
-  //   }
-  // } onKeyDown={handleEnterPress} <-- put in return
-
-  // useEffect(() => {
-  //   socket.on("receive_message", (data) => {
-  //     setMessReceived(data.message);
-  //   })
-  // }, [socket])
   return (
     <div className='App'>
       {showLobby ? ( // show lobby when userID is received
@@ -144,20 +132,5 @@ const App = () => {
       </div>
     )
   };
-
-// {/* <input
-//         placeholder="Message..."
-//         onChange={(e) => {setMessage(e.target.value)}}
-//       />
-//       <button onClick={sendMessage}>Send Message</button>
-//       <p className="messages">{messReceived}</p> */}
-
-
-// {/* <Lobby
-//         socket={socket}
-//         lobbyName={lobbyName}
-//         setLobbyName={(e) => setLobbyName(e)}
-//         setIsNamed={() => setIsNamed(true)}
-//       /> */}
 
 export default App;
