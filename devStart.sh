@@ -10,4 +10,6 @@ cd backend
 
 # Navigate back a step and to the frontend dir to start frontend dev server
 cd ../frontend
-npm start
+
+#
+npm run dev

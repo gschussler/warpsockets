@@ -14,6 +14,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/rs/cors"
 )
 
 // declare a channel to receive signals for graceful shutdown (ctrl + c)
@@ -190,6 +191,13 @@ func broadcastMessage(lobby string, message Message) {
 // }
 
 func main() {
+	// handle cors
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Content-Type"},
+	})
+
 	// init Redis db
 	initRedis()
 
@@ -220,7 +228,7 @@ func main() {
 	// start http server for homepage
 	// prepare WebSocket for incoming connections
 	log.Println("server started on port 8085")
-	http.Handle("/", http.FileServer(http.Dir("../frontend/dist")))
+	http.Handle("/", c.Handler(http.FileServer(http.Dir("../frontend/dist"))))
 	http.HandleFunc("/ws", handleWebSocket)
 
 	err := http.ListenAndServe(":8085", nil)

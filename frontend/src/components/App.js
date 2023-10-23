@@ -1,4 +1,3 @@
-// require('dotenv').config();
 import React, { useEffect, useRef, useState } from 'react';
 import Lobby from './Lobby'
 

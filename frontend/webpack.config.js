@@ -16,6 +16,7 @@ module.exports = {
   ],
 
   devServer: {
+    allowedHosts: 'all',
     host: 'localhost',
     port: 3000, // match with proxy config
     open: true,
