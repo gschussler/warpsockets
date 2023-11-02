@@ -1,10 +1,10 @@
 #!/bin/bash
 # run at project root -- ./devStart.sh
 # Navigate back a step and to the frontend dir to start frontend dev server
-cd ./frontend
+cd frontend
 npm install &
 npm run build &
-cd ../
+cd ..
 
 # Start the Redis server (current path is localhost:6379, so use default)
 redis-server &
