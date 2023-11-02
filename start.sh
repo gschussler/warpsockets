@@ -2,6 +2,7 @@
 # run at project root -- ./devStart.sh
 # Navigate back a step and to the frontend dir to start frontend dev server
 cd ./frontend
+npm install &
 npm run build &
 cd ../
 
