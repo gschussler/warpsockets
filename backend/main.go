@@ -181,6 +181,8 @@ func broadcastMessage(lobby string, message Message) {
 		err := conn.WriteMessage(websocket.TextMessage, msgJSON)
 		if err != nil {
 			log.Println("Error writing message: ", err)
+		} else {
+			log.Printf("message sent") // checking if messages are successfully broadcast
 		}
 	}
 }
@@ -228,6 +230,7 @@ func main() {
 	// start http server for homepage
 	// prepare WebSocket for incoming connections
 	log.Println("server started on port 8085")
+	// wrap http.Handle in c.Handler if you bring CORS settings back
 	http.Handle("/", c.Handler(http.FileServer(http.Dir("../frontend/dist"))))
 	http.HandleFunc("/ws", handleWebSocket)
 
