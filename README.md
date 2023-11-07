@@ -5,6 +5,8 @@ _Lobby-based, ephemeral chatrooms powered by WebSocket, Go, and React_
 - Automatically retrieve messages that have been sent in a lobby upon connecting.
 - When no one is left in the lobby, the messages are deleted.
 
+---
+
 ### Setup
 Everything you need to get up and running lies in one script.
 
@@ -15,6 +17,8 @@ For the **production** build, run `./start.sh` in the root directory. Currently,
 
 #### Close out
 Currently, you must exit the application in the browser before closing the application. Otherwise, closing the server with `Ctrl + C` will fail to gracefully stop all processes.
+
+---
 
 #### Troubleshooting
 If you cannot start Redis or the Go backend, you've likely stopped the server before exiting from the browser end.
