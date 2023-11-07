@@ -1,8 +1,9 @@
 # word-roulette_go
 ## [Word Roulette](https://github.com/gschussler/word-roulette) with backend rebuilt in Go.
-_Lobby-based, ephemeral chatrooms powered by Go, WebSocket, and React_
+_Real-time, ephemeral chatrooms powered by Go, WebSocket, and React_
 
-- Automatically retrieve messages that have been sent in a lobby upon connecting.
+- Chat with whoever, just enter the same lobby name!
+- Automatically retrieve messages that have been sent in an existing lobby upon connecting to it.
 - When no one is left in the lobby, the messages are deleted.
 
 ---
