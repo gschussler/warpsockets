@@ -4,7 +4,7 @@
   "description": "React components compiled using webpack",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --mode development",
+    "dev": "webpack server --mode development --open",
     "build": "webpack --mode production"
   },
   "keywords": [],

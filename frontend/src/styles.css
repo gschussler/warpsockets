@@ -343,3 +343,22 @@ body {
     transform: rotate(0deg);
   }
 }
+
+/* Width */
+::-webkit-scrollbar {
+  width: 8px; 
+}
+
+/* blend track with background */
+::-webkit-scrollbar-track {
+  background: rgb(34, 35, 33);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
