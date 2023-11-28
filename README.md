@@ -2,6 +2,8 @@
 ## [Word Roulette](https://github.com/gschussler/word-roulette) with backend rebuilt in Go.
 _Real-time, ephemeral chatrooms powered by Go, WebSocket, and React_
 
+Chatting with sub-millisecond latency should be what all communication platforms strive for where possible.
+Try Word Roulette out, see how fast communication can be.
 - Chat with whoever, just enter the same lobby name!
 - Automatically retrieve messages that have been sent in an existing lobby upon connecting to it.
 - When no one is left in the lobby, the messages are deleted.
