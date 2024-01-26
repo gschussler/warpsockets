@@ -1,0 +1,8 @@
+{
+  "builds": [
+    { "src": "frontend/**/*", "use": "@now/static-build" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/frontend/$1" }
+  ]
+}
