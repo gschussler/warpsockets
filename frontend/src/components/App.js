@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Lobby from './Lobby'
+import 'dotenv';
 
 const colorList = [
   'rgb(255, 87, 51)',    // Reddish-Orange
@@ -21,7 +22,9 @@ const App = () => {
   const socket = useRef(null);
   
   useEffect(() => {
-    socket.current = new WebSocket('ws://localhost:8085/ws');
+    // need to determine external vs localhost
+    // external --> Create .env file in the frontend directory and assign 'EXT_IP' the value of the external IP of the machine the go server is running on
+    socket.current = new WebSocket(`ws://${process.env.EXT_IP}/ws`) //|| new WebSocket('ws://localhost:8085/ws');
 
     socket.current.addEventListener('open', (e) => {
       console.log('WebSocket connected');
@@ -59,7 +62,7 @@ const App = () => {
             backgroundColor: color,
             width: '20px',
             height: '20px',
-            marginRight: '8px'
+            marginRight: '8px',
           }}
         ></div>
       </div>

@@ -181,8 +181,9 @@ func broadcastMessage(lobby string, message Message) {
 		err := conn.WriteMessage(websocket.TextMessage, msgJSON)
 		if err != nil {
 			log.Println("Error writing message: ", err)
-		} else {
-			log.Printf("message sent") // checking if messages are successfully broadcast
+			// } else {
+			// 	// logs the number of connections receiving the broadcast
+			// 	log.Printf("message sent")
 		}
 	}
 }
