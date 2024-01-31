@@ -2,6 +2,14 @@ const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  // was needed when trying dotenv, unsure of reason yet
+  // resolve: {
+  //   fallback: {
+  //     "path": false,
+  //     "os": false,
+  //     "crypto": false,
+  //   },
+  // },
   entry: './src/index.js', // React entrypoint
   output: {
     path: path.resolve(__dirname, 'dist'), // output dir of bundled frontend code
