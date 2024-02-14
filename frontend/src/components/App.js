@@ -20,37 +20,51 @@ const App = () => {
   const [showLobby, setShowLobby] = useState(false);
   const socket = useRef(null);
   
-  useEffect(() => {
-    // assign external IP to `EXT_IP` in a .env created in frontend dir
-    // add the .env to your `.gitignore` to avoid pushing it to GitHub
-    socket.current = new WebSocket(`ws://${process.env.EXT_IP}/ws`) //|| new WebSocket('ws://localhost:8085/ws');
+  const connectWebSocket = () => {
+    // need to wait until connection is completed. async/await syntax not supported by WebSockets
+    return new Promise((resolve, reject) => {
+      // assign external IP to `EXT_IP` in a .env created in frontend dir
+      // add the .env to your `.gitignore` to avoid pushing it to GitHub
+      socket.current = new WebSocket(`ws://${process.env.EXT_IP}/ws`)
 
-    socket.current.addEventListener('open', (e) => {
-      console.log('WebSocket connected');
+      socket.current.addEventListener('open', (e) => {
+        console.log('WebSocket connected');
+        resolve();
+      });
+
+      socket.current.addEventListener('close', (e) => {
+        console.log('WebSocket closed');
+        reject(new Error('WebSocket closed'));
+      });
     });
+  };
 
-    socket.current.addEventListener('close', (e) => {
-      // console.log(e);
-      console.log('WebSocket closed');
-    });
-
-    // clean up WebSocket connection when the component unmounts
-    return () => {
-      socket.current.close();
-    };
-  }, []);
-
-  const joinLobby = (e) => {
+  const joinLobby = async (e) => {
     e.preventDefault();
     if(user !== "" && lobby !== "") {
-      // generate their color for the lobby
-      setUserColor(userColor)
-      // send lobby information to the server
-      socket.current.send(JSON.stringify({action: "join", user, lobby}));
-      // then switch display to lobby
-      setShowLobby(true);
+      try {
+        // generate their color for the lobby
+        setUserColor(userColor);
+        // connect WebSocket when the user joins a lobby
+        await connectWebSocket();
+        // send lobby information to the server
+        socket.current.send(JSON.stringify({action: "join", user, lobby}));
+        // then switch display to lobby
+        setShowLobby(true);
+      } catch (error) {
+        console.error('Error joining lobby:', error.message);
+      }
     }
-  }
+  };
+
+  useEffect(() => {
+    // clean up WebSocket connection when the component unmounts
+    return () => {
+      if(socket.current) {
+        socket.current.close();
+      }
+    };
+  }, []);
 
   const colorOptions = colorList.map((color) => ({
     value: color,

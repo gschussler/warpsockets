@@ -3,7 +3,8 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 const dotenv = require('dotenv-webpack');
 
 module.exports = {
-  // was needed when trying dotenv, unsure of reason yet
+  // was needed when trying dotenv, but Go starts the server. so dotenv was unavailable
+  // even with this fix
   // resolve: {
   //   fallback: {
   //     "path": false,
