@@ -1,8 +1,10 @@
 const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
+const dotenv = require('dotenv-webpack');
 
 module.exports = {
-  // was needed when trying dotenv, unsure of reason yet
+  // was needed when trying dotenv, but Go starts the server. so dotenv was unavailable
+  // even with this fix
   // resolve: {
   //   fallback: {
   //     "path": false,
@@ -21,6 +23,7 @@ module.exports = {
       title: 'Development',
       template: './src/index.html', // Path to HTML template
     }),
+    new dotenv() // make .env variables available to webpack when bundling
   ],
 
   devServer: {

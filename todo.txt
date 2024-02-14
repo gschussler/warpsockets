@@ -1,0 +1,11 @@
+- ADD
+  - '${user} joined the lobby.' / '${user} left the lobby' as text in the Lobby messaging.
+  - non-annoying sound when a message is sent/received
+
+- FIX
+  - usage of dotenv for external ip in the socket connection from the frontend (possibly find solution not dotenv?)
+  - temporarily hardcoded (DO NOT COMMIT WHEN IP IS HARD CODED)
+  - mobile UI (honestly the UI in general as well lol)
+
+- REFACTOR
+  - A WebSocket connection should only be instantiated when a user enters a lobby, not upon coming to the site itself
