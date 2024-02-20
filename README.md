@@ -16,7 +16,7 @@ Navigate to the `frontend` directory and run `npm install`.
 Everything you need to get up and running lies in one script. **Relevant scripts should be run at the root directory.**
 
 #### Start the server
-For the **development** build, run `./devStart.sh` in the root directory and head over to `http://localhost:8085/`.
+For the **development** build, run `./devStart.sh` in the root directory and head over to `http://localhost:3000/`.
 
 For the **production** build, run `./start.sh` in the root directory. Currently, the production build requires NGINX configuration and port forwarding in order for users other than the host machine to join. Considering more reasonable solutions for serving the application at this time.
 

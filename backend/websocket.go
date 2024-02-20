@@ -83,6 +83,15 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				}
 				conn.WriteMessage(websocket.TextMessage, msgJSON)
 			}
+		case "leave":
+			removeUserFromLobby(lobby, conn)
+			log.Printf(`"%s" left Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
+
+			// check if lobby is empty in order to delete messages from Redis
+			if len(lobbyConnections[lobby]) == 0 {
+				deleteEmptyLobbies(lobby)
+			}
+			return
 		default:
 			log.Printf("Unknown action: %s", lobbyInfo.Action)
 		}
@@ -147,6 +156,7 @@ func removeUserFromLobby(lobby string, conn *websocket.Conn) {
 	connections := lobbyConnections[lobby]
 	for i, c := range connections {
 		if c == conn {
+			conn.Close()
 			lobbyConnections[lobby] = append(connections[:i], connections[i+1:]...)
 			break
 		}

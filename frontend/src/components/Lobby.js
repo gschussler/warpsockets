@@ -1,11 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-const Lobby = ({ socket, user, lobby, userColor }) => {
+const Lobby = ({ socket, user, lobby, userColor, showLobby, setShowLobby }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [scrollAtBottom, setScrollAtBottom] = useState(true);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
   const lobbyRef = useRef(null);
+
+  // handle users leaving the lobby
+  const leaveLobby = async () => {
+    if(socket.current) {
+      await socket.current.send(JSON.stringify({action: 'leave', user, lobby}))
+      socket.current.close();
+    }
+    setShowLobby(false);
+  }
 
   const sendMessage = async () => {
     if(message !== '') {
@@ -24,7 +33,7 @@ const Lobby = ({ socket, user, lobby, userColor }) => {
 
   // TIME is set up on the backend, figure out proper order of parsing here (current user message vs existing message)
   useEffect(() => {
-    socket.current.addEventListener('message', (e) => {
+    const handleMessage = (e) => {
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
       // console.log("received message: ", messageContent)
@@ -49,14 +58,26 @@ const Lobby = ({ socket, user, lobby, userColor }) => {
           setNewMessagesButton(true);
         }
       }
-    });
+    };
+
+    if (socket.current) {
+      console.log("WebSocket state in Lobby: ", socket.current.readyState);
+      socket.current.addEventListener('message', handleMessage);
+
+      return () => {
+        if (socket.current) {
+          socket.current.removeEventListener('message', handleMessage);
+          socket.current.close();
+        }
+      };
+    }
   }, [socket]);
-// Add this useEffect block to your Lobby component
+
+// handle scrolling by keeping track of y-position in the lobby
 useEffect(() => {
   if (lobbyRef.current) {
     const handleScroll = () => {
-      const isScrolledToBottom =
-        lobbyRef.current.scrollHeight - lobbyRef.current.scrollTop === lobbyRef.current.clientHeight;
+      const isScrolledToBottom = lobbyRef.current.scrollHeight - lobbyRef.current.scrollTop === lobbyRef.current.clientHeight;
       setScrollAtBottom(isScrolledToBottom);
 
       // If the user is at the bottom, hide the "New Messages" button
@@ -64,11 +85,14 @@ useEffect(() => {
         setNewMessagesButton(false);
       }
     };
-
-    lobbyRef.current.addEventListener("scroll", handleScroll);
+    if (lobbyRef.current) {
+      lobbyRef.current.addEventListener("scroll", handleScroll);
+    }
 
     return () => {
-      lobbyRef.current.removeEventListener("scroll", handleScroll);
+      if (lobbyRef.current) {
+        lobbyRef.current.removeEventListener("scroll", handleScroll);
+      }
     };
   }
 }, [lobbyRef]);
@@ -77,6 +101,7 @@ useEffect(() => {
     <div className='lobby'>
       <div className='lobby-h'>
         <p className='welcome'>You are in the {lobby} lobby, let's goooo.</p>
+        <button onClick={leaveLobby}>Leave</button>
       </div>
       <div className='lobby-content'>
         <div className='lobby-body' ref={lobbyRef}>
