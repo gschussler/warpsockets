@@ -89,7 +89,7 @@ func deleteEmptyLobbies(lobby string) {
 }
 
 func deleteRedisData() error {
-	// perform thez Redis data deletion
+	// perform the Redis data deletion
 	// need to create a context for the redis FlushDB method
 	ctx := context.Background()
 

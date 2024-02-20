@@ -34,10 +34,10 @@ const App = () => {
       // add the .env to your `.gitignore` to avoid pushing it to GitHub
       const wsPath = process.env.NODE_ENV === 'production'
       ? `ws://${process.env.EXT_IP}/ws` :
-      `ws://localhost:8085/ws`
+      `ws://localhost:8085/ws`;
 
       console.log("Creating new WebSocket connection...")
-      socket.current = new WebSocket(wsPath)
+      socket.current = new WebSocket(wsPath);
 
       socket.current.addEventListener('open', (e) => {
         console.log('WebSocket connected');

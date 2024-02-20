@@ -39,7 +39,7 @@ func main() {
 			log.Printf("Error deleting Redis data: %v", err)
 		}
 
-		// Close WebSocket connections to prevent errors
+		// close WebSocket connections to prevent errors
 		for lobby, connections := range lobbyConnections {
 			_ = lobby //empty usage to avoid linting error
 			for _, conn := range connections {
