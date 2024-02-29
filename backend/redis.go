@@ -71,8 +71,8 @@ func deleteEmptyLobbies(lobby string) {
 	err := redisClient.Del(context.Background(), key).Err()
 	if err != nil {
 		log.Printf("Error deleting messages for empty lobby %s: %v", lobby, err)
-	} else {
-		log.Printf("Deleted messages for empty lobby: %s", lobby)
+		// } else {
+		// 	log.Printf("Removed messages from '%s' lobby cache.", lobby) // check that messages are removed from Redis
 	}
 
 	// delete the lobby's key store once the last user leaves
@@ -83,8 +83,8 @@ func deleteEmptyLobbies(lobby string) {
 	err = redisClient.Del(context.Background(), lobbyKey).Err()
 	if err != nil {
 		log.Printf("Error deleting lobby key %s %v", lobbyKey, err)
-	} else {
-		log.Printf("Deleted lobby key: %s", lobbyKey)
+		// } else {
+		// 	log.Printf("Deleted lobby key for '%s' lobby", lobby) // check that lobby key is also removed from Redis
 	}
 }
 

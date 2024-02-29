@@ -39,15 +39,15 @@ const App = () => {
       console.log("Creating new WebSocket connection...")
       socket.current = new WebSocket(wsPath);
 
-      socket.current.addEventListener('open', (e) => {
+      socket.current.onopen = (e) => {
         console.log('WebSocket connected');
         resolve();
-      });
+      };
 
-      socket.current.addEventListener('close', (e) => {
+      socket.current.onclose = (e) => {
         console.log('WebSocket closed');
         reject(new Error('WebSocket closed'));
-      });
+      };
     });
   };
 
@@ -71,7 +71,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    // clean up WebSocket connection when the component unmounts
+    // clean up WebSocket connection when the component unmounts or leaving the lobby
     return () => {
       if(socket.current) {
         console.log('Closing WebSocket connection...')
@@ -104,7 +104,6 @@ const App = () => {
             user={user}
             lobby={lobby}
             userColor={userColor}
-            showLobby={showLobby}
             setShowLobby={setShowLobby}
           />
         ) : (

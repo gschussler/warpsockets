@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-const Lobby = ({ socket, user, lobby, userColor, showLobby, setShowLobby }) => {
+const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [scrollAtBottom, setScrollAtBottom] = useState(true);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const lobbyRef = useRef(null);
 
   // handle users leaving the lobby
   const leaveLobby = async () => {
     if(socket.current) {
-      await socket.current.send(JSON.stringify({action: 'leave', user, lobby}))
-      socket.current.close();
+      await socket.current.close();
     }
     setShowLobby(false);
   }
@@ -101,7 +101,13 @@ useEffect(() => {
     <div className='lobby'>
       <div className='lobby-h'>
         <p className='welcome'>You are in the {lobby} lobby, let's goooo.</p>
-        <button onClick={leaveLobby}>Leave</button>
+        <button 
+          className="leave-lobby"
+          onClick={leaveLobby}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}>
+            {hovered ? 'Leave' : '↩'}
+        </button>
       </div>
       <div className='lobby-content'>
         <div className='lobby-body' ref={lobbyRef}>
@@ -126,6 +132,7 @@ useEffect(() => {
           </div>
         </div>
         <div className='lobby-footer'>
+          <div className='user-avatar' style={{ backgroundColor: userColor }}></div>
           {newMessagesButton && (
             <button
               className={`new-messages ${newMessagesButton ? 'visible' : ''}`}

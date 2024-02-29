@@ -179,6 +179,24 @@ body {
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
 }
 
+.leave-lobby {
+  font-family: "ProggyVector";
+  font-size: 50px;
+  border: none;
+  background-color: rgb(34, 35, 33);
+  color: rgba(255, 23, 7, 0.553);
+  width: 60px;
+  border-radius: 4px;
+  margin-left: 10px;
+}
+
+.leave-lobby:hover {
+  background-color: rgb(34, 35, 33);
+  color: rgb(255, 23, 7);
+  transform: scale(1.05);
+  font-size: 45px;
+}
+
 .message-list {
   display: flex;
   flex-direction: column-reverse;
@@ -198,6 +216,7 @@ body {
 
 .message-c {
   font-family: "ProggyVector";
+  font-size: 18px;
 }
 
 /* current user msg */
@@ -245,7 +264,7 @@ body {
   display: flex;
   justify-content: right;
   padding-right: 5px;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .user {
@@ -254,7 +273,7 @@ body {
   margin-right: 5px;
   padding-left: 3px;
   padding-right: 3px;
-  font-size: 25px;
+  font-size: 20px;
   font-weight: bold;
   background-color: antiquewhite;
   border-radius: 5px;
@@ -267,6 +286,13 @@ body {
   position: fixed;
   bottom: 50px;
   resize: none;
+}
+
+.user-avatar {
+  width: 20px;
+  height: 20px;
+  /* border-radius: 50%; */
+  margin-right: 8px;
 }
 
 .text-input {

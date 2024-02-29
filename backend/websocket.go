@@ -42,7 +42,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		retries = 0
-		defer conn.Close()
+		// defer conn.Close() // possibly preventing closure when user leaves lobby
 
 		// import LobbyInfo struct from models.go
 		var lobbyInfo LobbyInfo
@@ -83,15 +83,6 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				}
 				conn.WriteMessage(websocket.TextMessage, msgJSON)
 			}
-		case "leave":
-			removeUserFromLobby(lobby, conn)
-			log.Printf(`"%s" left Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
-
-			// check if lobby is empty in order to delete messages from Redis
-			if len(lobbyConnections[lobby]) == 0 {
-				deleteEmptyLobbies(lobby)
-			}
-			return
 		default:
 			log.Printf("Unknown action: %s", lobbyInfo.Action)
 		}
@@ -105,18 +96,13 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				removeUserFromLobby(lobby, conn)
 				log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
 
+				conn.Close()
+
 				// check if lobby is empty in order to delete messages from Redis
 				if len(lobbyConnections[lobby]) == 0 {
 					deleteEmptyLobbies(lobby)
 				}
 				return
-			}
-
-			var ReceivedMessage struct {
-				Lobby   string `json:"lobby"`
-				User    string `json:"user"`
-				Content string `json:"content"`
-				Color   string `json:"color"`
 			}
 
 			if err := json.Unmarshal(msg, &ReceivedMessage); err != nil {
@@ -156,8 +142,8 @@ func removeUserFromLobby(lobby string, conn *websocket.Conn) {
 	connections := lobbyConnections[lobby]
 	for i, c := range connections {
 		if c == conn {
-			conn.Close()
 			lobbyConnections[lobby] = append(connections[:i], connections[i+1:]...)
+			conn.Close()
 			break
 		}
 	}
@@ -170,6 +156,9 @@ func broadcastMessage(lobby string, message Message) {
 		log.Println("Error serializing message to JSON: ", err)
 		return
 	}
+	// // log that a message was broadcasted to all connections in the lobby
+	// log.Printf("Message broadcasted in '%s' lobby", lobby)
+
 	// broadcast a message to all clients in the specified lobby
 	connections := lobbyConnections[lobby]
 	for _, conn := range connections {

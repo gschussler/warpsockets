@@ -22,3 +22,10 @@ type LobbyInfo struct {
 	User   string `json:"user"`
 	Action string `json:"action"`
 }
+
+var ReceivedMessage struct {
+	Lobby   string `json:"lobby"`
+	User    string `json:"user"`
+	Content string `json:"content"`
+	Color   string `json:"color"`
+}
