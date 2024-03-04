@@ -101,13 +101,6 @@ useEffect(() => {
     <div className='lobby'>
       <div className='lobby-h'>
         <p className='welcome'>You are in the {lobby} lobby, let's goooo.</p>
-        <button 
-          className="leave-lobby"
-          onClick={leaveLobby}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}>
-            {hovered ? 'Leave' : '↩'}
-        </button>
       </div>
       <div className='lobby-content'>
         <div className='lobby-body' ref={lobbyRef}>
@@ -132,6 +125,14 @@ useEffect(() => {
           </div>
         </div>
         <div className='lobby-footer'>
+          <button 
+            className="leave-lobby"
+            onClick={leaveLobby}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}>
+              {/* {hovered ? 'Leave' : '↩'} <- logic to change symbol to 'Leave'. decided against for now*/}
+              ↩
+          </button>
           <div className='user-avatar' style={{ backgroundColor: userColor }}></div>
           {newMessagesButton && (
             <button

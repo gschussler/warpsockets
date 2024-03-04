@@ -1,4 +1,4 @@
-// cross-module structs
+/* Cross-module structs */
 package main
 
 import (

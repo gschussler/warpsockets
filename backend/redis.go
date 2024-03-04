@@ -1,4 +1,4 @@
-// instantiate Redis db
+/* Handles Redis db interactions */
 package main
 
 import (
@@ -11,6 +11,7 @@ import (
 
 var redisClient *redis.Client
 
+/* initialize Redis db for server */
 func initRedis() {
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379", // port 6379 is redis default port
@@ -26,6 +27,7 @@ func initRedis() {
 	log.Printf("Connected to Redis: %s", pong)
 }
 
+/* stores received messages in Redis db */
 func storeMessage(message Message) {
 	// serialize as JSON before storing in Redis db
 	messageJSON, err := json.Marshal(message)
@@ -42,7 +44,7 @@ func storeMessage(message Message) {
 	}
 }
 
-// upon entering a lobby, retrieve messages from Redis db
+/* Upon entering a lobby, retrieve messages from Redis db */
 func getExistingMessages(lobbyID string) []Message {
 	key := "lobby:" + lobbyID + ":messages"
 	messagesJSON, err := redisClient.LRange(context.Background(), key, 0, -1).Result()
@@ -65,12 +67,15 @@ func getExistingMessages(lobbyID string) []Message {
 	return messages
 }
 
+/* Cleans up an empty lobby when the last remaining user leaves */
 func deleteEmptyLobbies(lobby string) {
 	// delete messages associated with the lobby
 	key := "lobby:" + lobby + ":messages"
 	err := redisClient.Del(context.Background(), key).Err()
 	if err != nil {
-		log.Printf("Error deleting messages for empty lobby %s: %v", lobby, err)
+		if err.Error() != "redis: client is closed" {
+			log.Printf("Error deleting messages for empty lobby %s: %v", lobby, err)
+		}
 		// } else {
 		// 	log.Printf("Removed messages from '%s' lobby cache.", lobby) // check that messages are removed from Redis
 	}
@@ -82,14 +87,16 @@ func deleteEmptyLobbies(lobby string) {
 	}
 	err = redisClient.Del(context.Background(), lobbyKey).Err()
 	if err != nil {
-		log.Printf("Error deleting lobby key %s %v", lobbyKey, err)
+		if err.Error() != "redis: client is closed" {
+			log.Printf("Error deleting lobby key %s %v", lobbyKey, err)
+		}
 		// } else {
 		// 	log.Printf("Deleted lobby key for '%s' lobby", lobby) // check that lobby key is also removed from Redis
 	}
 }
 
+/* Flush entire Redis db and close. Called upon server shutdown */
 func deleteRedisData() error {
-	// perform the Redis data deletion
 	// need to create a context for the redis FlushDB method
 	ctx := context.Background()
 

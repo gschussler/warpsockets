@@ -138,7 +138,7 @@ body {
 
 .lobby-h {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: row-reverse; */
   align-self: center;
 }
 
@@ -153,8 +153,8 @@ body {
 .lobby-body {
   width: 100%;
   margin: 0 auto;
-  max-height: 71vh;
-  min-height: 71vh;
+  max-height: calc(71vh - 30px); /* needed to subtract the height of the lobby-footer to avoid overlap */
+  min-height: calc(71vh - 30px);
   overflow-y: scroll;
   /* border-bottom: 1px solid rgb(49, 50, 46); */
   /* box-shadow: 0px 20px 0px rgba(49, 50, 46, 0.281); */
@@ -179,24 +179,6 @@ body {
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
 }
 
-.leave-lobby {
-  font-family: "ProggyVector";
-  font-size: 50px;
-  border: none;
-  background-color: rgb(34, 35, 33);
-  color: rgba(255, 23, 7, 0.553);
-  width: 60px;
-  border-radius: 4px;
-  margin-left: 10px;
-}
-
-.leave-lobby:hover {
-  background-color: rgb(34, 35, 33);
-  color: rgb(255, 23, 7);
-  transform: scale(1.05);
-  font-size: 45px;
-}
-
 .message-list {
   display: flex;
   flex-direction: column-reverse;
@@ -207,11 +189,11 @@ body {
   /* flex-wrap: wrap; */
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;
   color: antiquewhite;
   margin-top: 10px;
   max-width: 50%;
   overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .message-c {
@@ -291,8 +273,9 @@ body {
 .user-avatar {
   width: 20px;
   height: 20px;
+  align-self: center;
   /* border-radius: 50%; */
-  margin-right: 8px;
+  margin: 10px;
 }
 
 .text-input {
@@ -303,6 +286,7 @@ body {
   font-size: 16px;
   font-family: "ProggyVector";
   outline: none;
+  align-self: center;
 }
 
 .text-input:focus {
@@ -326,15 +310,36 @@ body {
   background-color: rgb(34, 35, 33);
   color: rgb(229, 244, 240);
   width: 80px;
+  height: 30px;
   border-radius: 5px;
   margin-left: 10px;
   transition: .2s;
+  align-self: center;
 }
 
 .send:hover {
   transform: scale(1.05);
   transition: .2s;
 }
+
+.leave-lobby {
+  font-family: "ProggyVector";
+  font-size: 50px;
+  border: none;
+  background-color: rgb(34, 35, 33);
+  color: rgba(255, 23, 7, 0.553);
+  /* width: 60px; */
+  border-radius: 4px;
+  /* margin-left: 10px; */
+}
+
+.leave-lobby:hover {
+  background-color: rgb(34, 35, 33);
+  color: rgb(255, 23, 7);
+  transform: scale(1.05);
+  /* font-size: 45px; */
+}
+
 
 .new-messages {
   position: absolute;

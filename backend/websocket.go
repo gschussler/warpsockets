@@ -96,8 +96,6 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				removeUserFromLobby(lobby, conn)
 				log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
 
-				conn.Close()
-
 				// check if lobby is empty in order to delete messages from Redis
 				if len(lobbyConnections[lobby]) == 0 {
 					deleteEmptyLobbies(lobby)
