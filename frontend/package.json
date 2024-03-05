@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "localtunnel": "^2.0.2",
+    "minidenticons": "^4.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",

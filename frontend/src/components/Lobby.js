@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import leaveSvg from "../images/leave.svg";
+import Settings from './Settings';
+import leaveSvg from '../images/leave.svg';
+import settingsSvg from '../images/settings.svg'
 
 // custom hook to determine whether scrollbar is at the bottom
 const useScrollToBottom = (ref) => {
@@ -26,18 +28,20 @@ const useScrollToBottom = (ref) => {
   return isAtBottomRef;
 }
 
-const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
+const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser, userIcon }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
   const [hovered, setHovered] = useState(false);
   const lobbyRef = useRef(null);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
   // handle users leaving the lobby
   const leaveLobby = async () => {
     if(socket.current) {
       await socket.current.close();
     }
+    setUser('');
     setShowLobby(false);
   }
 
@@ -113,8 +117,23 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
   return (
     <div className='lobby'>
       <div className='lobby-h'>
-        <p className='welcome'>{lobby} lobby</p>
-        <button 
+        <p className='welcome'>lobby: {lobby}</p>
+        <div className='user-container'>
+          <div className='user-avatar'>
+            {<img src={userIcon} />}
+          </div>
+          <div className='user-title' style={{ color: userColor }}>{user}</div>
+        </div>
+        <div className='buttons-container-h'>
+          <button className='settings' onClick={() => setSettingsModalOpen(true)}>
+            <img src={settingsSvg} alt='Settings' />
+          </button>
+          {settingsModalOpen && (
+            <div className='modal-overlay'>
+              <Settings closeModal={() => setSettingsModalOpen(false)} />
+            </div>
+          )}
+          <button 
             className="leave-lobby"
             onClick={leaveLobby}
             onMouseEnter={() => setHovered(true)}
@@ -122,6 +141,7 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
           >
             <img src={leaveSvg} alt='Leave' />
           </button>
+        </div>
       </div>
       <div className='lobby-content'>
         <div className='lobby-body' ref={lobbyRef}>
@@ -146,7 +166,6 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
           </div>
         </div>
         <div className='lobby-footer'>
-          <div className='user-avatar' style={{ backgroundColor: userColor }}></div>
           <input
             className='text-input'
             type='text'

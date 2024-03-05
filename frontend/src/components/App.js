@@ -1,21 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { minidenticon } from 'minidenticons';
 import Lobby from './Lobby';
 
-const colorList = [
-  'rgb(255, 87, 51)',    // Reddish-Orange
-  'rgb(255, 0, 0)',      // Red
-  'rgb(255, 51, 166)',   // Pink
-  'rgb(0, 0, 255)',      // Blue
-  'rgb(51, 166, 255)',   // Sky Blue
-  'rgb(0, 128, 0)',      // Green
-  'rgb(128, 0, 128)',    // Purple
-  'rgb(0, 0, 0)',        // Black
-  'rgb(255, 255, 255)',  // White
-]
+const MinidenticonImg = ({ username, saturation, lightness, ...props}) => {
+  const svgURI = useMemo(
+    () => 'data:image/svg+xml;utf8,' + encodeURIComponent(minidenticon(username, saturation, lightness)),
+    [username, saturation, lightness]
+  )
+
+  // setUserIcon(svgURI);
+  return (<img src={svgURI} alt={username} {...props} />)
+}
 
 const App = () => {
   const [user, setUser] = useState('');
-  const [userColor, setUserColor] = useState(colorList[0])
+  const [userColor, setUserColor] = useState('')
+  const [userIcon, setUserIcon] = useState('')
   const [lobby, setLobby] = useState('');
   const [showLobby, setShowLobby] = useState(false);
   const socket = useRef(null);
@@ -56,8 +56,12 @@ const App = () => {
     if(user !== "" && lobby !== "") {
       try {
         console.log('Attempting to join lobby...')
-        // generate their color for the lobby
-        setUserColor(userColor);
+        // set user color for the lobby
+        const generatedAvatar = minidenticon(user, '90', '55')
+        const match = /fill="([^"]+)"/.exec(generatedAvatar);
+        const extractedColor = match ? match[1] : 'defaultColor';
+        setUserColor(extractedColor);
+        
         // connect WebSocket when the user joins a lobby
         await connectWebSocket();
         // send lobby information to the server
@@ -80,22 +84,6 @@ const App = () => {
     };
   }, []);
 
-  const colorOptions = colorList.map((color) => ({
-    value: color,
-    label: (
-      <div style={{ display: 'flex', alignItems: 'center'}}>
-        <div
-          style={{
-            backgroundColor: color,
-            width: '20px',
-            height: '20px',
-            marginRight: '8px',
-          }}
-        ></div>
-      </div>
-    ),
-  }));
-
   return (
     <div className='App'>
       {showLobby ? ( // show lobby when userID is received
@@ -105,6 +93,8 @@ const App = () => {
             lobby={lobby}
             userColor={userColor}
             setShowLobby={setShowLobby}
+            setUser={setUser}
+            setUserIcon={setUserIcon}
           />
         ) : (
           <div className='welcome-container'>
@@ -145,19 +135,18 @@ const App = () => {
                   }}
                 />
               </div>
-              <div className='color-grid'>
-              {colorOptions.map((option) => (
-                <div
-                  key={option.value}
-                  className={`color-option ${userColor === option.value ? 'selected' : ''}`}
-                  style={{ backgroundColor: option.value }}
-                  onClick={() => setUserColor(option.value)}
+              <div className='app-enter-container'>
+                <MinidenticonImg
+                  style={{ visibility: user !== '' ? 'visible' : 'hidden'}}
+                  className="app-avatar"
+                  username={user}
+                  saturation="90"
+                  lightness="55"
                 />
-              ))}
-              </div>
-                <button className='app-j' onClick={joinLobby}>ENTER</button>
+                <button className='app-enter' onClick={joinLobby}>ENTER</button>
               </div>
             </div>
+          </div>
         )}
       </div>
     )

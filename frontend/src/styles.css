@@ -66,37 +66,18 @@ body {
   gap: 20px;
 }
 
-.color-grid {
-  display: grid;
-  /* background-color: rgba(245, 245, 245, 0.079); */
-  justify-content: center;
-  grid-template-columns: repeat(auto-fill, 44px);
-  margin-top: 5px;
-  margin-bottom: 10px;
-  padding-left: 4px;
-
-}
-.color-option {
-  width: 20px;
-  height: 20px;
-  border: 1px solid transparent;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
+.app-enter-container {
+  display: flex;
+  justify-content: space-evenly;
 }
 
-.color-option.selected {
-  border-color: rgba(255, 255, 255, 0.151);
-  animation: pulse 1.5s infinite;
+.app-avatar {
+  height: 50px;
+  width: 50px;
+  background-color: rgba(226, 245, 218, 0.098);
 }
 
-.color-box {
-  width: 20px;
-  height: 20px;
-  margin-left: 10px;
-}
-
-.app-j {
+.app-enter {
   display: grid;
   padding-left: 15px;
   padding-right: 15px;
@@ -110,7 +91,7 @@ body {
   font-weight: bold;
   font-size: 25px;
   place-self: center;
-  margin-top: 15px;
+  /* margin-top: 15px; */
 }
 
 /* unsure about using .not-connected for pre-lobby just yet */
@@ -138,36 +119,68 @@ body {
 
 .lobby-h {
   display: flex;
+  gap: 10px;
   /* flex-direction: row-reverse; */
-  align-self: center;
   align-items: center;
+  justify-content: space-between;
+  max-width: 800px;
+  width: 100%;
 }
 
 .welcome {
-  font-size: 35px;
+  font-size: 25px;
   font-family:"GohuFont uni14 Nerd Font Mono";
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
 }
 
+.user-container {
+  display: flex;
+  gap: 10px;
+}
+
+.user-title {
+  font-family: "GohuFont uni14 Nerd Font Mono";
+  background-color: rgba(250, 235, 215, 0.105);
+  /* align-self: center; */
+  border-radius: 20%;
+  padding: 2px;
+}
+
+.buttons-container-h {
+  display: flex;
+  gap: 10px;
+}
+
+.settings {
+  border: none;
+  border-radius: 4px;
+  background-color: rgb(34, 35, 33);
+  transition: .5s;
+}
+
+.settings:hover {
+  transform: rotate(90deg);
+  transition: .5s;
+}
+
 .leave-lobby {
-  font-family: "ProggyVector";
-  font-size: 50px;
+  /* font-family: "ProggyVector"; */
+  /* font-size: 50px; */
   border: none;
   background-color: rgb(34, 35, 33);
-  color: rgba(255, 23, 7, 0.553);
+  /* color: rgba(255, 23, 7, 0.553); */
   height: 50px;
   width: 50px;
   border-radius: 4px;
-  transition: .2s;
-  
+  transition: .5s;
 }
 
 .leave-lobby:hover {
   background-color: rgb(34, 35, 33);
   color: rgb(255, 23, 7);
   transform: scale(1.08);
-  transition: .2s;
+  transition: .5s;
   /* font-size: 45px; */
 }
 
@@ -182,8 +195,8 @@ body {
 .lobby-body {
   width: 100%;
   margin: 0 auto;
-  max-height: calc(71vh - 30px); /* needed to subtract the height of the lobby-footer to avoid overlap */
-  min-height: calc(71vh - 30px);
+  max-height: calc(80vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
+  min-height: calc(80vh);
   overflow-y: scroll;
   /* border-bottom: 1px solid rgb(49, 50, 46); */
   /* box-shadow: 0px 20px 0px rgba(49, 50, 46, 0.281); */
@@ -292,14 +305,6 @@ body {
   resize: none;
 }
 
-.user-avatar {
-  width: 20px;
-  height: 20px;
-  align-self: center;
-  /* border-radius: 50%; */
-  margin: 10px;
-}
-
 .text-input {
   width: 50vh;
   height: 30px;
@@ -378,6 +383,37 @@ body {
   100% {
     transform: rotate(0deg);
   }
+}
+
+.settings-modal {
+  color: antiquewhite;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  border-radius: 10%;
+  background-color: rgba(250, 235, 215, 0.105);
+  padding: 20px;
+  border: 1px solid #cccccc8e;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: .5s;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: backdrop-filter 1s ease;
 }
 
 /* Width */
