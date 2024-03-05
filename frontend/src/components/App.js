@@ -23,19 +23,31 @@ const App = () => {
   const connectWebSocket = () => {
     // need to wait until connection is completed. async/await syntax not supported by WebSockets
     return new Promise((resolve, reject) => {
+      if(socket.current && socket.current.readyState === WebSocket.OPEN) {
+        // the WebSocket connection is already open, resolve immediately
+        // likely to occur when leaving a lobby then trying to enter another
+        console.log("WebSocket is already open.")
+        resolve();
+      }
+      // the WebSocket connection is not open, create a new connection
       // assign external IP to `EXT_IP` in a .env created in frontend dir
       // add the .env to your `.gitignore` to avoid pushing it to GitHub
-      socket.current = new WebSocket(`ws://${process.env.EXT_IP}/ws`)
+      const wsPath = process.env.NODE_ENV === 'production'
+      ? `ws://${process.env.EXT_IP}/ws` :
+      `ws://localhost:8085/ws`;
 
-      socket.current.addEventListener('open', (e) => {
+      console.log("Creating new WebSocket connection...")
+      socket.current = new WebSocket(wsPath);
+
+      socket.current.onopen = (e) => {
         console.log('WebSocket connected');
         resolve();
-      });
+      };
 
-      socket.current.addEventListener('close', (e) => {
+      socket.current.onclose = (e) => {
         console.log('WebSocket closed');
         reject(new Error('WebSocket closed'));
-      });
+      };
     });
   };
 
@@ -43,6 +55,7 @@ const App = () => {
     e.preventDefault();
     if(user !== "" && lobby !== "") {
       try {
+        console.log('Attempting to join lobby...')
         // generate their color for the lobby
         setUserColor(userColor);
         // connect WebSocket when the user joins a lobby
@@ -58,9 +71,10 @@ const App = () => {
   };
 
   useEffect(() => {
-    // clean up WebSocket connection when the component unmounts
+    // clean up WebSocket connection when the component unmounts or leaving the lobby
     return () => {
       if(socket.current) {
+        console.log('Closing WebSocket connection...')
         socket.current.close();
       }
     };
@@ -90,6 +104,7 @@ const App = () => {
             user={user}
             lobby={lobby}
             userColor={userColor}
+            setShowLobby={setShowLobby}
           />
         ) : (
           <div className='welcome-container'>

@@ -1,4 +1,4 @@
-// cross-module structs
+/* Cross-module structs */
 package main
 
 import (
@@ -21,4 +21,11 @@ type LobbyInfo struct {
 	Lobby  string `json:"lobby"`
 	User   string `json:"user"`
 	Action string `json:"action"`
+}
+
+var ReceivedMessage struct {
+	Lobby   string `json:"lobby"`
+	User    string `json:"user"`
+	Content string `json:"content"`
+	Color   string `json:"color"`
 }

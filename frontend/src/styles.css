@@ -138,8 +138,37 @@ body {
 
 .lobby-h {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: row-reverse; */
   align-self: center;
+  align-items: center;
+}
+
+.welcome {
+  font-size: 35px;
+  font-family:"GohuFont uni14 Nerd Font Mono";
+  color: rgb(226, 245, 218);
+  text-shadow: 0px 2px 4px rgb(56, 56, 56);
+}
+
+.leave-lobby {
+  font-family: "ProggyVector";
+  font-size: 50px;
+  border: none;
+  background-color: rgb(34, 35, 33);
+  color: rgba(255, 23, 7, 0.553);
+  height: 50px;
+  width: 50px;
+  border-radius: 4px;
+  transition: .2s;
+  
+}
+
+.leave-lobby:hover {
+  background-color: rgb(34, 35, 33);
+  color: rgb(255, 23, 7);
+  transform: scale(1.08);
+  transition: .2s;
+  /* font-size: 45px; */
 }
 
 .lobby-content {
@@ -153,8 +182,8 @@ body {
 .lobby-body {
   width: 100%;
   margin: 0 auto;
-  max-height: 71vh;
-  min-height: 71vh;
+  max-height: calc(71vh - 30px); /* needed to subtract the height of the lobby-footer to avoid overlap */
+  min-height: calc(71vh - 30px);
   overflow-y: scroll;
   /* border-bottom: 1px solid rgb(49, 50, 46); */
   /* box-shadow: 0px 20px 0px rgba(49, 50, 46, 0.281); */
@@ -172,13 +201,6 @@ body {
   font-family: "ProggyVector";
 }
 
-.welcome {
-  font-size: 35px;
-  font-family:"GohuFont uni14 Nerd Font Mono";
-  color: rgb(226, 245, 218);
-  text-shadow: 0px 2px 4px rgb(56, 56, 56);
-}
-
 .message-list {
   display: flex;
   flex-direction: column-reverse;
@@ -189,15 +211,16 @@ body {
   /* flex-wrap: wrap; */
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;
   color: antiquewhite;
   margin-top: 10px;
   max-width: 50%;
   overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .message-c {
   font-family: "ProggyVector";
+  font-size: 18px;
 }
 
 /* current user msg */
@@ -245,7 +268,7 @@ body {
   display: flex;
   justify-content: right;
   padding-right: 5px;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .user {
@@ -254,7 +277,7 @@ body {
   margin-right: 5px;
   padding-left: 3px;
   padding-right: 3px;
-  font-size: 25px;
+  font-size: 20px;
   font-weight: bold;
   background-color: antiquewhite;
   border-radius: 5px;
@@ -269,6 +292,14 @@ body {
   resize: none;
 }
 
+.user-avatar {
+  width: 20px;
+  height: 20px;
+  align-self: center;
+  /* border-radius: 50%; */
+  margin: 10px;
+}
+
 .text-input {
   width: 50vh;
   height: 30px;
@@ -277,6 +308,7 @@ body {
   font-size: 16px;
   font-family: "ProggyVector";
   outline: none;
+  align-self: center;
 }
 
 .text-input:focus {
@@ -300,30 +332,30 @@ body {
   background-color: rgb(34, 35, 33);
   color: rgb(229, 244, 240);
   width: 80px;
+  height: 30px;
   border-radius: 5px;
   margin-left: 10px;
   transition: .2s;
+  align-self: center;
 }
 
 .send:hover {
   transform: scale(1.05);
   transition: .2s;
+  cursor: pointer;
 }
 
 .new-messages {
-  position: absolute;
-  left: 30%;
-  bottom: 60px;
-  transform: translateX(-50%);
   background-color: rgba(226, 245, 218, 0.204);
   color: rgb(202, 191, 175);
-  padding: 10px;
   border: none;
   border-radius: 5px;
+  height: 30px;
+  align-self: center;
   cursor: pointer;
   display: none;
-  font-size: 20px;
-  animation: wiggle 1s infinite;
+  font-size: 15px;
+  animation: wiggle 0.8s infinite;
 }
 
 .new-messages.visible {
