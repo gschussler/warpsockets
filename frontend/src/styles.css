@@ -140,6 +140,35 @@ body {
   display: flex;
   /* flex-direction: row-reverse; */
   align-self: center;
+  align-items: center;
+}
+
+.welcome {
+  font-size: 35px;
+  font-family:"GohuFont uni14 Nerd Font Mono";
+  color: rgb(226, 245, 218);
+  text-shadow: 0px 2px 4px rgb(56, 56, 56);
+}
+
+.leave-lobby {
+  font-family: "ProggyVector";
+  font-size: 50px;
+  border: none;
+  background-color: rgb(34, 35, 33);
+  color: rgba(255, 23, 7, 0.553);
+  height: 50px;
+  width: 50px;
+  border-radius: 4px;
+  transition: .2s;
+  
+}
+
+.leave-lobby:hover {
+  background-color: rgb(34, 35, 33);
+  color: rgb(255, 23, 7);
+  transform: scale(1.08);
+  transition: .2s;
+  /* font-size: 45px; */
 }
 
 .lobby-content {
@@ -170,13 +199,6 @@ body {
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(45, 46, 44);
   font-family: "ProggyVector";
-}
-
-.welcome {
-  font-size: 35px;
-  font-family:"GohuFont uni14 Nerd Font Mono";
-  color: rgb(226, 245, 218);
-  text-shadow: 0px 2px 4px rgb(56, 56, 56);
 }
 
 .message-list {
@@ -320,41 +342,20 @@ body {
 .send:hover {
   transform: scale(1.05);
   transition: .2s;
+  cursor: pointer;
 }
-
-.leave-lobby {
-  font-family: "ProggyVector";
-  font-size: 50px;
-  border: none;
-  background-color: rgb(34, 35, 33);
-  color: rgba(255, 23, 7, 0.553);
-  /* width: 60px; */
-  border-radius: 4px;
-  /* margin-left: 10px; */
-}
-
-.leave-lobby:hover {
-  background-color: rgb(34, 35, 33);
-  color: rgb(255, 23, 7);
-  transform: scale(1.05);
-  /* font-size: 45px; */
-}
-
 
 .new-messages {
-  position: absolute;
-  left: 30%;
-  bottom: 60px;
-  transform: translateX(-50%);
   background-color: rgba(226, 245, 218, 0.204);
   color: rgb(202, 191, 175);
-  padding: 10px;
   border: none;
   border-radius: 5px;
+  height: 30px;
+  align-self: center;
   cursor: pointer;
   display: none;
-  font-size: 20px;
-  animation: wiggle 1s infinite;
+  font-size: 15px;
+  animation: wiggle 0.8s infinite;
 }
 
 .new-messages.visible {

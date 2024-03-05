@@ -1,9 +1,34 @@
 import React, { useEffect, useState, useRef } from 'react';
+import leaveSvg from "../images/leave.svg";
+
+// custom hook to determine whether scrollbar is at the bottom
+const useScrollToBottom = (ref) => {
+  const isAtBottomRef = useRef(true);
+
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = ref.current;
+    const isAtBottom = scrollHeight - scrollTop <= clientHeight + 5;
+    isAtBottomRef.current = isAtBottom;
+  }
+
+  useEffect(() => {
+    if(ref.current) {
+      ref.current.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if(ref.current) {
+        ref.current.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [ref]);
+
+  return isAtBottomRef;
+}
 
 const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
-  const [scrollAtBottom, setScrollAtBottom] = useState(true);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
   const [hovered, setHovered] = useState(false);
   const lobbyRef = useRef(null);
@@ -30,6 +55,7 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
     }
   };
 
+  const isAtBottomRef = useScrollToBottom(lobbyRef);
 
   // TIME is set up on the backend, figure out proper order of parsing here (current user message vs existing message)
   useEffect(() => {
@@ -45,18 +71,10 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
       setMessageList((list) => [...list, { ...messageContent, isCurrentUser, messageColor }]);
     
       // check if the scrollbar is at the bottom after the message is added
-      if(lobbyRef.current) {
-        //scrollbar gets smaller as it goes, must account for this in scrollbar calculation with a buffer
-        const buff = 5;
-        const isScrolledToBottom = lobbyRef.current.scrollHeight - lobbyRef.current.scrollTop <= lobbyRef.current.clientHeight + buff;
-        setScrollAtBottom(isScrolledToBottom);
-
-        // if not at the bottom, show the "New Messages" button
-        if(isScrolledToBottom) {
-          lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
-        } else {
-          setNewMessagesButton(true);
-        }
+      if(isAtBottomRef.current) {
+        lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight + 5;
+      } else {
+        setNewMessagesButton(true);
       }
     };
 
@@ -65,42 +83,45 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
       socket.current.addEventListener('message', handleMessage);
 
       return () => {
-        if (socket.current) {
-          socket.current.removeEventListener('message', handleMessage);
-          socket.current.close();
-        }
+        socket.current.removeEventListener('message', handleMessage);
+        socket.current.close();
       };
     }
-  }, [socket]);
+  }, [socket, isAtBottomRef]);
 
-// handle scrolling by keeping track of y-position in the lobby
-useEffect(() => {
-  if (lobbyRef.current) {
+  useEffect(() => {
     const handleScroll = () => {
       const isScrolledToBottom = lobbyRef.current.scrollHeight - lobbyRef.current.scrollTop === lobbyRef.current.clientHeight;
-      setScrollAtBottom(isScrolledToBottom);
 
-      // If the user is at the bottom, hide the "New Messages" button
-      if (isScrolledToBottom) {
+      if(isScrolledToBottom) {
         setNewMessagesButton(false);
       }
     };
-    if (lobbyRef.current) {
-      lobbyRef.current.addEventListener("scroll", handleScroll);
-    }
 
-    return () => {
-      if (lobbyRef.current) {
-        lobbyRef.current.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }
-}, [lobbyRef]);
+    if(lobbyRef.current) {
+      lobbyRef.current.addEventListener("scroll", handleScroll);
+
+      return () => {
+        // need to check lobbyRef once more to make sure it is necessary to remove the reference during unmounting
+        if(lobbyRef.current) {
+          lobbyRef.current.removeEventListener("scroll", handleScroll);
+        }
+      };
+    }
+  }, [lobbyRef, isAtBottomRef]);
 
   return (
     <div className='lobby'>
       <div className='lobby-h'>
-        <p className='welcome'>You are in the {lobby} lobby, let's goooo.</p>
+        <p className='welcome'>{lobby} lobby</p>
+        <button 
+            className="leave-lobby"
+            onClick={leaveLobby}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
+            <img src={leaveSvg} alt='Leave' />
+          </button>
       </div>
       <div className='lobby-content'>
         <div className='lobby-body' ref={lobbyRef}>
@@ -125,28 +146,7 @@ useEffect(() => {
           </div>
         </div>
         <div className='lobby-footer'>
-          <button 
-            className="leave-lobby"
-            onClick={leaveLobby}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}>
-              {/* {hovered ? 'Leave' : '↩'} <- logic to change symbol to 'Leave'. decided against for now*/}
-              ↩
-          </button>
           <div className='user-avatar' style={{ backgroundColor: userColor }}></div>
-          {newMessagesButton && (
-            <button
-              className={`new-messages ${newMessagesButton ? 'visible' : ''}`}
-              onClick={() => {
-                if (lobbyRef.current) {
-                  lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
-                  setNewMessagesButton(false);
-                }
-              }}
-            >
-              ↓ New Messages ↓
-            </button>
-          )}
           <input
             className='text-input'
             type='text'
@@ -165,6 +165,19 @@ useEffect(() => {
           <button className='send' onClick={sendMessage}>
             Send
           </button>
+          {newMessagesButton && (
+            <button
+              className={`new-messages ${newMessagesButton ? 'visible' : ''}`}
+              onClick={() => {
+                if (lobbyRef.current) {
+                  lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
+                  setNewMessagesButton(false);
+                }
+              }}
+            >
+              ↓ New Messages ↓
+            </button>
+          )}
         </div>
       </div>
     </div>
