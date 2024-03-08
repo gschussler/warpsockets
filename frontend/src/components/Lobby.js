@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Settings from './Settings';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
+import { MinidenticonImg } from './App';
 
 // custom hook to determine whether scrollbar is at the bottom
 const useScrollToBottom = (ref) => {
@@ -28,13 +29,14 @@ const useScrollToBottom = (ref) => {
   return isAtBottomRef;
 }
 
-const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser, userIcon }) => {
+const Lobby = ({ socket, user, lobby, userColor, backgroundColor, setShowLobby, setUser }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
   const [hovered, setHovered] = useState(false);
   const lobbyRef = useRef(null);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  // const startTimeRef = useRef(null);
 
   // handle users leaving the lobby
   const leaveLobby = async () => {
@@ -46,6 +48,7 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser, userIcon
   }
 
   const sendMessage = async () => {
+    // startTimeRef.current  = performance.now(); // captures time of process; used to get duration of sending and receiving a message
     if(message !== '') {
       const messageContent = {
         lobby: lobby,
@@ -54,6 +57,7 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser, userIcon
         color: userColor
       };
       await socket.current.send(JSON.stringify(messageContent));
+
       // prepare a message to be appended to the message list
       setMessage('');
     }
@@ -66,14 +70,19 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser, userIcon
     const handleMessage = (e) => {
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
-      // console.log("received message: ", messageContent)
+
       // case if current user is the one who sent the message
       const isCurrentUser = messageContent.User === user;
 
       const messageColor = isCurrentUser ? userColor : messageContent.Color;
 
       setMessageList((list) => [...list, { ...messageContent, isCurrentUser, messageColor }]);
-    
+
+      // // log the amount of time it took for a message to be sent and received back on the frontend
+      // const endTime = performance.now();
+      // const duration = endTime - startTimeRef.current;
+      // console.log(`Sending and handling took ${duration}`)
+
       // check if the scrollbar is at the bottom after the message is added
       if(isAtBottomRef.current) {
         lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight + 5;
@@ -119,8 +128,12 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser, userIcon
       <div className='lobby-h'>
         <p className='welcome'>lobby: {lobby}</p>
         <div className='user-container'>
-          <div className='user-avatar'>
-            {<img src={userIcon} />}
+          <div className='app-avatar'>
+            <MinidenticonImg
+              username={user}
+              saturation="90"
+              lightness="55"
+            />
           </div>
           <div className='user-title' style={{ color: userColor }}>{user}</div>
         </div>
@@ -148,16 +161,21 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser, userIcon
           <div className='message-list'>
           {messageList.slice().reverse().map((messageContent, index) => {
             const isCurrentUser = messageContent.User === user;
+            const isSystemMessage = messageContent.User === "System";
+            const messageClass = isCurrentUser ? 'message message-cr'
+            : isSystemMessage ? 'system-message'
+            : 'message message-cl';
+
             return (
               <div 
-                className={`message ${isCurrentUser ? 'message-cr' : 'message-cl'}`}
+                className={`${isSystemMessage ? messageClass : 'message ' + messageClass}`}
                 key={index}
               >
                 <div className='message-c'>
                   <p>{messageContent.Content}</p>
                 </div>
                 <div className='message-info'>
-                  <p className='user' style={{ color: messageContent.messageColor}}>{messageContent.User}</p>
+                  <p className={'user'} style={{ color: messageContent.messageColor }}>{messageContent.User}</p>
                   <p className='time'>{`at: ${messageContent.FormattedTime}`}</p>
                 </div>
               </div>

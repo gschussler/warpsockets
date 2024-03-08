@@ -2,20 +2,19 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { minidenticon } from 'minidenticons';
 import Lobby from './Lobby';
 
-const MinidenticonImg = ({ username, saturation, lightness, ...props}) => {
+export const MinidenticonImg = React.memo(({ username, saturation, lightness, ...props}) => {
   const svgURI = useMemo(
     () => 'data:image/svg+xml;utf8,' + encodeURIComponent(minidenticon(username, saturation, lightness)),
     [username, saturation, lightness]
   )
 
-  // setUserIcon(svgURI);
+  // console.log('SVG URI:', svgURI) // test for rerenders of variable
   return (<img src={svgURI} alt={username} {...props} />)
-}
+});
 
 const App = () => {
   const [user, setUser] = useState('');
   const [userColor, setUserColor] = useState('')
-  const [userIcon, setUserIcon] = useState('')
   const [lobby, setLobby] = useState('');
   const [showLobby, setShowLobby] = useState(false);
   const socket = useRef(null);
@@ -92,9 +91,8 @@ const App = () => {
             user={user}
             lobby={lobby}
             userColor={userColor}
-            setShowLobby={setShowLobby}
             setUser={setUser}
-            setUserIcon={setUserIcon}
+            setShowLobby={setShowLobby}
           />
         ) : (
           <div className='welcome-container'>

@@ -1,8 +1,9 @@
 ## ADD
-- [ ] A user may leave a lobby through a button. Returns user to homepage
+- [x] A user may leave a lobby through a button. Returns user to homepage
 - [ ] `${user} joined the lobby.` / `${user} left the lobby` as text in the Lobby messaging.
 - [ ] non-annoying sound when a message is sent/received
 - [ ] `...` chat bubble appearing while a user is actively typing
+- [ ] Increase size of input box when typing a message in lobby
 
 ## FIX
 - [x] usage of dotenv for external ip in the socket connection from the frontend (possibly find solution not dotenv?)

@@ -3,6 +3,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -72,6 +73,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			lobbyConnections[lobby] = append(lobbyConnections[lobby], conn)
 			log.Printf(`"%s" connected to Lobby "%s" -- Socket opened`, lobbyInfo.User, lobby)
 
+			systemMessage := generateSystemMessage("arrived", lobby, lobbyInfo.User, "#b5b3b0")
+
 			// retrieve existing messages from Redis
 			existingMessages := getExistingMessages(lobby)
 			for _, message := range existingMessages {
@@ -83,6 +86,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				}
 				conn.WriteMessage(websocket.TextMessage, msgJSON)
 			}
+			storeMessage(systemMessage)
+			broadcastMessage(lobby, systemMessage)
 		default:
 			log.Printf("Unknown action: %s", lobbyInfo.Action)
 		}
@@ -92,6 +97,9 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
 				// log.Println("Error reading message: ", err)
+
+				systemMessage := generateSystemMessage("departed", lobby, lobbyInfo.User, "#b5b3b0")
+
 				// remove connection from the lobby
 				removeUserFromLobby(lobby, conn)
 				log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
@@ -99,6 +107,9 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				// check if lobby is empty in order to delete messages from Redis
 				if len(lobbyConnections[lobby]) == 0 {
 					deleteEmptyLobbies(lobby)
+				} else {
+					storeMessage(systemMessage)
+					broadcastMessage(lobby, systemMessage)
 				}
 				return
 			}
@@ -164,5 +175,17 @@ func broadcastMessage(lobby string, message Message) {
 		if err != nil {
 			log.Println("Error writing message: ", err)
 		}
+	}
+}
+
+func generateSystemMessage(action, lobby, user, color string) Message {
+	return Message{
+		ID:            generateMessageID(),
+		Lobby:         lobby,
+		User:          "System",
+		Content:       fmt.Sprintf("%s has %s.", user, action),
+		Color:         color,
+		Time:          time.Now(),
+		FormattedTime: time.Now().Format("03:04 PM"),
 	}
 }

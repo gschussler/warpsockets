@@ -74,7 +74,7 @@ body {
 .app-avatar {
   height: 50px;
   width: 50px;
-  background-color: rgba(226, 245, 218, 0.098);
+  /* background-color: rgba(226, 245, 218, 0.098); */
 }
 
 .app-enter {
@@ -140,9 +140,11 @@ body {
 }
 
 .user-title {
-  font-family: "GohuFont uni14 Nerd Font Mono";
-  background-color: rgba(250, 235, 215, 0.105);
-  /* align-self: center; */
+  font-family: "ProggyClean Nerd Font Mono";
+  /* background-color: rgba(250, 235, 215, 0.105); */
+  font-size: 20px;
+  font-weight: bold;
+  align-self: center;
   border-radius: 20%;
   padding: 2px;
 }
@@ -224,11 +226,24 @@ body {
   /* flex-wrap: wrap; */
   flex-direction: column;
   justify-content: flex-start;
-  color: antiquewhite;
   margin-top: 10px;
   max-width: 50%;
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+.system-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  max-width: fit-content;
+  color: rgb(226, 245, 218);
+  font-family: "DinaRemaster";
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+  
 }
 
 .message-c {
@@ -243,6 +258,7 @@ body {
   padding: 10px;
   margin-right: 10px;
   border-radius: 10px;
+  color: antiquewhite;
 }
 
 .message-cr:hover {
@@ -272,8 +288,7 @@ body {
   justify-content: space-between;
   align-items: center;
   font-family: "ProggyClean Nerd Font Mono";
-  opacity: 0.5;
-  margin-top: -20px;
+  margin-top: -30px;
   border-radius: 10px;
 }
 
@@ -282,17 +297,18 @@ body {
   justify-content: right;
   padding-right: 5px;
   font-size: 13px;
+  opacity: 0.5;
 }
 
 .user {
   display: flex;
   justify-content: left;
   margin-right: 5px;
-  padding-left: 3px;
-  padding-right: 3px;
+  padding-left: 4px;
+  padding-right: 4px;
   font-size: 20px;
   font-weight: bold;
-  background-color: antiquewhite;
+  /* background-color: rgba(250, 235, 215, 0.089); */
   border-radius: 5px;
 }
 
