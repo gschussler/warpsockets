@@ -10,4 +10,5 @@ redis-server &
 
 # Navigate to backend dir and start the Go server
 cd backend
+go build &
 ./word-roulette_go

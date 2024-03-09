@@ -1,17 +1,21 @@
-import React, { useEffect, useState, useRef } from 'react';
-import leaveSvg from "../images/leave.svg";
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import Settings from './Settings';
+import leaveSvg from '../images/leave.svg';
+import settingsSvg from '../images/settings.svg'
+import { MinidenticonImg } from './App';
+import ExpandingTextarea from './TextInput';
 
-// custom hook to determine whether scrollbar is at the bottom
+// custom hook to determine whether scrollbar is at the bottom, then stick to bottom if in range
 const useScrollToBottom = (ref) => {
   const isAtBottomRef = useRef(true);
-
-  const handleScroll = () => {
-    const { scrollTop, scrollHeight, clientHeight } = ref.current;
-    const isAtBottom = scrollHeight - scrollTop <= clientHeight + 5;
-    isAtBottomRef.current = isAtBottom;
-  }
-
   useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = ref.current;
+      // added num represents minimum height of a single message
+      const isAtBottom = scrollHeight - scrollTop <= clientHeight + 100;
+      isAtBottomRef.current = isAtBottom;
+    }
+  
     if(ref.current) {
       ref.current.addEventListener('scroll', handleScroll);
     }
@@ -26,22 +30,27 @@ const useScrollToBottom = (ref) => {
   return isAtBottomRef;
 }
 
-const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
+const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
   const [hovered, setHovered] = useState(false);
   const lobbyRef = useRef(null);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const textareaRef = useRef(null);
+  // const startTimeRef = useRef(null);
 
   // handle users leaving the lobby
   const leaveLobby = async () => {
     if(socket.current) {
       await socket.current.close();
     }
+    setUser('');
     setShowLobby(false);
   }
 
   const sendMessage = async () => {
+    // startTimeRef.current  = performance.now(); // captures time of process; used to get duration of sending and receiving a message
     if(message !== '') {
       const messageContent = {
         lobby: lobby,
@@ -50,8 +59,12 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
         color: userColor
       };
       await socket.current.send(JSON.stringify(messageContent));
+
       // prepare a message to be appended to the message list
       setMessage('');
+      if(textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     }
   };
 
@@ -62,14 +75,17 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
     const handleMessage = (e) => {
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
-      // console.log("received message: ", messageContent)
-      // case if current user is the one who sent the message
-      const isCurrentUser = messageContent.User === user;
 
-      const messageColor = isCurrentUser ? userColor : messageContent.Color;
+      // check if current user sent the message being handled
+      const messageColor = messageContent.User === user ? userColor : messageContent.Color;
 
-      setMessageList((list) => [...list, { ...messageContent, isCurrentUser, messageColor }]);
-    
+      setMessageList((list) => [...list, { ...messageContent, messageColor }]);
+
+      // // log the amount of time it took for a message to be sent and received back on the frontend
+      // const endTime = performance.now();
+      // const duration = endTime - startTimeRef.current;
+      // console.log(`Sending and handling took ${duration}`)
+
       // check if the scrollbar is at the bottom after the message is added
       if(isAtBottomRef.current) {
         lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight + 5;
@@ -89,32 +105,53 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
     }
   }, [socket, isAtBottomRef]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolledToBottom = lobbyRef.current.scrollHeight - lobbyRef.current.scrollTop === lobbyRef.current.clientHeight;
+  const handleNewMessageScroll = useMemo(() => {
+    return () => {
+      const isScrolledToBottom = lobbyRef.current.scrollHeight - lobbyRef.current.scrollTop <= lobbyRef.current.clientHeight + 100;
 
       if(isScrolledToBottom) {
         setNewMessagesButton(false);
       }
-    };
+    }
+  }, [setNewMessagesButton]);
 
+  useEffect(() => {
     if(lobbyRef.current) {
-      lobbyRef.current.addEventListener("scroll", handleScroll);
+      lobbyRef.current.addEventListener("scroll", handleNewMessageScroll);
 
       return () => {
         // need to check lobbyRef once more to make sure it is necessary to remove the reference during unmounting
         if(lobbyRef.current) {
-          lobbyRef.current.removeEventListener("scroll", handleScroll);
+          lobbyRef.current.removeEventListener("scroll", handleNewMessageScroll);
         }
       };
     }
-  }, [lobbyRef, isAtBottomRef]);
+  }, [handleNewMessageScroll, lobbyRef, isAtBottomRef]);
 
   return (
     <div className='lobby'>
       <div className='lobby-h'>
-        <p className='welcome'>{lobby} lobby</p>
-        <button 
+        <p className='welcome'>lobby: {lobby}</p>
+        <div className='user-container'>
+          <div className='app-avatar'>
+            <MinidenticonImg
+              username={user}
+              saturation="90"
+              lightness="55"
+            />
+          </div>
+          <div className='user-title' style={{ color: userColor }}>{user}</div>
+        </div>
+        <div className='buttons-container-h'>
+          <button className='settings' onClick={() => setSettingsModalOpen(true)}>
+            <img src={settingsSvg} alt='Settings' />
+          </button>
+          {settingsModalOpen && (
+            <div className='modal-overlay'>
+              <Settings closeModal={() => setSettingsModalOpen(false)} />
+            </div>
+          )}
+          <button 
             className="leave-lobby"
             onClick={leaveLobby}
             onMouseEnter={() => setHovered(true)}
@@ -122,22 +159,28 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
           >
             <img src={leaveSvg} alt='Leave' />
           </button>
+        </div>
       </div>
       <div className='lobby-content'>
         <div className='lobby-body' ref={lobbyRef}>
           <div className='message-list'>
           {messageList.slice().reverse().map((messageContent, index) => {
-            const isCurrentUser = messageContent.User === user;
+            // define message class based on who sent the message
+            const isSystemMessage = messageContent.User === "System";
+            const messageClass = messageContent.User === user ? 'message message-cr'
+            : isSystemMessage ? 'system-message'
+            : 'message message-cl';
+
             return (
               <div 
-                className={`message ${isCurrentUser ? 'message-cr' : 'message-cl'}`}
+                className={messageClass}
                 key={index}
               >
                 <div className='message-c'>
                   <p>{messageContent.Content}</p>
                 </div>
                 <div className='message-info'>
-                  <p className='user' style={{ color: messageContent.messageColor}}>{messageContent.User}</p>
+                  <p className='user' style={{ color: messageContent.messageColor }}>{messageContent.User}</p>
                   <p className='time'>{`at: ${messageContent.FormattedTime}`}</p>
                 </div>
               </div>
@@ -146,15 +189,10 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
           </div>
         </div>
         <div className='lobby-footer'>
-          <div className='user-avatar' style={{ backgroundColor: userColor }}></div>
-          <input
-            className='text-input'
-            type='text'
-            placeholder='Send a message...'
+          <ExpandingTextarea
+            textareaRef={textareaRef}
             value={message}
-            onChange={(e) => {
-              setMessage(e.target.value);
-            }}
+            onChange={(e) => {setMessage(e.target.value)}}
             onKeyDown={(e) => {
               if(e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -165,7 +203,8 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
           <button className='send' onClick={sendMessage}>
             Send
           </button>
-          {newMessagesButton && (
+        </div>
+        {newMessagesButton && (
             <button
               className={`new-messages ${newMessagesButton ? 'visible' : ''}`}
               onClick={() => {
@@ -178,7 +217,6 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby }) => {
               ↓ New Messages ↓
             </button>
           )}
-        </div>
       </div>
     </div>
   );
