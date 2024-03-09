@@ -124,15 +124,14 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 			// build message from struct to be stored in Redis
 			message := Message{
-				ID:      generateMessageID(),
-				Lobby:   lobby,
-				User:    lobbyInfo.User,
-				Content: ReceivedMessage.Content,
-				Color:   ReceivedMessage.Color,
-				Time:    time.Now(),
+				ID:            generateMessageID(),
+				Lobby:         lobby,
+				User:          lobbyInfo.User,
+				Content:       ReceivedMessage.Content,
+				Color:         ReceivedMessage.Color,
+				Time:          time.Now(),
+				FormattedTime: time.Now().Format("3:04 PM"),
 			}
-
-			message.FormattedTime = message.Time.Format("03:04 PM")
 
 			storeMessage(message)
 
@@ -186,6 +185,6 @@ func generateSystemMessage(action, lobby, user, color string) Message {
 		Content:       fmt.Sprintf("%s has %s.", user, action),
 		Color:         color,
 		Time:          time.Now(),
-		FormattedTime: time.Now().Format("03:04 PM"),
+		FormattedTime: time.Now().Format("3:04 PM"),
 	}
 }

@@ -119,7 +119,6 @@ body {
 
 .lobby-h {
   display: flex;
-  gap: 10px;
   /* flex-direction: row-reverse; */
   align-items: center;
   justify-content: space-between;
@@ -132,11 +131,13 @@ body {
   font-family:"GohuFont uni14 Nerd Font Mono";
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
+  user-select: none;
 }
 
 .user-container {
   display: flex;
   gap: 10px;
+  user-select: none;
 }
 
 .user-title {
@@ -197,8 +198,8 @@ body {
 .lobby-body {
   width: 100%;
   margin: 0 auto;
-  max-height: calc(80vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
-  min-height: calc(80vh);
+  max-height: calc(77.5vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
+  min-height: calc(77.5vh);
   overflow-y: scroll;
   /* border-bottom: 1px solid rgb(49, 50, 46); */
   /* box-shadow: 0px 20px 0px rgba(49, 50, 46, 0.281); */
@@ -230,6 +231,7 @@ body {
   max-width: 50%;
   overflow-wrap: break-word;
   word-break: break-word;
+  cursor: default;
 }
 
 .system-message {
@@ -238,12 +240,14 @@ body {
   align-items: center;
   align-self: center;
   max-width: fit-content;
-  color: rgb(226, 245, 218);
+  color: #b5b3b0;
+  /* background-color: #b5b3b006; */
   font-family: "DinaRemaster";
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 5px;
-  
+  cursor: default;
+  user-select: none;
 }
 
 .message-c {
@@ -298,6 +302,7 @@ body {
   padding-right: 5px;
   font-size: 13px;
   opacity: 0.5;
+  user-select: none;
 }
 
 .user {
@@ -310,6 +315,7 @@ body {
   font-weight: bold;
   /* background-color: rgba(250, 235, 215, 0.089); */
   border-radius: 5px;
+  user-select: none;
 }
 
 .lobby-footer {
@@ -321,18 +327,31 @@ body {
   resize: none;
 }
 
-.text-input {
-  width: 50vh;
-  height: 30px;
-  border: 1px solid antiquewhite;
+textarea {
+  width: 100%;
+  resize: vertical;
+  box-sizing: border-box;
+  max-height: 90px;
+  min-height: 40px;
+  min-width: 50vh;
+  max-width: 50vh;
+  padding: 8px;
+  resize: none;
+}
+
+.text-input textarea {
+  border: 1px solid rgba(136, 136, 136, 0.41);
+  background-color: rgba(47, 43, 36, 0.982);
+  color: antiquewhite;
   border-radius: 4px;
   font-size: 16px;
   font-family: "ProggyVector";
   outline: none;
   align-self: center;
+  scrollbar-color: rgba(47, 43, 36, 0.982) rgba(47, 43, 36, 0.982); /* hiding within background */
 }
 
-.text-input:focus {
+.text-input textarea:focus {
   animation: pulse 1s infinite;
 }
 
@@ -341,7 +360,7 @@ body {
     outline: 2px solid transparent;
   }
   50% {
-    outline: 2px solid rgb(226, 245, 218);
+    outline: 2px solid rgba(136, 136, 136, 0.41);
   }
   100% {
     outline: 2px solid transparent;
@@ -355,9 +374,9 @@ body {
   width: 80px;
   height: 30px;
   border-radius: 5px;
+  margin-right: 10px;
   margin-left: 10px;
   transition: .2s;
-  align-self: center;
 }
 
 .send:hover {
@@ -372,11 +391,11 @@ body {
   border: none;
   border-radius: 5px;
   height: 30px;
-  align-self: center;
+  position: fixed;
   cursor: pointer;
   display: none;
   font-size: 15px;
-  animation: wiggle 0.8s infinite;
+  animation: wiggle 1s infinite;
 }
 
 .new-messages.visible {
@@ -409,7 +428,7 @@ body {
   transform: translate(-50%, -50%);
   border: none;
   border-radius: 10%;
-  background-color: rgba(250, 235, 215, 0.105);
+  background-color: rgba(233, 233, 233, 0.209);
   padding: 20px;
   border: 1px solid #cccccc8e;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -423,7 +442,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
