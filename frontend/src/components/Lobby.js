@@ -3,7 +3,7 @@ import Settings from './Settings';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
 import { MinidenticonImg } from './App';
-import ExpandingTextarea from './TextInput';
+import { ExpandingTextarea } from './TextInput';
 
 // custom hook to determine whether scrollbar is at the bottom, then stick to bottom if in range
 const useScrollToBottom = (ref) => {
@@ -30,7 +30,7 @@ const useScrollToBottom = (ref) => {
   return isAtBottomRef;
 }
 
-const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser }) => {
+const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
@@ -46,6 +46,7 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser }) => {
       await socket.current.close();
     }
     setUser('');
+    setLobby('');
     setShowLobby(false);
   }
 
@@ -199,6 +200,7 @@ const Lobby = ({ socket, user, lobby, userColor, setShowLobby, setUser }) => {
                 sendMessage();
               }
             }}
+            maxLength={160}
           />
           <button className='send' onClick={sendMessage}>
             Send

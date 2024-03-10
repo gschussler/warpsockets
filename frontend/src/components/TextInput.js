@@ -1,7 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 
-const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef}) => {
-
+const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, maxLength}) => {
   const adjustTextareaHeight = () => {
     if(textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -10,14 +9,16 @@ const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef}) => {
   };
 
   return (
-    <div className="text-input">
+    <div className="expanding-text">
       <textarea
         ref={textareaRef}
         value={value}
         rows={1}
         onChange={(e) => {
-          onChange(e);
-          adjustTextareaHeight();
+          if(e.target.value.length <= maxLength) {
+            onChange(e);
+            adjustTextareaHeight();
+          }
         }}
         onKeyDown={onKeyDown}
         placeholder="Send a message..."
@@ -26,4 +27,4 @@ const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef}) => {
   )
 };
 
-export default ExpandingTextarea;
+export { ExpandingTextarea };

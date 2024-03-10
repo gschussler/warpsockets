@@ -51,8 +51,11 @@ const App = () => {
   };
 
   const joinLobby = async (e) => {
-    e.preventDefault();
     if(user !== "" && lobby !== "") {
+      if(user.length > 16 || lobby.length > 16) {
+        console.error('Username and lobby name should be 16 characters or less.')
+        return;
+      }
       try {
         console.log('Attempting to join lobby...')
         // set user color for the lobby
@@ -83,15 +86,31 @@ const App = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if(e && e.key === 'Enter') {
+        e.preventDefault();
+        joinLobby();
+      }
+    };
+
+    document.addEventListener('keypress', handleKeyPress);
+
+    return () => {
+      document.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [joinLobby])
+
   return (
     <div className='App'>
       {showLobby ? ( // show lobby when userID is received
           <Lobby
             socket={socket}
             user={user}
-            lobby={lobby}
             userColor={userColor}
+            lobby={lobby}
             setUser={setUser}
+            setLobby={setLobby}
             setShowLobby={setShowLobby}
           />
         ) : (
@@ -100,37 +119,23 @@ const App = () => {
             <h3 className='app-sh'>create or join a lobby.</h3>
             <div className='app-input'>
               <div className='app-user'>
-                <p>Username:</p>
-                <input
-                  className='app-input'
-                  type="text"
+                <p className='no-select'>Username:</p>
+                <textarea
+                  className='app-textarea'
+                  value={user}
+                  onChange={(e) => setUser(e.target.value)}
                   placeholder='Choose your username!'
-                  onChange={(e) => {
-                    setUser(e.target.value);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && user !== '' && lobby !== '') {
-                      e.preventDefault();
-                      joinLobby(e);
-                    }
-                  }}
+                  maxLength={16}
                 />
               </div>
               <div className='app-lobby'>
-                <p>Lobby Name:</p>
-                <input
-                  className='app-input'
-                  type="text"
+                <p className='no-select'>Lobby Name:</p>
+                <textarea
+                  className='app-textarea'
+                  value={lobby}
+                  onChange={(e) => setLobby(e.target.value)}
                   placeholder='Create or join a lobby!'
-                  onChange={(e) => {
-                    setLobby(e.target.value);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && user !== '' && lobby !== '') {
-                      e.preventDefault();
-                      joinLobby(e);
-                    }
-                  }}
+                  maxLength={16}
                 />
               </div>
               <div className='app-enter-container'>

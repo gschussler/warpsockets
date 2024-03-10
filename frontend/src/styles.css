@@ -20,6 +20,7 @@ body {
   font-size: 55px;
   margin-top: 20vh;
   margin-bottom: 0px;
+  user-select: none;
 }
 
 .app-sh {
@@ -30,6 +31,7 @@ body {
   font-family: "GohuFont uni14 Nerd Font Mono";
   font-size: 40px;
   margin-top: 15px;
+  user-select: none;
 }
 
 .app-input {
@@ -41,19 +43,7 @@ body {
   font-family: "ProggyVector";
 }
 
-.app-user {
-  display: grid;
-  border: none;
-  outline: none;
-  justify-content: left;
-  align-items: center;
-  grid-template-columns: 120px 1fr;
-  gap: 40px;
-  color: rgb(226, 245, 218);
-  font-family: "DinaRemaster";
-  font-size: 25px;
-}
-
+.app-user,
 .app-lobby {
   display: grid;
   border: none;
@@ -64,6 +54,10 @@ body {
   font-family: "DinaRemaster";
   font-size: 25px;
   gap: 20px;
+}
+
+.app-textarea {
+  height: 40px;
 }
 
 .app-enter-container {
@@ -91,6 +85,7 @@ body {
   font-weight: bold;
   font-size: 25px;
   place-self: center;
+  cursor: pointer;
   /* margin-top: 15px; */
 }
 
@@ -160,6 +155,7 @@ body {
   border-radius: 4px;
   background-color: rgb(34, 35, 33);
   transition: .5s;
+  cursor: pointer;
 }
 
 .settings:hover {
@@ -177,6 +173,7 @@ body {
   width: 50px;
   border-radius: 4px;
   transition: .5s;
+  cursor: pointer;
 }
 
 .leave-lobby:hover {
@@ -327,31 +324,17 @@ body {
   resize: none;
 }
 
-textarea {
+.expanding-text textarea {
   width: 100%;
-  resize: vertical;
-  box-sizing: border-box;
   max-height: 90px;
   min-height: 40px;
   min-width: 50vh;
   max-width: 50vh;
-  padding: 8px;
-  resize: none;
-}
-
-.text-input textarea {
-  border: 1px solid rgba(136, 136, 136, 0.41);
-  background-color: rgba(47, 43, 36, 0.982);
-  color: antiquewhite;
-  border-radius: 4px;
-  font-size: 16px;
-  font-family: "ProggyVector";
-  outline: none;
   align-self: center;
   scrollbar-color: rgba(47, 43, 36, 0.982) rgba(47, 43, 36, 0.982); /* hiding within background */
 }
 
-.text-input textarea:focus {
+.expanding-text textarea:focus {
   animation: pulse 1s infinite;
 }
 
@@ -386,7 +369,8 @@ textarea {
 }
 
 .new-messages {
-  background-color: rgba(226, 245, 218, 0.204);
+  background-color: rgba(226, 245, 218, 0.107);
+  backdrop-filter: blur(8px);
   color: rgb(202, 191, 175);
   border: none;
   border-radius: 5px;
@@ -442,13 +426,30 @@ textarea {
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(5px);
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999;
   transition: backdrop-filter 1s ease;
+}
+
+textarea {
+  box-sizing: border-box;
+  border: 1px solid rgba(136, 136, 136, 0.41);
+  background-color: rgba(47, 43, 36, 0.982);
+  color: antiquewhite;
+  border-radius: 4px;
+  font-size: 16px;
+  font-family: "ProggyVector";
+  outline: none;
+  padding: 8px;
+  resize: none;
+}
+
+.no-select {
+  user-select: none;
 }
 
 /* Width */
