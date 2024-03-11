@@ -1,3 +1,37 @@
+/* Styles shared by components */
+
+/*
+Point fontfaces to server-side fonts.
+- Reduced DinaRemaster and Gohu to latin characters for smaller filesize (https://stackoverflow.com/questions/2635423/way-to-reduce-size-of-ttf-fonts
+*/
+@font-face {
+  font-family: 'DinaRemaster';
+  src: url('../../../backend/static/DinaRemasterSmaller-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DinaRemaster';
+  src: url('../../../backend/static/DinaRemasterSmaller-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GohuFont uni14 Nerd Font Mono';
+  src: url('../../../backend/static/GohuFontSmaller.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ProggyVector';
+  src: url('../../../backend/static/ProggyVector-Regular-Mac.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   position: relative;
   background-color: rgb(34, 35, 33);

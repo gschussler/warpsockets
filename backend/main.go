@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
 
@@ -29,6 +30,10 @@ func main() {
 
 	// notify server of OS signals
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+	router := mux.NewRouter()
+	// server static to load fonts
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	go func() {
 		<-shutdown

@@ -11,6 +11,8 @@
 - [x] usage of dotenv for external ip in the socket connection from the frontend (possibly find solution not dotenv?)
 - [ ] mobile UI (honestly the UI in general as well lol)
 - [ ] pay attention to rerendering amount intermittently (keep resources low)
+- [ ] possibly render user text immediately instead of waiting for sync with db (probably bad practice though)
 
 ## REFACTOR
 - [x] A WebSocket connection should only be instantiated when a user enters a lobby, not upon coming to the site itself
+- [x] Reduce served font file sizes
