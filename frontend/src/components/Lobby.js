@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
+import '../styles/lobby.css';
 import Settings from './Settings';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
@@ -132,7 +133,7 @@ const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser
   return (
     <div className='lobby'>
       <div className='lobby-h'>
-        <p className='welcome'>lobby: {lobby}</p>
+        <p className='lobby-welcome'>lobby: {lobby}</p>
         <div className='user-container'>
           <div className='app-avatar'>
             <MinidenticonImg

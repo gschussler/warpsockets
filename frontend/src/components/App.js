@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
+import '../styles/app.css';
 import { minidenticon } from 'minidenticons';
 import Lobby from './Lobby';
 import useSound from 'use-sound';
