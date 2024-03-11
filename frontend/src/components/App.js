@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { minidenticon } from 'minidenticons';
 import Lobby from './Lobby';
+import useSound from 'use-sound';
+import EnterSound from '../sounds/wheep-wheep.mp3';
+import Click from '../sounds/mouse-click.mp3';
+import mutedSVG from '../images/muted.svg'
+import unmutedSVG from '../images/unmuted.svg'
 
 export const MinidenticonImg = React.memo(({ username, saturation, lightness, ...props}) => {
   const svgURI = useMemo(
@@ -18,6 +23,10 @@ const App = () => {
   const [lobby, setLobby] = useState('');
   const [showLobby, setShowLobby] = useState(false);
   const socket = useRef(null);
+  const [muted, setMuted] = useState(false);
+  const [playEnter] = useSound(EnterSound, {volume: muted ? 0: 0.2});
+  const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
+  const maxLength = 16;
   
   const connectWebSocket = () => {
     // need to wait until connection is completed. async/await syntax not supported by WebSockets
@@ -68,6 +77,7 @@ const App = () => {
         await connectWebSocket();
         // send lobby information to the server
         socket.current.send(JSON.stringify({action: "join", user, lobby}));
+        playEnter();
         // then switch display to lobby
         setShowLobby(true);
       } catch (error) {
@@ -75,6 +85,15 @@ const App = () => {
       }
     }
   };
+
+  const toggleMute = () => {
+    setMuted((prevMuted) => !prevMuted);
+    // stop sounds whether muting or unmuting
+    stop();
+    if(muted) {
+      playClick();
+    }
+  }
 
   useEffect(() => {
     // clean up WebSocket connection when the component unmounts or leaving the lobby
@@ -86,6 +105,7 @@ const App = () => {
     };
   }, []);
 
+  // 'Enter' should only be used for trying to enter a lobby
   useEffect(() => {
     const handleKeyPress = (e) => {
       if(e && e.key === 'Enter') {
@@ -125,7 +145,7 @@ const App = () => {
                   value={user}
                   onChange={(e) => setUser(e.target.value)}
                   placeholder='Choose your username!'
-                  maxLength={16}
+                  maxLength={maxLength}
                 />
               </div>
               <div className='app-lobby'>
@@ -135,7 +155,7 @@ const App = () => {
                   value={lobby}
                   onChange={(e) => setLobby(e.target.value)}
                   placeholder='Create or join a lobby!'
-                  maxLength={16}
+                  maxLength={maxLength}
                 />
               </div>
               <div className='app-enter-container'>
@@ -147,6 +167,12 @@ const App = () => {
                   lightness="55"
                 />
                 <button className='app-enter' onClick={joinLobby}>ENTER</button>
+                <button className='toggle-mute' onClick={toggleMute}>
+                  <img
+                    src={muted ? mutedSVG : unmutedSVG}
+                    alt={muted ? 'Unmute' : 'Mute'}
+                  />
+                </button>
               </div>
             </div>
           </div>
