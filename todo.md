@@ -6,6 +6,7 @@
 - [x] Increase size of input box when typing a message in lobby
 - [x] Limit max username/lobby name length (16 char at the moment)
 - [ ] Limit max number of messages in the chatroom
+- [ ] Add onto an already-sent message if the immediate next message is sent by the same user (prevents unnecessary repetition of message-info)
 
 ## FIX
 - [x] usage of dotenv for external ip in the socket connection from the frontend (possibly find solution not dotenv?)
