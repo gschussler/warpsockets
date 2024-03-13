@@ -74,14 +74,14 @@ a {
 }
 
 .stars {
- background: black url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/stars.png) repeat;
- position: absolute;
+  background: black url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/stars.png) repeat;
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   display: block;
-    z-index: 0;
+  z-index: 0;
 }
 
 .twinkling{
@@ -89,18 +89,17 @@ a {
   height: 100%;
   background: transparent url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/twinkling.png") repeat;
   background-size: 1000px 1000px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
     
-    -moz-animation:move-background 70s linear infinite;
+  -moz-animation:move-background 70s linear infinite;
   -ms-animation:move-background 70s linear infinite;
   -o-animation:move-background 70s linear infinite;
   -webkit-animation:move-background 70s linear infinite;
   animation:move-background 70s linear infinite;
-  
 }
 
 .no-select {

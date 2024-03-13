@@ -1,37 +1,29 @@
+/**
+ * Component to handle client-side WebSocket interactions and render a 'lobby'
+ * @module Lobby
+ */
+
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import '../styles/lobby.scss';
 import Settings from './Settings.jsx';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
 import { MinidenticonImg } from './App.jsx';
-import { ExpandingTextarea } from './TextInput';
+import { ExpandingTextarea } from './TextInput.js';
 
-// custom hook to determine whether scrollbar is at the bottom, then stick to bottom if in range
-const useScrollToBottom = (ref) => {
-  const isAtBottomRef = useRef(true);
-  useEffect(() => {
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = ref.current;
-      // added num represents minimum height of a single message
-      const isAtBottom = scrollHeight - scrollTop <= clientHeight + 100;
-      isAtBottomRef.current = isAtBottom;
-    }
-  
-    if(ref.current) {
-      ref.current.addEventListener('scroll', handleScroll);
-    }
+/**
+ * Handles sending/receiving messages from server and other user interactions with the lobby.
+ * @param {React.MutableRefObject} props.socket - A reference to the WebSocket instance instantiated in App.jsx
+ * @param {string} props.user - Current client username.
+ * @param {string} props.userColor - Color assigned to the current user
+ * @param {string} props.lobby - Lobby name.
+ * @param {Function} props.setLobby - Function to set lobby name state.
+ * @param {Function} props.setShowLobby - Function to set lobby visibility.
+ * @param {Function} props.setUser - Function to set username state.
+ * @returns {JSX.Element} - Rendered Lobby component
+ */
 
-    return () => {
-      if(ref.current) {
-        ref.current.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [ref]);
-
-  return isAtBottomRef;
-}
-
-const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser }) => {
+const Lobby = ({ socket, user, userColor, lobby, setLobby, setShowLobby, setUser }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
@@ -41,7 +33,10 @@ const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser
   const textareaRef = useRef(null);
   // const startTimeRef = useRef(null);
 
-  // handle users leaving the lobby
+  /**
+   * Leaves the lobby and closes the client's WebSocket connection
+   * @returns {void}
+   */
   const leaveLobby = async () => {
     if(socket.current) {
       await socket.current.close();
@@ -51,8 +46,14 @@ const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser
     setShowLobby(false);
   }
 
+
+  /**
+   * Sends a message via WebSocket connection to the server
+   * @returns {void}
+   */
   const sendMessage = async () => {
-    // startTimeRef.current  = performance.now(); // captures time of process; used to get duration of sending and receiving a message
+    // // captures time of process client-side; used to get duration of sending and receiving a message
+    // startTimeRef.current  = performance.now();
     if(message !== '') {
       const messageContent = {
         lobby: lobby,
@@ -64,10 +65,42 @@ const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser
 
       // prepare a message to be appended to the message list
       setMessage('');
+      // return input box to original height
       if(textareaRef.current) {
         textareaRef.current.style.height = 'auto';
       }
     }
+  };
+
+  /**
+   * 
+   * @param {React.MutableRefObject} ref - Reference to the lobby container.
+   * @returns {React.MutableRefObject} - Reference to whether the scrollbar is at the bottom of the container.
+   */
+
+  const useScrollToBottom = (ref) => {
+    const isAtBottomRef = useRef(true);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = ref.current;
+        // added num represents minimum height of a single message
+        const isAtBottom = scrollHeight - scrollTop <= clientHeight + 5;
+        isAtBottomRef.current = isAtBottom;
+      }
+    
+      if(ref.current) {
+        ref.current.addEventListener('scroll', handleScroll);
+      }
+
+      return () => {
+        if(ref.current) {
+          ref.current.removeEventListener('scroll', handleScroll);
+        }
+      };
+    }, [ref]);
+
+    return isAtBottomRef;
   };
 
   const isAtBottomRef = useScrollToBottom(lobbyRef);
@@ -81,6 +114,11 @@ const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser
       // check if current user sent the message being handled
       const messageColor = messageContent.User === user ? userColor : messageContent.Color;
 
+      /* 
+      When setting the message list, check if the last sent message was from the same user (also the timestamp).
+        - If from the same user AND sent in the same minute, append the new message to the previous message, with a new line in between.
+        - Otherwise, the message is from a different user OR sent by the same user in a different minute. Append message to the list as normal
+      */
       setMessageList((list) => {
         const lastMessage = list[list.length - 1];
         if(lastMessage && lastMessage.User === messageContent.User) {
@@ -108,11 +146,11 @@ const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser
       // // log the amount of time it took for a message to be sent and received back on the frontend
       // const endTime = performance.now();
       // const duration = endTime - startTimeRef.current;
-      // console.log(`Sending and handling took ${duration}`)
+      // console.log(`Send/receive speed of current client's last message: ${duration}ms`)
 
       // check if the scrollbar is at the bottom after the message is added
       if(isAtBottomRef.current) {
-        lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight + 5;
+        lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
       } else {
         setNewMessagesButton(true);
       }
@@ -203,7 +241,7 @@ const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser
                   <p className='user' style={{ color: messageContent.messageColor }}>{messageContent.User}</p>
                   <p className='time'>{`${messageContent.FormattedTime}`}</p>
                 </div>
-                <div className='message-c'>
+                <div className='message-content'>
                   {messageContent.Content}
                 </div>
               </div>
