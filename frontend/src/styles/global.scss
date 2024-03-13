@@ -1,0 +1,182 @@
+/* Styles shared by components */
+
+html,
+body {
+  position: relative;
+  // background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  // background-color: rgb(34, 35, 33);
+  height: 100%;
+  overflow: hidden;
+  z-index: 3;
+}
+
+textarea {
+  box-sizing: border-box;
+  border: 1px solid rgba(136, 136, 136, 0.41);
+  background-color: rgba(47, 43, 36, 0.982);
+  color: antiquewhite;
+  border-radius: 4px;
+  font-size: 16px;
+  font-family: "ProggyVector";
+  outline: none;
+  padding: 8px;
+  resize: none;
+}
+
+a {
+  font-style: italic;
+  color: rgba(250, 235, 215, 0.767);
+  text-decoration: none;
+}
+
+@keyframes move-background {
+  from {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+  }
+  to { 
+    -webkit-transform: translate3d(1000px, 0px, 0px);
+  }
+}
+@-webkit-keyframes move-background {
+  from {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+  }
+  to { 
+    -webkit-transform: translate3d(1000px, 0px, 0px);
+  }
+}
+
+@-moz-keyframes move-background {    
+  from {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+  }
+  to { 
+    -webkit-transform: translate3d(1000px, 0px, 0px);
+  }
+}
+
+    @-webkit-keyframes move-background {
+  from {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+  }
+  to { 
+    -webkit-transform: translate3d(1000px, 0px, 0px);
+  }
+}
+
+.background-container{
+  position: fixed;
+  top: 0;
+  left:0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.stars {
+ background: black url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/stars.png) repeat;
+ position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: block;
+    z-index: 0;
+}
+
+.twinkling{
+  width:10000px;
+  height: 100%;
+  background: transparent url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/twinkling.png") repeat;
+  background-size: 1000px 1000px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    
+    -moz-animation:move-background 70s linear infinite;
+  -ms-animation:move-background 70s linear infinite;
+  -o-animation:move-background 70s linear infinite;
+  -webkit-animation:move-background 70s linear infinite;
+  animation:move-background 70s linear infinite;
+  
+}
+
+.no-select {
+  user-select: none;
+}
+
+.app-avatar {
+  height: 50px;
+  width: 50px;
+  /* background-color: rgba(226, 245, 218, 0.098); */
+}
+
+/* Width */
+::-webkit-scrollbar {
+  width: 8px; 
+}
+
+/* blend track with background */
+::-webkit-scrollbar-track {
+  background: rgb(34, 35, 33);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* unsure about using .not-connected for pre-lobby just yet */
+/* .not-connected {
+  display: grid;
+  grid-template-rows: 30px;
+  background-color: rgba(226, 245, 218, 0.775);
+  color: rgb(34, 35, 33);
+  border-radius: 10px;
+  margin-top: 15px;
+  justify-content: center;
+  text-align: left;
+  font-family: "GohuFont uni14 Nerd Font Mono";
+  font-size: 25px;
+  transition: 1s;
+  animation: wiggle 2s infinite;
+}
+*/
+
+/*
+Point fontfaces to server-side fonts.
+- Reduced DinaRemaster and Gohu to latin characters for smaller filesize (https://stackoverflow.com/questions/2635423/way-to-reduce-size-of-ttf-fonts). ProggyVector is the user-input font, so kept all characters (might revisit to reduce size further). WOFF conversion for compatibility.
+*/
+@font-face {
+  font-family: 'DinaRemaster';
+  src: url('../../../backend/static/DinaRemasterSmaller-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DinaRemaster';
+  src: url('../../../backend/static/DinaRemasterSmaller-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GohuFont uni14 Nerd Font Mono';
+  src: url('../../../backend/static/GohuFontSmaller.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ProggyVector';
+  src: url('../../../backend/static/ProggyVector-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}

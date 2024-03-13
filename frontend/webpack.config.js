@@ -56,12 +56,21 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/,
+        test: /\.s[ac]ss$/i,
         exclude: /node_modules/,
-        use: ['style-loader', 'css-loader']
+        use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        // optimize svgs, process in next test
+        test: /\.svg$/,
+        use: [
+          {
+            loader: 'svgo-loader',
+          }
+        ]
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif|mp3)$/i,
         type: 'asset/resource',
       }
     ],
