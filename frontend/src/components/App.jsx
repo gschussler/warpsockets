@@ -1,3 +1,8 @@
+/**
+ * Main application component.
+ * @module App
+ */
+
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import '../styles/app.scss';
 import { minidenticon } from 'minidenticons';
@@ -6,8 +11,17 @@ import useSound from 'use-sound';
 import Enter from '../sounds/wheep-wheep.mp3';
 import Click from '../sounds/mouse-click.mp3';
 import Denied from '../sounds/keycard-denial.mp3';
-import mutedSVG from '../images/muted.svg'
-import unmutedSVG from '../images/unmuted.svg'
+import mutedSVG from '../images/muted.svg';
+import unmutedSVG from '../images/unmuted.svg';
+
+/**
+ * Displays a minidenticon image. Credit: https://github.com/laurentpayot/minidenticons
+ * @param {object} props Component props.
+ * @param {string} props.username Username.
+ * @param {string} props.saturation Saturation value.
+ * @param {string} props.lightness Lightness value.
+ * @returns {JSX.Element} Rendered minidenticon image.
+ */
 
 export const MinidenticonImg = React.memo(({ username, saturation, lightness, ...props}) => {
   const svgURI = useMemo(
@@ -18,6 +32,11 @@ export const MinidenticonImg = React.memo(({ username, saturation, lightness, ..
   // console.log('SVG URI:', svgURI) // test for rerenders of variable
   return (<img src={svgURI} alt={username} {...props} />)
 });
+
+/**
+ * Handles client information state and other interactions with the landing page.
+ * @returns {JSX.Element} Rendered App component.
+ */
 
 const App = () => {
   const [user, setUser] = useState('');

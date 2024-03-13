@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, maxLength}) => {
   const adjustTextareaHeight = () => {

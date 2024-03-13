@@ -47,13 +47,13 @@
   border: none;
   border-radius: 4px;
   background: none;
-  transition: .5s;
+  transition: transform .5s;
   cursor: pointer;
 }
 
 .settings:hover {
   transform: rotate(90deg);
-  transition: .5s;
+  transition: transform .5s;
 }
 
 .leave-lobby {
@@ -65,22 +65,20 @@
   height: 50px;
   width: 50px;
   border-radius: 4px;
-  transition: .5s;
+  transition: transform .5s;
   cursor: pointer;
 }
 
 .leave-lobby:hover {
   transform: scale(1.08);
-  transition: .5s;
+  transition: transform .5s;
   /* font-size: 45px; */
 }
 
 .lobby-content {
   display: flex;
-  background-color: rgba(51, 53, 57, 0.698);
-  border-radius: 5%;
-  border-style: outset;
-  border: red;
+  background-color: rgba(51, 53, 57, 0.775);
+  border-radius: 1%;
   flex-direction: column;
   align-items: center;
   max-width: 800px;
@@ -112,12 +110,13 @@
 .message-list {
   display: flex;
   flex-direction: column-reverse;
-  gap: 10px;
+  // gap: 10px;
 }
 
-.message-separator {
-  height: 10px;
-}
+/* considering a conditional div that better separates messages */
+// .message-separator {
+//   height: 10px;
+// }
 
 .system-message {
   display: flex;
@@ -143,9 +142,9 @@
   white-space: pre-line;
 }
 
-.message-c {
+.message-content {
   font-family: "ProggyVector";
-  margin: 10px;
+  margin: 5px;
   line-height: 1.5;
   // font-size: 18px;
 }
@@ -156,13 +155,16 @@
   // align-items: flex-end;
   padding-left: 10px;
   padding-right: 10px;
-  margin-right: 10px;
+  margin: 10px;
   border-radius: 10px;
   color: antiquewhite;
+  transition: background-color .2s;
 }
 
 .message-cr:hover {
-  background-color: rgb(46, 47, 44);
+  background-color: rgb(51, 53, 57);
+  transition: background-color .2s;
+  // background-color: rgb(46, 47, 44);
 }
 
 /* other user in lobby msg */
@@ -173,15 +175,18 @@
   align-self: flex-start;
   align-items: flex-start;
   text-align: left;
-  padding: 10px;
-  margin-left: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
   border-radius: 10px;
+  transition: background-color .2s;
 }
 
 .message-cl:hover {
-  background-color: rgb(202, 191, 175);
-  color: rgb(29, 30, 28);
-  transition: .3s
+  background-color: rgba(51, 53, 57);
+  transition: background-color .2s;
+  // background-color: rgb(202, 191, 175);
+  // color: rgb(29, 30, 28);
+  // transition: .3s
 }
 
 .message-info {
@@ -194,23 +199,22 @@
 .time {
   display: flex;
   justify-content: right;
-  padding-right: 5px;
-  font-size: 13px;
+  font-size: 15px;
   opacity: 0.5;
   user-select: none;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .user {
   display: flex;
   justify-content: left;
-  margin-right: 5px;
-  padding-left: 4px;
-  padding-right: 4px;
+  margin-right: 10px;
   font-size: 20px;
   font-weight: bold;
-  /* background-color: rgba(250, 235, 215, 0.089); */
+  font-size: 24px;
   border-radius: 5px;
   user-select: none;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .lobby-footer {
@@ -267,7 +271,7 @@
 }
 
 .new-messages {
-  background-color: rgba(226, 245, 218, 0.107);
+  background-color: rgba(51, 52, 57, 0.284);
   backdrop-filter: blur(8px);
   color: rgb(202, 191, 175);
   border: none;
@@ -287,19 +291,19 @@
 
 @keyframes wiggle {
   0% { 
-    transform: rotate(0deg); 
+    transform: rotateZ(0deg); 
   }
   80% {
-    transform: rotate(0deg);
+    transform: rotateZ(0deg);
   }
   85% {
-    transform: rotate(2deg);
+    transform: rotateZ(2deg);
   }
   95% {
-    transform: rotate(-2deg);
+    transform: rotateZ(-2deg);
   }
   100% {
-    transform: rotate(0deg);
+    transform: rotateZ(0deg);
   }
 }
 
