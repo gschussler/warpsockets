@@ -200,13 +200,6 @@ const Lobby = ({ socket, user, userColor, setLobby, lobby, setShowLobby, setUser
                 key={index}
               >
                 <div className='message-info'>
-                  <div className={messageContent.User === 'System' ? null : 'app-avatar'}>
-                    <MinidenticonImg
-                      username={user}
-                      saturation="90"
-                      lightness="55"
-                    />
-                  </div>
                   <p className='user' style={{ color: messageContent.messageColor }}>{messageContent.User}</p>
                   <p className='time'>{`${messageContent.FormattedTime}`}</p>
                 </div>
