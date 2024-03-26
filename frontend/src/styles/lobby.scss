@@ -142,17 +142,10 @@
   white-space: pre-line;
 }
 
-.message-content {
-  font-family: "ProggyVector";
-  margin: 5px;
-  line-height: 1.5;
-  // font-size: 18px;
-}
-
 /* current user msg */
 .message-cr {
   align-self: flex-start;
-  // align-items: flex-end;
+  align-items: flex-start;
   padding-left: 10px;
   padding-right: 10px;
   margin: 10px;
@@ -171,13 +164,13 @@
 .message-cl {
   // color: rgb(34, 35, 33);
   // background-color: antiquewhite;
-  color: antiquewhite;
   align-self: flex-start;
   align-items: flex-start;
-  text-align: left;
   padding-left: 10px;
   padding-right: 10px;
+  margin: 10px;
   border-radius: 10px;
+  color: antiquewhite;
   transition: background-color .2s;
 }
 
@@ -187,6 +180,13 @@
   // background-color: rgb(202, 191, 175);
   // color: rgb(29, 30, 28);
   // transition: .3s
+}
+
+.message-content {
+  font-family: "ProggyVector";
+  margin: 5px;
+  line-height: 1.5;
+  // font-size: 18px;
 }
 
 .message-info {
@@ -220,7 +220,7 @@
 .lobby-footer {
   display: flex;
   flex-direction: row;
-  /* align-items: center; */
+  align-items: flex-end;
   position: fixed;
   bottom: 50px;
   resize: none;
@@ -230,8 +230,7 @@
   width: 100%;
   max-height: 90px;
   min-height: 40px;
-  min-width: 50vh;
-  max-width: 50vh;
+  width: 50vh;
   align-self: center;
   scrollbar-color: rgba(47, 43, 36, 0.982) rgba(47, 43, 36, 0.982); /* hiding within background */
 }
@@ -262,6 +261,7 @@
   margin-right: 10px;
   margin-left: 10px;
   transition: .2s;
+  margin-bottom: 1.7%;
 }
 
 .send:hover {
@@ -271,7 +271,7 @@
 }
 
 .new-messages {
-  background-color: rgba(51, 52, 57, 0.284);
+  background-color: rgba(51, 52, 57, 0.59);
   backdrop-filter: blur(8px);
   color: rgb(202, 191, 175);
   border: none;

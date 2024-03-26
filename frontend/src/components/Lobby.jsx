@@ -1,18 +1,17 @@
-/**
- * Component to handle client-side WebSocket interactions and render a 'lobby'
- * @module Lobby
- */
-
 import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/lobby.scss';
 import Settings from './Settings.jsx';
+import useSound from 'use-sound';
+import Send from '../sounds/zap.mp3';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
-import { MinidenticonImg } from './App.jsx';
+import { MinidenticonImg } from './utils.js';
 import { ExpandingTextarea } from './TextInput.js';
 
 /**
- * Handles sending/receiving messages from server and other user interactions with the lobby.
+ * Component to handle sending/receiving messages from server and other client interactions within the 'lobby'.
+ * @module Lobby
  * @param {React.MutableRefObject} props.socket - A reference to the WebSocket instance instantiated in App.jsx
  * @param {string} props.user - Current client username.
  * @param {string} props.userColor - Color assigned to the current user
@@ -23,14 +22,16 @@ import { ExpandingTextarea } from './TextInput.js';
  * @returns {JSX.Element} - Rendered Lobby component
  */
 
-const Lobby = ({ socket, user, userColor, lobby, setLobby, setShowLobby, setUser }) => {
+const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
   const [hovered, setHovered] = useState(false);
   const lobbyRef = useRef(null);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
   const textareaRef = useRef(null);
+  const navigate = useNavigate();
   // const startTimeRef = useRef(null);
 
   /**
@@ -38,12 +39,11 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setShowLobby, setUser
    * @returns {void}
    */
   const leaveLobby = async () => {
-    if(socket.current) {
-      await socket.current.close();
-    }
+    await socket.close();
+    console.log(`${socket.readyState}`);
     setUser('');
     setLobby('');
-    setShowLobby(false);
+    navigate('/');
   }
 
 
@@ -61,7 +61,8 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setShowLobby, setUser
         content: message,
         color: userColor
       };
-      await socket.current.send(JSON.stringify(messageContent));
+      await socket.send(JSON.stringify(messageContent));
+      playSend();
 
       // prepare a message to be appended to the message list
       setMessage('');
@@ -156,13 +157,13 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setShowLobby, setUser
       }
     };
 
-    if (socket.current) {
-      console.log("WebSocket state in Lobby: ", socket.current.readyState);
-      socket.current.addEventListener('message', handleMessage);
+    if (socket) {
+      console.log("WebSocket state in Lobby: ", socket.readyState);
+      socket.addEventListener('message', handleMessage);
 
       return () => {
-        socket.current.removeEventListener('message', handleMessage);
-        socket.current.close();
+        socket.removeEventListener('message', handleMessage);
+        socket.close();
       };
     }
   }, [socket, isAtBottomRef]);
@@ -255,7 +256,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setShowLobby, setUser
             value={message}
             onChange={(e) => {setMessage(e.target.value)}}
             onKeyDown={(e) => {
-              if(e.key === 'Enter' && !e.shiftKey) {
+              if(e.key === 'Enter') {
                 e.preventDefault();
                 sendMessage();
               }
