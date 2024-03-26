@@ -40,11 +40,11 @@ const App = () => {
       console.log("Creating new WebSocket connection...")
       socket.current = new WebSocket(wsPath);
 
-      socket.current.onopen = (e) => {
-        resolve();
+      socket.current.onopen = async (e) => {
         console.log('WebSocket connected');
         // send lobby information to the server
-        socket.current.send(JSON.stringify({action: "join", user, lobby}));
+        await socket.current.send(JSON.stringify({action: "join", user, lobby}));
+        resolve();
       };
 
       socket.current.onclose = (e) => {
@@ -73,7 +73,6 @@ const App = () => {
         element={
           <Welcome
             connectWebSocket={connectWebSocket}
-            socket={socket.current}
             user={user}
             setUserColor={setUserColor}
             lobby={lobby}
@@ -88,7 +87,7 @@ const App = () => {
         path="/lobby"
         element={
           <Lobby
-            socket={socket.current}
+            socket={socket}
             user={user}
             userColor={userColor}
             lobby={lobby}

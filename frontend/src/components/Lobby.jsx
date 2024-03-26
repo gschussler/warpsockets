@@ -39,8 +39,10 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
    * @returns {void}
    */
   const leaveLobby = async () => {
-    await socket.close();
-    console.log(`${socket.readyState}`);
+    if(socket.current) {
+      await socket.current.close();
+      console.log(`${socket.current.readyState}`);
+    }
     setUser('');
     setLobby('');
     navigate('/');
@@ -61,7 +63,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         content: message,
         color: userColor
       };
-      await socket.send(JSON.stringify(messageContent));
+      await socket.current.send(JSON.stringify(messageContent));
       playSend();
 
       // prepare a message to be appended to the message list
@@ -157,13 +159,13 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       }
     };
 
-    if (socket) {
-      console.log("WebSocket state in Lobby: ", socket.readyState);
-      socket.addEventListener('message', handleMessage);
+    if (socket.current) {
+      console.log("WebSocket state in Lobby: ", socket.current.readyState);
+      socket.current.addEventListener('message', handleMessage);
 
       return () => {
-        socket.removeEventListener('message', handleMessage);
-        socket.close();
+        socket.current.removeEventListener('message', handleMessage);
+        socket.current.close();
       };
     }
   }, [socket, isAtBottomRef]);
