@@ -1,15 +1,14 @@
 /**
- * Main application component.
- * SOMETHING WRONG WITH THE WAY WEBSOCKET STATE IS HANDLED CLIENT-SIDE WITH THIS NEW STRUCTURE. 
- * ~~INITIATING WEBSOCKET CLOSE REQUESTS TO SERVER BUT FAILING TO ACTUALLY SEND THEM LOL~~
- * ONLY HAPPENS ON SECOND CONSECUTIVE ENTRANCE INTO LOBBY OF THE SAME NAME.
- * INCREDIBLE STUFF BY REACT, WHAT A FUN TIME.
+ * Main application component, state management of global variables.
+ * - Must pass entire `socket` reference to Welcome and Lobby, not just `socket.current`
  * @module App
  */
 
 import React, { useState, useRef, useEffect } from "react";
 import { Routes, Route } from 'react-router-dom';
 import '../styles/global.scss';
+import useSound from "use-sound";
+import Denied from '../sounds/keycard-denial.mp3';
 import Lobby from './Lobby.jsx';
 import Welcome from './Welcome.jsx';
 
@@ -17,6 +16,8 @@ const App = () => {
   const [user, setUser] = useState('');
   const [userColor, setUserColor] = useState('')
   const [lobby, setLobby] = useState('');
+  const [buttonClicked, setButtonClicked] = useState(false);
+  const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
   const [muted, setMuted] = useState(false);
   // socket data needs to be accessible by other components through socket.current; Lobby.jsx after the call to join a lobby within Welcome.jsx
   const socket = useRef(null);
@@ -37,18 +38,18 @@ const App = () => {
       ? `ws://${process.env.EXT_IP}/ws` :
       `ws://localhost:8085/ws`;
 
-      console.log("Creating new WebSocket connection...")
+      // console.log("Creating new WebSocket connection...")
       socket.current = new WebSocket(wsPath);
 
       socket.current.onopen = async (e) => {
-        console.log('WebSocket connected');
-        // send lobby information to the server
-        await socket.current.send(JSON.stringify({action: "join", user, lobby}));
+        // console.log('WebSocket connected');
+        // send lobby information to the server and confirm join action before resolving
         resolve();
       };
 
       socket.current.onclose = (e) => {
-        console.log('WebSocket closed code: ', e.code)
+        // console.log('WebSocket closed code: ', e.code)
+        // console.log('WebSocket closed');
         reject(new Error('WebSocket closed'));
       };
     });
@@ -73,6 +74,7 @@ const App = () => {
         element={
           <Welcome
             connectWebSocket={connectWebSocket}
+            socket={socket}
             user={user}
             setUserColor={setUserColor}
             lobby={lobby}
@@ -80,6 +82,9 @@ const App = () => {
             setUser={setUser}
             muted={muted}
             setMuted={setMuted}
+            buttonClicked={buttonClicked}
+            setButtonClicked={setButtonClicked}
+            playDenied={playDenied}
           />
         }
       />
@@ -95,6 +100,7 @@ const App = () => {
             setUser={setUser}
             muted={muted}
             setMuted={setMuted}
+            playDenied={playDenied}
           />
         }
       />

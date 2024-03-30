@@ -6,7 +6,7 @@ import useSound from 'use-sound';
 import Send from '../sounds/zap.mp3';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
-import { MinidenticonImg } from './utils.js';
+import { MinidenticonImg, groupMessages, isNearBottom } from './utils.js';
 import { ExpandingTextarea } from './TextInput.js';
 
 /**
@@ -22,14 +22,15 @@ import { ExpandingTextarea } from './TextInput.js';
  * @returns {JSX.Element} - Rendered Lobby component
  */
 
-const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted }) => {
+const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
+  const [disconnected, setDisconnected] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const lobbyRef = useRef(null);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
+  const lobbyRef = useRef(null);
   const textareaRef = useRef(null);
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
@@ -41,72 +42,116 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const leaveLobby = async () => {
     if(socket.current) {
       await socket.current.close();
-      console.log(`${socket.current.readyState}`);
+      // console.log(`${socket.current.readyState}`);
     }
     setUser('');
     setLobby('');
     navigate('/');
   }
 
-
   /**
-   * Sends a message via WebSocket connection to the server
+   * Sends a message via WebSocket connection to the server and immediately displays the message for the sender.
    * @returns {void}
    */
+
   const sendMessage = async () => {
     // // captures time of process client-side; used to get duration of sending and receiving a message
     // startTimeRef.current  = performance.now();
-    if(message !== '') {
-      const messageContent = {
-        lobby: lobby,
-        user: user,
-        content: message,
-        color: userColor
-      };
-      await socket.current.send(JSON.stringify(messageContent));
-      playSend();
+    if(socket.current.readyState === 1) {
+      if(message !== '') {
+        const messageContent = {
+          lobby: lobby,
+          user: user,
+          content: message,
+          color: userColor
+        };
 
-      // prepare a message to be appended to the message list
-      setMessage('');
-      // return input box to original height
-      if(textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
+        //! Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent in try/catch statement)
+        let date = new Date();
+        const formattedTime = (date) => {
+          let hrs = date.getHours();
+          const meridiem = hrs > 11 ? ' PM' : ' AM';
+          hrs = hrs % 12 || 12;
+
+          let mins = date.getMinutes();
+          if(mins < 10) mins  = '0' + mins;
+
+          return `${hrs}:${mins}${meridiem}`;
+        }
+
+        // add message to message list immediately (currently, crudely changes property names to match message properties when returned from the server.)
+        setMessageList(prevMessages => groupMessages({ ...messageContent, User: user, Content: message, messageColor: userColor, FormattedTime: formattedTime(date) }, prevMessages));
+        
+        // if message fails to send, retry sending
+        let retries = 0;
+        const maxRetries = 3;
+
+        while (retries < maxRetries) {
+          // try sending to server as normal
+          try {
+            await socket.current.send(JSON.stringify(messageContent));
+            playSend();
+            // prepare a message to be appended to the message list
+            setMessage('');
+            // return input box to original height
+            if(textareaRef.current) {
+              textareaRef.current.style.height = 'auto';
+            }
+            if(isNearBottom()) {
+              lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
+            }
+            return;
+          } catch (error) {
+            // message failed to send
+            console.error('Failed to send message:', error);
+            retries++;
+            // retry sending the message with delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+        // reached max tries --> should display something to user.
+        console.error('Max retry count reached. Failed to send message.');
+      } else {
+        playDenied();
       }
+    } else {
+      setMessage('');
+      playDenied();
+      return;
     }
   };
 
   /**
-   * 
-   * @param {React.MutableRefObject} ref - Reference to the lobby container.
-   * @returns {React.MutableRefObject} - Reference to whether the scrollbar is at the bottom of the container.
+   * Check scroll wheel height to:
+   * 1. Keep scroll wheel at the bottom of the lobby
+   * 2. Display new messages button if not near the bottom.
+   * @returns Boolean - scroll wheel is at the bottom or not.
    */
 
-  const useScrollToBottom = (ref) => {
-    const isAtBottomRef = useRef(true);
-
-    useEffect(() => {
-      const handleScroll = () => {
-        const { scrollTop, scrollHeight, clientHeight } = ref.current;
-        // added num represents minimum height of a single message
-        const isAtBottom = scrollHeight - scrollTop <= clientHeight + 5;
-        isAtBottomRef.current = isAtBottom;
-      }
-    
-      if(ref.current) {
-        ref.current.addEventListener('scroll', handleScroll);
-      }
-
-      return () => {
-        if(ref.current) {
-          ref.current.removeEventListener('scroll', handleScroll);
-        }
-      };
-    }, [ref]);
-
-    return isAtBottomRef;
+  const isNearBottom = () => {
+    const { scrollTop, scrollHeight, clientHeight } = lobbyRef.current;
+    return scrollHeight - scrollTop <= clientHeight + 100;
   };
 
-  const isAtBottomRef = useScrollToBottom(lobbyRef);
+  const handleScroll = () => {
+    if(isNearBottom()) {
+      setNewMessagesButton(false);
+    } else {
+      setNewMessagesButton(true);
+    }
+  }
+
+  useEffect(() => {
+    if(lobbyRef.current) {
+      lobbyRef.current.addEventListener('scroll', handleScroll);
+
+      return () => {
+        if(lobbyRef.current) {
+          lobbyRef.current.removeEventListener('scroll', handleScroll);
+        }
+      };
+    }
+  }, []);
 
   // TIME is set up on the backend, figure out proper order of parsing here (current user message vs existing message)
   useEffect(() => {
@@ -114,37 +159,12 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
 
-      // check if current user sent the message being handled
-      const messageColor = messageContent.User === user ? userColor : messageContent.Color;
+      // Removed broadcasting back to the current user, so this is unnecessary
+      // // check if current user sent the message being handled
+      // const messageColor = messageContent.User === user ? userColor : messageContent.Color;
+      const messageColor = messageContent.Color;
 
-      /* 
-      When setting the message list, check if the last sent message was from the same user (also the timestamp).
-        - If from the same user AND sent in the same minute, append the new message to the previous message, with a new line in between.
-        - Otherwise, the message is from a different user OR sent by the same user in a different minute. Append message to the list as normal
-      */
-      setMessageList((list) => {
-        const lastMessage = list[list.length - 1];
-        if(lastMessage && lastMessage.User === messageContent.User) {
-
-          const isNewMessageGroup = lastMessage.FormattedTime !== messageContent.FormattedTime;
-          if(isNewMessageGroup) {
-            // messages have not been sent within the same minute, send with new message-info
-            return [...list, { ...messageContent, messageColor }];
-          } else {
-            // messages have been sent in the same minute, only update messageContent.Content for the current message
-            return [
-              ...list.slice(0, list.length - 1),
-              {
-                ...lastMessage,
-                Content: `${lastMessage.Content}\n${messageContent.Content}`,
-              },
-            ];
-          }
-        } else {
-          // if the last message was sent by a different user, or there was not one previously; add as normal
-          return [...list, { ...messageContent, messageColor }]
-        }
-      });
+      setMessageList(prevMessages => groupMessages({ ...messageContent, messageColor}, prevMessages));
 
       // // log the amount of time it took for a message to be sent and received back on the frontend
       // const endTime = performance.now();
@@ -152,29 +172,41 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       // console.log(`Send/receive speed of current client's last message: ${duration}ms`)
 
       // check if the scrollbar is at the bottom after the message is added
-      if(isAtBottomRef.current) {
+      if(isNearBottom()) {
         lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
       } else {
         setNewMessagesButton(true);
       }
     };
 
+    const handleSocketClose = () => {
+      setDisconnected(true);
+    };
+
+    const handleSocketOpen = () => {
+      setDisconnected(false);
+    }
+
     if (socket.current) {
-      console.log("WebSocket state in Lobby: ", socket.current.readyState);
+      // console.log("WebSocket state in Lobby: ", socket.current.readyState);
       socket.current.addEventListener('message', handleMessage);
+      socket.current.addEventListener('close', handleSocketClose);
+      socket.current.addEventListener('open', handleSocketOpen);
+      // send 'join' action to server in order to receive back an announcement that a user has joined the lobby
+      socket.current.send(JSON.stringify({action: "join", user, lobby}));
 
       return () => {
         socket.current.removeEventListener('message', handleMessage);
+        socket.current.removeEventListener('close', handleSocketClose);
+        socket.current.removeEventListener('open', handleSocketOpen);
         socket.current.close();
       };
     }
-  }, [socket, isAtBottomRef]);
+  }, [socket]);
 
   const handleNewMessageScroll = useMemo(() => {
     return () => {
-      const isScrolledToBottom = lobbyRef.current.scrollHeight - lobbyRef.current.scrollTop <= lobbyRef.current.clientHeight + 100;
-
-      if(isScrolledToBottom) {
+      if(isNearBottom()) {
         setNewMessagesButton(false);
       }
     }
@@ -191,12 +223,12 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         }
       };
     }
-  }, [handleNewMessageScroll, lobbyRef, isAtBottomRef]);
+  }, [handleNewMessageScroll, lobbyRef]);
 
   return (
     <div className='lobby'>
       <div className='lobby-h'>
-        <p className='lobby-welcome'>lobby: {lobby}</p>
+        <p className='lobby-title'>lobby: {lobby}</p>
         <div className='user-container'>
           <div className='app-avatar'>
             <MinidenticonImg
@@ -281,6 +313,11 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             >
               ↓ New Messages ↓
             </button>
+          )}
+          { disconnected && (
+            <div className='disconnected'>
+              <p> DISCONNECTED... </p>
+            </div>
           )}
       </div>
     </div>

@@ -25,6 +25,42 @@ export const MinidenticonImg = React.memo(({ username, saturation, lightness, ..
   return (<img src={svgURI} alt={username} {...props} />)
 });
 
+/**
+ * Groups messages based on timestamp.
+ * @param {string} newMessage Message content to be added to and grouped within the message list (must be parsed first if received from the server).
+ * @param {string[]} messageList Current array of messages displayed in the lobby.
+ * @returns {string[]} Updated message list within lobby.
+ */
+
+/* 
+When setting the message list, check if the last sent message was from the same user (also the timestamp).
+  - If from the same user AND sent in the same minute, append the new message to the previous message, with a new line in between.
+  - Otherwise, the message is from a different user OR sent by the same user in a different minute. Append message to the list as normal
+*/
+export const groupMessages = (newMessage, messageList) => {
+  const lastMessage = messageList[messageList.length - 1];
+
+  if(lastMessage && lastMessage.User === newMessage.User) {
+    const isNewMessageGroup = lastMessage.FormattedTime !== newMessage.FormattedTime;
+    if(isNewMessageGroup) {
+      // messages have not been sent within the same minute, add to message list as normal (with its new message info)
+      return [...messageList, newMessage];
+    } else {
+      // messages have been sent within the same minute, only update messageContent.Content for the current message
+      return [
+        ...messageList.slice(0, messageList.length - 1),
+        {
+          ...lastMessage,
+          Content: `${lastMessage.Content}\n${newMessage.Content}`,
+        },
+      ];
+    }
+  } else {
+    // last message was sent by a different user or it's the first message in the lobby. add to message list as normal
+    return [...messageList, newMessage];
+  }
+};
+
 // /**
 //  * Limits the rate of invocation of a passed in function
 //  * @param {Function} func - Function to throttle.

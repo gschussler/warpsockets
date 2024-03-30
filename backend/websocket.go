@@ -87,7 +87,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				conn.WriteMessage(websocket.TextMessage, msgJSON)
 			}
 			storeMessage(systemMessage)
-			broadcastMessage(lobby, systemMessage)
+			broadcastMessage(lobby, systemMessage, nil)
 		default:
 			log.Printf("Unknown action: %s", lobbyInfo.Action)
 		}
@@ -109,7 +109,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 					deleteEmptyLobbies(lobby)
 				} else {
 					storeMessage(systemMessage)
-					broadcastMessage(lobby, systemMessage)
+					broadcastMessage(lobby, systemMessage, nil)
 				}
 				return
 			}
@@ -135,7 +135,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 			storeMessage(message)
 
-			broadcastMessage(lobby, message)
+			broadcastMessage(lobby, message, conn)
 		}
 	}
 }
@@ -157,7 +157,7 @@ func removeUserFromLobby(lobby string, conn *websocket.Conn) {
 	}
 }
 
-func broadcastMessage(lobby string, message Message) {
+func broadcastMessage(lobby string, message Message, senderConn *websocket.Conn) {
 	// serialize message to JSON
 	msgJSON, err := json.Marshal(message)
 	if err != nil {
@@ -167,12 +167,14 @@ func broadcastMessage(lobby string, message Message) {
 	// // log that a message was broadcasted to all connections in the lobby
 	// log.Printf("Message broadcasted in '%s' lobby", lobby)
 
-	// broadcast a message to all clients in the specified lobby
+	// broadcast a message to all clients (except for the sender) in the specified lobby
 	connections := lobbyConnections[lobby]
 	for _, conn := range connections {
-		err := conn.WriteMessage(websocket.TextMessage, msgJSON)
-		if err != nil {
-			log.Println("Error writing message: ", err)
+		if conn != senderConn {
+			err := conn.WriteMessage(websocket.TextMessage, msgJSON)
+			if err != nil {
+				log.Println("Error writing message: ", err)
+			}
 		}
 	}
 }

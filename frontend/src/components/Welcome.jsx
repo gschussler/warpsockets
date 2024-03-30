@@ -11,7 +11,6 @@ import { MinidenticonImg } from './utils.js';
 import useSound from 'use-sound';
 import Enter from '../sounds/wheep-wheep.mp3';
 import Click from '../sounds/mouse-click.mp3';
-import Denied from '../sounds/keycard-denial.mp3';
 import mutedSVG from '../images/muted.svg';
 import unmutedSVG from '../images/unmuted.svg';
 
@@ -20,11 +19,9 @@ import unmutedSVG from '../images/unmuted.svg';
  * @returns {JSX.Element} Rendered Welcome component.
  */
 
-const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobby, muted, setMuted }) => {
+const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, setButtonClicked, buttonClicked, playDenied }) => {
   const [playEnter] = useSound(Enter, {volume: muted ? 0: 0.1});
   const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
-  const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
-  const [buttonClicked, setButtonClicked] = useState(false);
   const maxLength = 16;
   const navigate = useNavigate();
 
@@ -36,7 +33,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
         return;
       }
       try {
-        console.log('Attempting to join lobby...')
+        // console.log('Attempting to join lobby...')
         // set user color for the lobby
         const generatedAvatar = minidenticon(user, '90', '55')
         const match = /fill="([^"]+)"/.exec(generatedAvatar);
@@ -87,9 +84,9 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
   }, [joinLobby])
 
   return (
-    <div className='App'>
+    <div className='Welcome'>
       <div className='welcome-container'>
-        <h1 className='app-h'>Word Roulette Go!</h1>
+        <h1 className='app-h'>WarpSockets</h1>
         <h3 className='app-sh'>create or join a lobby.</h3>
         <div className='app-input'>
           <div className='app-user'>

@@ -4,6 +4,9 @@
   grid-template-rows: repeat(3, auto);
   justify-content: center;
   align-items: center;
+  user-select: none;
+  opacity: 1;
+  animation: fade 200ms linear;
 }
 
 .app-h {
@@ -15,7 +18,7 @@
   font-size: 55px;
   margin-top: 20vh;
   margin-bottom: 0px;
-  user-select: none;
+  animation: float 4000ms infinite ease-in-out;
 }
 
 .app-sh {
@@ -24,16 +27,21 @@
   color: rgb(218, 240, 245);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
   font-family: "GohuFont uni14 Nerd Font Mono";
-  font-size: 40px;
+  font-size: 36px;
   margin-top: 15px;
-  user-select: none;
+  animation: float 4000ms infinite ease-in-out;
+}
+
+@keyframes float {
+  0% { transform: translatey(0px); }
+  50% { transform: translatey(10px); }
+  100% { transform: translatey(0px); }
 }
 
 .toggle-mute {
   border: none;
   background: none;
   cursor: pointer;
-  user-select: none;
 }
 
 .app-input {
@@ -65,7 +73,6 @@
 .app-enter-container {
   display: flex;
   justify-content: space-around;
-  user-select: none;
 }
 
 .app-enter {
@@ -88,11 +95,6 @@
 
 .app-enter:hover {
   transform: scale(1.05);
-}
-
-.error {
-  background-color: rgb(171, 32, 32);
-  transition: background-color 0.2s;
 }
 
 /* small screen/mobile alterations */

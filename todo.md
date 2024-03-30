@@ -19,3 +19,5 @@
 - [x] A WebSocket connection should only be instantiated when a user enters a lobby, not upon coming to the site itself
 - [x] Reduce served font file sizes
 - [ ] Use React Router as good practice instead of conditional.
+- [ ] New name ideas
+  - WarpSocket

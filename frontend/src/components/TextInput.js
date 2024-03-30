@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, maxLength}) => {
+export const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, maxLength, buttonClicked}) => {
   const adjustTextareaHeight = () => {
     if(textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -9,7 +9,7 @@ export const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, max
   };
 
   return (
-    <div className="expanding-text">
+    <div className={'expanding-text'}>
       <textarea
         ref={textareaRef}
         value={value}

@@ -21,12 +21,22 @@ textarea {
   outline: none;
   padding: 8px;
   resize: none;
+  transition: background-color 0.2s;
 }
 
 a {
   font-style: italic;
   color: rgba(250, 235, 215, 0.767);
   text-decoration: none;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+@keyframes fade {
+  0% { opacity: 0 }
+  100% { opacity: 1 }
 }
 
 @keyframes move-background {
@@ -110,6 +120,11 @@ a {
   height: 50px;
   width: 50px;
   /* background-color: rgba(226, 245, 218, 0.098); */
+}
+
+.error {
+  background-color: rgb(171, 32, 32);
+  transition: background-color 0.2s;
 }
 
 /* Width */
