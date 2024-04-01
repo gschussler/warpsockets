@@ -30,7 +30,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const [hovered, setHovered] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
-  const lobbyRef = useRef(null);
+  const listRef = useRef(null);
   const textareaRef = useRef(null);
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
@@ -66,7 +66,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           color: userColor
         };
 
-        //! Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent in try/catch statement)
+        //* Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent in try/catch statement)
         let date = new Date();
         const formattedTime = (date) => {
           let hrs = date.getHours();
@@ -78,9 +78,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
 
           return `${hrs}:${mins}${meridiem}`;
         }
-
-        // add message to message list immediately (currently, crudely changes property names to match message properties when returned from the server.)
-        setMessageList(prevMessages => groupMessages({ ...messageContent, User: user, Content: message, messageColor: userColor, FormattedTime: formattedTime(date) }, prevMessages));
         
         // if message fails to send, retry sending
         let retries = 0;
@@ -89,17 +86,22 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         while (retries < maxRetries) {
           // try sending to server as normal
           try {
+            // send to server to be broadcasted to lobby
             await socket.current.send(JSON.stringify(messageContent));
+
+            // add message to message list immediately for sender (currently, crudely changes property names to match server-side Message struct properties.)
+            setMessageList(prevMessages => groupMessages({ ...messageContent, User: user, Content: message, Color: userColor, FormattedTime: formattedTime(date) }, prevMessages));
+
             playSend();
-            // prepare a message to be appended to the message list
             setMessage('');
             // return input box to original height
             if(textareaRef.current) {
               textareaRef.current.style.height = 'auto';
             }
-            if(isNearBottom()) {
-              lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
-            }
+            // scroll to the bottom after message is sent (had to delay to give a few more ms for the DOM to update)
+            setTimeout(() => {
+              listRef.current.scrollTop = listRef.current.scrollHeight;
+            }, 0)
             return;
           } catch (error) {
             // message failed to send
@@ -109,7 +111,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             await new Promise(resolve => setTimeout(resolve, 1000));
           }
         }
-        // reached max tries --> should display something to user.
+        // reached max tries --> need to display something to user.
         console.error('Max retry count reached. Failed to send message.');
       } else {
         playDenied();
@@ -122,49 +124,49 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   };
 
   /**
-   * Check scroll wheel height to:
-   * 1. Keep scroll wheel at the bottom of the lobby
-   * 2. Display new messages button if not near the bottom.
-   * @returns Boolean - scroll wheel is at the bottom or not.
+   * Checks if the position of the scroll wheel is near the bottom of the lobby.
+   * @returns {boolean} - True if at the bottom; False if not.
    */
 
+  // TODO: Find better solution than 100px for determining scrollwheel distance from bottom
   const isNearBottom = () => {
-    const { scrollTop, scrollHeight, clientHeight } = lobbyRef.current;
+    const { scrollTop, scrollHeight, clientHeight } = listRef.current;
     return scrollHeight - scrollTop <= clientHeight + 100;
   };
 
-  const handleScroll = () => {
-    if(isNearBottom()) {
-      setNewMessagesButton(false);
-    } else {
-      setNewMessagesButton(true);
+  const handleNewMessageScroll = useMemo(() => {
+    return () => {
+      if(isNearBottom()) {
+        setNewMessagesButton(false);
+      }
     }
-  }
+  }, [setNewMessagesButton]);
 
   useEffect(() => {
-    if(lobbyRef.current) {
-      lobbyRef.current.addEventListener('scroll', handleScroll);
+    if(listRef.current) {
+      listRef.current.addEventListener("scroll", handleNewMessageScroll);
 
       return () => {
-        if(lobbyRef.current) {
-          lobbyRef.current.removeEventListener('scroll', handleScroll);
+        // need to check listRef once more to make sure it is necessary to remove the reference during unmounting
+        if(listRef.current) {
+          listRef.current.removeEventListener("scroll", handleNewMessageScroll);
         }
       };
     }
-  }, []);
+  }, [handleNewMessageScroll, listRef]);
 
-  // TIME is set up on the backend, figure out proper order of parsing here (current user message vs existing message)
   useEffect(() => {
+    /**
+     * Handles incoming messages from server.
+     * - Broadcasted message is parsed and grouped based on user identity and timestamp.
+     * - Message is then appended to messageList.
+     * @param {MessageEvent} e - The event containing the incoming message data from server.
+     */
     const handleMessage = (e) => {
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
 
-      // Removed broadcasting back to the current user, so this is unnecessary
-      // // check if current user sent the message being handled
-      // const messageColor = messageContent.User === user ? userColor : messageContent.Color;
-      const messageColor = messageContent.Color;
-
-      setMessageList(prevMessages => groupMessages({ ...messageContent, messageColor}, prevMessages));
+      setMessageList(prevMessages => groupMessages(messageContent, prevMessages));
 
       // // log the amount of time it took for a message to be sent and received back on the frontend
       // const endTime = performance.now();
@@ -173,7 +175,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
 
       // check if the scrollbar is at the bottom after the message is added
       if(isNearBottom()) {
-        lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
+        listRef.current.scrollTop = listRef.current.scrollHeight;
       } else {
         setNewMessagesButton(true);
       }
@@ -203,27 +205,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       };
     }
   }, [socket]);
-
-  const handleNewMessageScroll = useMemo(() => {
-    return () => {
-      if(isNearBottom()) {
-        setNewMessagesButton(false);
-      }
-    }
-  }, [setNewMessagesButton]);
-
-  useEffect(() => {
-    if(lobbyRef.current) {
-      lobbyRef.current.addEventListener("scroll", handleNewMessageScroll);
-
-      return () => {
-        // need to check lobbyRef once more to make sure it is necessary to remove the reference during unmounting
-        if(lobbyRef.current) {
-          lobbyRef.current.removeEventListener("scroll", handleNewMessageScroll);
-        }
-      };
-    }
-  }, [handleNewMessageScroll, lobbyRef]);
 
   return (
     <div className='lobby'>
@@ -259,8 +240,8 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         </div>
       </div>
       <div className='lobby-content'>
-        <div className='lobby-body' ref={lobbyRef}>
-          <div className='message-list'>
+        <div className='lobby-body'>
+          <div className='message-list' ref={listRef}>
           {messageList.slice().reverse().map((messageContent, index) => {
             // define message class based on who sent the message
             return (
@@ -273,7 +254,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
                 key={index}
               >
                 <div className='message-info'>
-                  <p className='user' style={{ color: messageContent.messageColor }}>{messageContent.User}</p>
+                  <p className='user' style={{ color: messageContent.Color }}>{messageContent.User}</p>
                   <p className='time'>{`${messageContent.FormattedTime}`}</p>
                 </div>
                 <div className='message-content'>
@@ -305,8 +286,8 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             <button
               className={`new-messages ${newMessagesButton ? 'visible' : ''}`}
               onClick={() => {
-                if (lobbyRef.current) {
-                  lobbyRef.current.scrollTop = lobbyRef.current.scrollHeight;
+                if (listRef.current) {
+                  listRef.current.scrollTop = listRef.current.scrollHeight;
                   setNewMessagesButton(false);
                 }
               }}

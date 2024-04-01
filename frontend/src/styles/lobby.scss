@@ -92,15 +92,14 @@
 }
 
 .lobby-body {
+  display: flex;
   width: 100%;
   margin: 0 auto;
   max-height: calc(76vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
   min-height: calc(76vh);
-  overflow-y: scroll;
+  // overflow-y: auto; /* no longer necessary for lobby-body to control overflow-y behavior*/
   /* border-bottom: 1px solid rgb(49, 50, 46); */
   /* box-shadow: 0px 20px 0px rgba(49, 50, 46, 0.281); */
-  scrollbar-width: thin;
-  scrollbar-color: rgb(68, 65, 60) rgba(34, 35, 33, 0); /*thumb and track colors*/
 }
 
 .lobby-c {
@@ -114,8 +113,14 @@
 }
 
 .message-list {
+  width: 100%;
   display: flex;
   flex-direction: column-reverse;
+  align-items: center;
+  overflow-y: scroll;
+  // scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(68, 65, 60) rgba(34, 35, 33, 0); /*thumb and track colors*/
   // gap: 10px;
 }
 
