@@ -6,7 +6,7 @@ import useSound from 'use-sound';
 import Send from '../sounds/zap.mp3';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
-import { MinidenticonImg, groupMessages, isNearBottom } from './utils.js';
+import { MinidenticonImg, groupMessages } from './utils.js';
 import { ExpandingTextarea } from './TextInput.js';
 
 /**
@@ -22,7 +22,7 @@ import { ExpandingTextarea } from './TextInput.js';
  * @returns {JSX.Element} - Rendered Lobby component
  */
 
-const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied }) => {
+const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied, shifted, setShifted }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
@@ -46,7 +46,17 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     }
     setUser('');
     setLobby('');
+    toggleBackgroundShift();
     navigate('/');
+  }
+
+  const toggleBackgroundShift = () => {
+    setShifted(!shifted);
+
+    const stars = document.querySelector('.stars');
+    if(stars) {
+      stars.classList.toggle('shifted');
+    }
   }
 
   /**
@@ -66,7 +76,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           color: userColor
         };
 
-        //* Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent in try/catch statement)
+        //* Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent through socket.)
         let date = new Date();
         const formattedTime = (date) => {
           let hrs = date.getHours();
@@ -131,29 +141,29 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   // TODO: Find better solution than 100px for determining scrollwheel distance from bottom
   const isNearBottom = () => {
     const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-    return scrollHeight - scrollTop <= clientHeight + 100;
+    return scrollHeight - scrollTop <= clientHeight + 10;
   };
 
-  const handleNewMessageScroll = useMemo(() => {
-    return () => {
-      if(isNearBottom()) {
-        setNewMessagesButton(false);
-      }
-    }
-  }, [setNewMessagesButton]);
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     if(isNearBottom()) {
+  //       setNewMessagesButton(false);
+  //     } else {
+  //       setNewMessagesButton(true);
+  //     }
+  //   };
 
-  useEffect(() => {
-    if(listRef.current) {
-      listRef.current.addEventListener("scroll", handleNewMessageScroll);
+  //   if(listRef.current) {
+  //     listRef.current.addEventListener("scroll", handleScroll);
 
-      return () => {
-        // need to check listRef once more to make sure it is necessary to remove the reference during unmounting
-        if(listRef.current) {
-          listRef.current.removeEventListener("scroll", handleNewMessageScroll);
-        }
-      };
-    }
-  }, [handleNewMessageScroll, listRef]);
+  //     return () => {
+  //       // need to check listRef once more to make sure it is necessary to remove the reference during unmounting
+  //       if(listRef.current) {
+  //         listRef.current.removeEventListener("scroll", handleScroll);
+  //       }
+  //     };
+  //   }
+  // }, [listRef, setNewMessagesButton]);
 
   useEffect(() => {
     /**
@@ -172,13 +182,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       // const endTime = performance.now();
       // const duration = endTime - startTimeRef.current;
       // console.log(`Send/receive speed of current client's last message: ${duration}ms`)
-
-      // check if the scrollbar is at the bottom after the message is added
-      if(isNearBottom()) {
-        listRef.current.scrollTop = listRef.current.scrollHeight;
-      } else {
-        setNewMessagesButton(true);
-      }
     };
 
     const handleSocketClose = () => {
@@ -283,23 +286,23 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           </button>
         </div>
         {newMessagesButton && (
-            <button
-              className={`new-messages ${newMessagesButton ? 'visible' : ''}`}
-              onClick={() => {
-                if (listRef.current) {
-                  listRef.current.scrollTop = listRef.current.scrollHeight;
-                  setNewMessagesButton(false);
-                }
-              }}
-            >
-              ↓ New Messages ↓
-            </button>
-          )}
-          { disconnected && (
-            <div className='disconnected'>
-              <p> DISCONNECTED... </p>
-            </div>
-          )}
+          <button
+            className={`new-messages`}
+            onClick={() => {
+              if (listRef.current) {
+                listRef.current.scrollTop = listRef.current.scrollHeight;
+                setNewMessagesButton(false);
+              }
+            }}
+          >
+            ↓ New Messages ↓
+          </button>
+        )}
+        {disconnected && (
+          <div className='disconnected'>
+            <p> DISCONNECTED... </p>
+          </div>
+        )}
       </div>
     </div>
   );

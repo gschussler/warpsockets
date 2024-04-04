@@ -17,7 +17,7 @@
 
 .lobby-title {
   font-size: 25px;
-  font-family:"GohuFont uni14 Nerd Font Mono";
+  font-family:"Gohu Nerd Font";
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
   user-select: none;
@@ -95,11 +95,8 @@
   display: flex;
   width: 100%;
   margin: 0 auto;
-  max-height: calc(76vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
-  min-height: calc(76vh);
-  // overflow-y: auto; /* no longer necessary for lobby-body to control overflow-y behavior*/
-  /* border-bottom: 1px solid rgb(49, 50, 46); */
-  /* box-shadow: 0px 20px 0px rgba(49, 50, 46, 0.281); */
+  max-height: calc(74vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
+  min-height: calc(74vh);
 }
 
 .lobby-c {
@@ -121,7 +118,7 @@
   // scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgb(68, 65, 60) rgba(34, 35, 33, 0); /*thumb and track colors*/
-  // gap: 10px;
+  padding-bottom: 1vh;
 }
 
 /* considering a conditional div that better separates messages */
@@ -136,7 +133,7 @@
   align-self: center;
   color: #b5b3b0;
   /* background-color: #b5b3b006; */
-  font-family: "DinaRemaster";
+  font-family: "Gohu Nerd Font";
   border-radius: 5px;
   cursor: default;
   user-select: none;
@@ -283,6 +280,7 @@
 }
 
 .new-messages {
+  display: block;
   background-color: rgba(51, 52, 57, 0.59);
   backdrop-filter: blur(8px);
   color: rgb(202, 191, 175);
@@ -292,13 +290,8 @@
   position: fixed;
   top: 90px;
   cursor: pointer;
-  display: none;
   font-size: 16px;
   animation: wiggle 1s infinite;
-}
-
-.new-messages.visible {
-  display: block;
 }
 
 @keyframes wiggle {
@@ -382,7 +375,7 @@
   position: absolute;
   top: 30%;
   font-size: 70px;
-  font-family: 'DinaRemaster';
+  font-family: 'Gohu Nerd Font';
   color: #930C03;
   animation: pulse 1500ms infinite;
 }
@@ -403,7 +396,7 @@
 @media only screen and (max-width: 668px) {
   .lobby-welcome {
     font-size: 20px;
-    font-family:"GohuFont uni14 Nerd Font Mono";
+    font-family:"Gohu Nerd Font";
     color: rgb(226, 245, 218);
     text-shadow: 0px 2px 4px rgb(56, 56, 56);
     text-align: center;

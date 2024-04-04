@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/welcome.scss';
 import { minidenticon } from 'minidenticons';
-import { MinidenticonImg } from './utils.js';
+import { MinidenticonImg, toggleBackgroundShift } from './utils.js';
 import useSound from 'use-sound';
 import Enter from '../sounds/wheep-wheep.mp3';
 import Click from '../sounds/mouse-click.mp3';
@@ -19,11 +19,25 @@ import unmutedSVG from '../images/unmuted.svg';
  * @returns {JSX.Element} Rendered Welcome component.
  */
 
-const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, setButtonClicked, buttonClicked, playDenied }) => {
+const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, setButtonClicked, buttonClicked, playDenied, shifted, setShifted }) => {
   const [playEnter] = useSound(Enter, {volume: muted ? 0: 0.1});
   const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
   const maxLength = 16;
   const navigate = useNavigate();
+
+  const handleEnterClick = () => {
+    joinLobby();
+    toggleBackgroundShift();
+  }
+
+  const toggleBackgroundShift = () => {
+    setShifted(!shifted);
+
+    const stars = document.querySelector('.stars');
+    if(stars) {
+      stars.classList.toggle('shifted');
+    }
+  }
 
   const joinLobby = async (e) => {
     setButtonClicked(true);
@@ -53,8 +67,9 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
       setTimeout(() => {
         setButtonClicked(false);
       }, 100);
-
-      playDenied();
+      if(!muted) {
+        playDenied();
+      }
     }
   };
 
@@ -87,7 +102,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
     <div className='Welcome'>
       <div className='welcome-container'>
         <h1 className='app-h'>WarpSockets</h1>
-        <h3 className='app-sh'>create or join a lobby.</h3>
+        <h3 className='app-sh'>for a moment in time, you are connected...</h3>
         <div className='app-input'>
           <div className='app-user'>
             <p className='no-select'>Username:</p>
@@ -95,7 +110,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
               className='app-textarea'
               value={user}
               onChange={(e) => setUser(e.target.value)}
-              placeholder='Choose your username!'
+              placeholder='Choose your username.'
               maxLength={maxLength}
             />
           </div>
@@ -105,7 +120,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
               className='app-textarea'
               value={lobby}
               onChange={(e) => setLobby(e.target.value)}
-              placeholder='Create or join a lobby!'
+              placeholder='Create or join a lobby.'
               maxLength={maxLength}
             />
           </div>
@@ -117,7 +132,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
               saturation="90"
               lightness="55"
             />
-            <button className={`app-enter ${buttonClicked && (user === '' || lobby === '') ? 'error' : ''}`} onClick={joinLobby}>ENTER</button>
+            <button className={`app-enter ${buttonClicked && (user === '' || lobby === '') ? 'error' : ''}`} onClick={handleEnterClick}>ENTER</button>
             <button className='toggle-mute' onClick={toggleMute}>
               <img
                 src={muted ? mutedSVG : unmutedSVG}

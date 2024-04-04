@@ -4,6 +4,7 @@
   grid-template-rows: repeat(3, auto);
   justify-content: center;
   align-items: center;
+  margin-top: 20vh;
   user-select: none;
   opacity: 1;
   animation: fade 300ms linear;
@@ -14,9 +15,8 @@
   justify-content: center;
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
-  font-family: "GohuFont uni14 Nerd Font Mono";
+  font-family: "Gohu Nerd Font";
   font-size: 55px;
-  margin-top: 20vh;
   margin-bottom: 0px;
   animation: float 4000ms infinite ease-in-out;
 }
@@ -26,7 +26,7 @@
   justify-content: center;
   color: rgb(218, 240, 245);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
-  font-family: "GohuFont uni14 Nerd Font Mono";
+  font-family: "Gohu Nerd Font";
   font-size: 36px;
   margin-top: 15px;
   animation: float 4000ms infinite ease-in-out;
@@ -84,7 +84,7 @@
   width: fit-content;
   color: rgb(34, 35, 33);
   text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
-  font-family: "GohuFont uni14 Nerd Font Mono";
+  font-family: "Gohu Nerd Font";
   font-weight: bold;
   font-size: 25px;
   place-self: center;
@@ -112,7 +112,7 @@
     justify-content: center;
     color: rgb(226, 245, 218);
     text-shadow: 0px 2px 4px rgb(56, 56, 56);
-    font-family: "GohuFont uni14 Nerd Font Mono";
+    font-family: "Gohu Nerd Font";
     font-size: 34px;
   }
 
@@ -121,7 +121,7 @@
     justify-content: center;
     color: rgb(218, 240, 245);
     text-shadow: 0px 2px 4px rgb(56, 56, 56);
-    font-family: "GohuFont uni14 Nerd Font Mono";
+    font-family: "Gohu Nerd Font";
     font-size: 22px;
   }
 

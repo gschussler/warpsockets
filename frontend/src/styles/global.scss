@@ -3,11 +3,12 @@
 html,
 body {
   position: relative;
-  // background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  z-index: 0;
   background-color: black;
   height: 100%;
+  width: 100%;
   overflow: hidden;
-  z-index: 3;
+  font-family: "ProggyVector";
 }
 
 textarea {
@@ -17,7 +18,6 @@ textarea {
   color: antiquewhite;
   border-radius: 4px;
   font-size: 16px;
-  font-family: "ProggyVector";
   outline: none;
   padding: 8px;
   resize: none;
@@ -34,83 +34,31 @@ img {
   -webkit-user-drag: none;
 }
 
-@keyframes fade {
-  0% { opacity: 0 }
-  100% { opacity: 1 }
-}
-
-@keyframes move-background {
-  from {
-    -webkit-transform: translate3d(0px, 0px, 0px);
-  }
-  to { 
-    -webkit-transform: translate3d(1000px, 0px, 0px);
-  }
-}
-@-webkit-keyframes move-background {
-  from {
-    -webkit-transform: translate3d(0px, 0px, 0px);
-  }
-  to { 
-    -webkit-transform: translate3d(1000px, 0px, 0px);
-  }
-}
-
-@-moz-keyframes move-background {    
-  from {
-    -webkit-transform: translate3d(0px, 0px, 0px);
-  }
-  to { 
-    -webkit-transform: translate3d(1000px, 0px, 0px);
-  }
-}
-
-    @-webkit-keyframes move-background {
-  from {
-    -webkit-transform: translate3d(0px, 0px, 0px);
-  }
-  to { 
-    -webkit-transform: translate3d(1000px, 0px, 0px);
-  }
-}
-
-.background-container{
-  position: fixed;
-  top: 0;
-  left:0;
-  bottom: 0;
-  right: 0;
-  z-index: -1;
-  animation: fade 1s linear;
-}
-
 .stars {
-  background: black url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/stars.png) repeat;
-  position: absolute;
+  position: fixed;
+  z-index: -1;
   top: 0;
-  bottom: 0;
   left: 0;
-  right: 0;
-  display: block;
-  z-index: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url('../../../backend/static/stars.svg');
+  background-repeat: repeat;
+  background-size: 50%;
+  transition: background-position 2s ease;
 }
 
-.twinkling{
-  width:10000px;
-  height: 100%;
-  background: transparent url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/1231630/twinkling.png") repeat;
-  background-size: 1000px 1000px;
+.stars.shifted {
+  background-position: -100px 0;
+}
+
+.stars::after {
+  content: "";
   position: absolute;
-  right: 0;
   top: 0;
-  bottom: 0;
-  z-index: 1;
-    
-  -moz-animation:move-background 60s linear infinite;
-  -ms-animation:move-background 60s linear infinite;
-  -o-animation:move-background 60s linear infinite;
-  -webkit-animation:move-background 60s linear infinite;
-  animation:move-background 60s linear infinite;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Adjust the alpha value for the desired dimming effect */
 }
 
 .no-select {
@@ -147,43 +95,18 @@ img {
   background: #555;
 }
 
-/* unsure about using .not-connected for pre-lobby just yet */
-/* .not-connected {
-  display: grid;
-  grid-template-rows: 30px;
-  background-color: rgba(226, 245, 218, 0.775);
-  color: rgb(34, 35, 33);
-  border-radius: 10px;
-  margin-top: 15px;
-  justify-content: center;
-  text-align: left;
-  font-family: "GohuFont uni14 Nerd Font Mono";
-  font-size: 25px;
-  transition: 1s;
-  animation: wiggle 2s infinite;
+@keyframes fade {
+  0% { opacity: 0 }
+  100% { opacity: 1 }
 }
-*/
 
 /*
 Point fontfaces to server-side fonts.
 - Reduced DinaRemaster and Gohu to latin characters for smaller filesize (https://stackoverflow.com/questions/2635423/way-to-reduce-size-of-ttf-fonts). ProggyVector is the user-input font, so kept all characters (might revisit to reduce size further). WOFF conversion for compatibility.
 */
-@font-face {
-  font-family: 'DinaRemaster';
-  src: url('../../../backend/static/DinaRemasterSmaller-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
 
 @font-face {
-  font-family: 'DinaRemaster';
-  src: url('../../../backend/static/DinaRemasterSmaller-Bold.woff') format('woff');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'GohuFont uni14 Nerd Font Mono';
+  font-family: 'Gohu Nerd Font';
   src: url('../../../backend/static/GohuFontSmaller.woff') format('woff');
   font-weight: normal;
   font-style: normal;
