@@ -44,7 +44,7 @@ img {
   background-image: url('../../../backend/static/stars.svg');
   background-repeat: repeat;
   background-size: 50%;
-  transition: background-position 2s ease;
+  transition: background-position 1.5s ease;
 }
 
 .stars.shifted {
@@ -58,7 +58,7 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Adjust the alpha value for the desired dimming effect */
+  background-color: rgba(0, 0, 0, 0.6); /* Adjust the alpha value for the desired dimming effect */
 }
 
 .no-select {
