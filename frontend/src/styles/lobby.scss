@@ -93,20 +93,34 @@
 
 .lobby-body {
   display: flex;
+  flex-direction: column-reverse;
   width: 100%;
   margin: 0 auto;
   max-height: calc(74vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
   min-height: calc(74vh);
+  overflow-y: scroll;
+  // scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(68, 65, 60) rgba(34, 35, 33, 0); /*thumb and track colors*/
 }
 
-.lobby-c {
+// .lobby-c {
+//   display: flex;
+//   border: 1px solid rgb(226, 245, 218);
+//   border-radius: 4px;
+//   background-color: rgb(34, 35, 33);
+//   color: rgb(226, 245, 218);
+//   text-shadow: 0px 2px 4px rgb(45, 46, 44);
+//   font-family: "ProggyVector";
+// }
+
+.lobby-welcome {
+  width: 96%;
   display: flex;
-  border: 1px solid rgb(226, 245, 218);
-  border-radius: 4px;
-  background-color: rgb(34, 35, 33);
+  justify-content: center;
   color: rgb(226, 245, 218);
-  text-shadow: 0px 2px 4px rgb(45, 46, 44);
-  font-family: "ProggyVector";
+  padding: 1%;
+  margin: 1%;
 }
 
 .message-list {
@@ -114,10 +128,6 @@
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
-  overflow-y: scroll;
-  // scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: rgb(68, 65, 60) rgba(34, 35, 33, 0); /*thumb and track colors*/
   padding-bottom: 1vh;
 }
 
@@ -394,14 +404,14 @@
 
 /* small screen/mobile alterations */
 @media only screen and (max-width: 668px) {
-  .lobby-welcome {
-    font-size: 20px;
-    font-family:"Gohu Nerd Font";
-    color: rgb(226, 245, 218);
-    text-shadow: 0px 2px 4px rgb(56, 56, 56);
-    text-align: center;
-    user-select: none;
-  }
+  // .lobby-welcome {
+  //   font-size: 20px;
+  //   font-family:"Gohu Nerd Font";
+  //   color: rgb(226, 245, 218);
+  //   text-shadow: 0px 2px 4px rgb(56, 56, 56);
+  //   text-align: center;
+  //   user-select: none;
+  // }
 
   .lobby-content {
     display: flex;

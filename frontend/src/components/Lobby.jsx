@@ -245,27 +245,30 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       <div className='lobby-content'>
         <div className='lobby-body'>
           <div className='message-list' ref={listRef}>
-          {messageList.slice().reverse().map((messageContent, index) => {
-            // define message class based on who sent the message
-            return (
-              <div
-                className={
-                  messageContent.User === 'System' ? 'message system-message'
-                  : messageContent.User === user ? 'message message-cr'
-                  : 'message message-cl'
-                }
-                key={index}
-              >
-                <div className='message-info'>
-                  <p className='user' style={{ color: messageContent.Color }}>{messageContent.User}</p>
-                  <p className='time'>{`${messageContent.FormattedTime}`}</p>
+            {messageList.slice().reverse().map((messageContent, index) => {
+              // define message class based on who sent the message
+              return (
+                <div
+                  className={
+                    messageContent.User === 'System' ? 'message system-message'
+                    : messageContent.User === user ? 'message message-cr'
+                    : 'message message-cl'
+                  }
+                  key={index}
+                >
+                  <div className='message-info'>
+                    <p className='user' style={{ color: messageContent.Color }}>{messageContent.User}</p>
+                    <p className='time'>{`${messageContent.FormattedTime}`}</p>
+                  </div>
+                  <div className='message-content'>
+                    {messageContent.Content}
+                  </div>
                 </div>
-                <div className='message-content'>
-                  {messageContent.Content}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+          <div className='lobby-welcome'>
+              <p>welcome!</p>
           </div>
         </div>
         <div className='lobby-footer'>
