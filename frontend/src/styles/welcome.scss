@@ -7,7 +7,7 @@
   margin-top: 20vh;
   user-select: none;
   opacity: 1;
-  animation: fade 300ms linear;
+  animation: fade 500ms linear;
 }
 
 .app-h {
@@ -63,11 +63,11 @@
   color: rgb(226, 245, 218);
   font-family: "DinaRemaster";
   font-size: 25px;
-  gap: 20px;
+  gap: 10px;
 }
 
 .app-textarea {
-  height: 40px;
+  height: 37px;
 }
 
 .app-enter-container {

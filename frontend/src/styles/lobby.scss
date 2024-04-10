@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: fade 300ms linear;
+  animation: fade 500ms linear;
 }
 
 .lobby-h {
@@ -316,13 +316,13 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 30%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   border: none;
   border: 1px solid #cccccc8e;
   border-radius: 10%;
-  padding: 20px;
+  padding: 30px;
   color: antiquewhite;
   background-color: rgba(233, 233, 233, 0.209);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);

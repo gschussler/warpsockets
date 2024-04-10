@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/lobby.scss';
 import Settings from './Settings.jsx';
 import useSound from 'use-sound';
+import Leave from '../sounds/wrgExit2_short.mp3' 
 import Send from '../sounds/zap.mp3';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
@@ -22,7 +23,7 @@ import { ExpandingTextarea } from './TextInput.js';
  * @returns {JSX.Element} - Rendered Lobby component
  */
 
-const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied, shifted, setShifted }) => {
+const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [newMessagesButton, setNewMessagesButton] = useState(false);
@@ -30,6 +31,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const [hovered, setHovered] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
+  const [playLeave] = useSound(Leave, {volume: muted ? 0: 0.1});
   const listRef = useRef(null);
   const textareaRef = useRef(null);
   const navigate = useNavigate();
@@ -46,17 +48,15 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     }
     setUser('');
     setLobby('');
-    toggleBackgroundShift();
+    playLeave();
+    lobbyBackgroundShift();
     navigate('/');
   }
 
-  const toggleBackgroundShift = () => {
-    setShifted(!shifted);
-
+  const lobbyBackgroundShift = () => {
     const stars = document.querySelector('.stars');
-    if(stars) {
-      stars.classList.toggle('shifted');
-    }
+    // Return to star background to original position
+    stars.style.backgroundPosition = '0 0';
   }
 
   /**

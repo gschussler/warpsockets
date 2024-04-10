@@ -1,5 +1,5 @@
-//* Outputs a SVG of randomized location/size white pixels
-//* IF USING, change ext to `.go`, otherwise use `.txt`
+// * Outputs a SVG of randomized location/size white pixels
+// * IF USING, change ext to `.go`, otherwise use `.txt`
 package main
 
 import (
@@ -8,6 +8,8 @@ import (
 	"os"
 	"time"
 )
+
+var starColors = []string{"#fff", "#faf9e8", "#fcfad2", "#faf6b1"}
 
 func generateSVG(width, height, numStars int) string {
 	rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -20,7 +22,10 @@ func generateSVG(width, height, numStars int) string {
 		x := rand.Intn(width)
 		y := rand.Intn(height)
 
-		svg += fmt.Sprintf(`<circle cx="%d" cy="%d" r="%d" fill="#fff"/>`, x, y, size)
+		colorIndex := rand.Intn(len(starColors))
+		fill := starColors[colorIndex]
+
+		svg += fmt.Sprintf(`<circle cx="%d" cy="%d" r="%d" fill="%s"/>`, x, y, size, fill)
 	}
 
 	svg += `</svg>`

@@ -61,6 +61,23 @@ export const groupMessages = (newMessage, messageList) => {
   }
 };
 
+// Use trigonometry to assign a direction for the stars background shift
+const getRandomDirection = () => {
+  // Assign random angle between 0 and 359 degrees
+  const randomAngle = Math.floor(Math.random() * 360);
+  // calculate horizontal and vertical components assuming 200 pixel linear directional movement
+  const deltaX = Math.cos(randomAngle * Math.PI / 180) * 400;
+  const deltaY = Math.sin(randomAngle * Math.PI / 180) * 400;
+  return `${deltaX}px ${deltaY}px`;
+}
+
+// apply getRandomDirection to the stars div
+export const applyShift = () => {
+  const stars = document.querySelector('.stars');
+  stars.style.backgroundPosition = getRandomDirection();
+}
+
+
 // /**
 //  * Limits the rate of invocation of a passed in function
 //  * @param {Function} func - Function to throttle.

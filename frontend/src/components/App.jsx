@@ -17,7 +17,6 @@ const App = () => {
   const [userColor, setUserColor] = useState('')
   const [lobby, setLobby] = useState('');
   const [buttonClicked, setButtonClicked] = useState(false);
-  const [shifted, setShifted] = useState(false);
   const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
   const [muted, setMuted] = useState(false);
   // socket data needs to be accessible by other components through socket.current; Lobby.jsx after the call to join a lobby within Welcome.jsx
@@ -86,8 +85,6 @@ const App = () => {
             buttonClicked={buttonClicked}
             setButtonClicked={setButtonClicked}
             playDenied={playDenied}
-            shifted={shifted}
-            setShifted={setShifted}
           />
         }
       />
@@ -104,8 +101,6 @@ const App = () => {
             muted={muted}
             setMuted={setMuted}
             playDenied={playDenied}
-            shifted={shifted}
-            setShifted={setShifted}
           />
         }
       />

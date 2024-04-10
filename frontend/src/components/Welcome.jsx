@@ -3,13 +3,13 @@
  * @module Welcome
  */
 
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/welcome.scss';
 import { minidenticon } from 'minidenticons';
-import { MinidenticonImg, toggleBackgroundShift } from './utils.js';
+import { MinidenticonImg, applyShift } from './utils.js';
 import useSound from 'use-sound';
-import Enter from '../sounds/wheep-wheep.mp3';
+import Enter from '../sounds/wrgEnter3_short.mp3';
 import Click from '../sounds/mouse-click.mp3';
 import mutedSVG from '../images/muted.svg';
 import unmutedSVG from '../images/unmuted.svg';
@@ -19,25 +19,11 @@ import unmutedSVG from '../images/unmuted.svg';
  * @returns {JSX.Element} Rendered Welcome component.
  */
 
-const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, setButtonClicked, buttonClicked, playDenied, shifted, setShifted }) => {
+const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, setButtonClicked, buttonClicked, playDenied }) => {
   const [playEnter] = useSound(Enter, {volume: muted ? 0: 0.1});
   const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
   const maxLength = 16;
   const navigate = useNavigate();
-
-  const handleEnterClick = () => {
-    joinLobby();
-    toggleBackgroundShift();
-  }
-
-  const toggleBackgroundShift = () => {
-    setShifted(!shifted);
-
-    const stars = document.querySelector('.stars');
-    if(stars) {
-      stars.classList.toggle('shifted');
-    }
-  }
 
   const joinLobby = async (e) => {
     setButtonClicked(true);
@@ -58,6 +44,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
         playEnter();
         // then switch display to lobby
         setButtonClicked(false);
+        applyShift();
         navigate('/lobby');
       } catch (error) {
         console.error('Error joining lobby:', error.message);
@@ -132,7 +119,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
               saturation="90"
               lightness="55"
             />
-            <button className={`app-enter ${buttonClicked && (user === '' || lobby === '') ? 'error' : ''}`} onClick={handleEnterClick}>ENTER</button>
+            <button className={`app-enter ${buttonClicked && (user === '' || lobby === '') ? 'error' : ''}`} onClick={joinLobby}>ENTER</button>
             <button className='toggle-mute' onClick={toggleMute}>
               <img
                 src={muted ? mutedSVG : unmutedSVG}
