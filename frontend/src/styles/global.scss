@@ -34,6 +34,16 @@ img {
   -webkit-user-drag: none;
 }
 
+::-moz-selection {
+  color: black;
+  background: antiquewhite;
+}
+
+::selection {
+  color: black;
+  background: antiquewhite;
+}
+
 .stars {
   position: fixed;
   z-index: -1;

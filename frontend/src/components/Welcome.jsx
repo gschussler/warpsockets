@@ -13,6 +13,8 @@ import Enter from '../sounds/wrgEnter3_short.mp3';
 import Click from '../sounds/mouse-click.mp3';
 import mutedSVG from '../images/muted.svg';
 import unmutedSVG from '../images/unmuted.svg';
+import logoL from '../images/astronaut-galaxy-l.svg'
+import logoR from '../images/astronaut-galaxy-r.svg'
 
 /**
  * Handles client information state and other interactions with the landing page.
@@ -88,8 +90,11 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
   return (
     <div className='Welcome'>
       <div className='welcome-container'>
-        <h1 className='app-h'>WarpSockets</h1>
-        <h3 className='app-sh'>for a moment in time, you are connected...</h3>
+        <div className='app-h'>
+          <img src={logoL} className='logo-l' />
+          <h3 className='title'>WarpSockets</h3>
+          <img src={logoR} className='logo-r' />
+        </div>
         <div className='app-input'>
           <div className='app-user'>
             <p className='no-select'>Username:</p>

@@ -7,6 +7,7 @@ import Leave from '../sounds/wrgExit2_short.mp3'
 import Send from '../sounds/zap.mp3';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
+import astronautSvg from '../images/astronaut.svg'
 import { MinidenticonImg, groupMessages } from './utils.js';
 import { ExpandingTextarea } from './TextInput.js';
 
@@ -268,7 +269,9 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             })}
           </div>
           <div className='lobby-welcome'>
-              <p>welcome!</p>
+            <p className='astronaut-greet'> For a moment in time, you are connected...</p>
+            <img src={astronautSvg} alt='Welcome!' className='astronaut'/>
+            <p className='astronaut-greet'> Welcome.</p>
           </div>
         </div>
         <div className='lobby-footer'>
