@@ -11,8 +11,8 @@ import { MinidenticonImg, applyShift } from './utils.js';
 import useSound from 'use-sound';
 import Enter from '../sounds/wrgEnter3_short.mp3';
 import Click from '../sounds/mouse-click.mp3';
-import mutedSVG from '../images/muted.svg';
-import unmutedSVG from '../images/unmuted.svg';
+import soundOff from '../images/sound-off.svg';
+import soundOn from '../images/sound-on.svg';
 import logoL from '../images/astronaut-galaxy-l.svg'
 import logoR from '../images/astronaut-galaxy-r.svg'
 
@@ -127,7 +127,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
             <button className={`app-enter ${buttonClicked && (user === '' || lobby === '') ? 'error' : ''}`} onClick={joinLobby}>ENTER</button>
             <button className='toggle-mute' onClick={toggleMute}>
               <img
-                src={muted ? mutedSVG : unmutedSVG}
+                src={muted ? soundOff : soundOn}
                 alt={muted ? 'Unmute' : 'Mute'}
               />
             </button>

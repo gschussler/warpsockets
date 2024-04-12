@@ -271,7 +271,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <div className='lobby-welcome'>
             <p className='astronaut-greet'> For a moment in time, you are connected...</p>
             <img src={astronautSvg} alt='Welcome!' className='astronaut'/>
-            <p className='astronaut-greet'> Welcome.</p>
           </div>
         </div>
         <div className='lobby-footer'>

@@ -68,8 +68,6 @@
   border: none;
   background: none;
   /* color: rgba(255, 23, 7, 0.553); */
-  height: 50px;
-  width: 50px;
   border-radius: 4px;
   transition: transform .5s;
   cursor: pointer;
@@ -94,6 +92,7 @@
 .lobby-body {
   display: flex;
   flex-direction: column-reverse;
+  justify-content: space-between;
   width: 100%;
   margin: 0 auto;
   max-height: calc(74vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
@@ -121,10 +120,11 @@
   justify-content: center;
   align-items: center;
   color: rgb(226, 245, 218);
+  // background-image: url('../../../backend/static/meteor.svg');
   padding: 1%;
   padding-bottom: 5vh;
   margin: 1%;
-  border-bottom: 1px outset #b5b3b03b;
+  // border-bottom: 1px outset #b5b3b03b;
   user-select: none;
 }
 
@@ -132,10 +132,11 @@
   align-self: center;
   width: 20vw;
   border-radius: 123px;
-  // color: #959ba5;
+  // color: #959ba588;
 }
 
 .astronaut-greet {
+  font-size: 20px;
   color: #b5b3b0;
   padding: 5px;
 }
