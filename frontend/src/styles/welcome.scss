@@ -112,7 +112,12 @@
 }
 
 .app-enter:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
+}
+
+.app-enter:focus {
+  outline-width: 4px;
+  transform: scale(1.1);
 }
 
 /* small screen/mobile alterations */

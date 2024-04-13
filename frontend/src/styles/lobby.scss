@@ -59,7 +59,6 @@
 
 .settings:hover {
   transform: rotate(90deg);
-  transition: transform .5s;
 }
 
 .leave-lobby {
@@ -70,12 +69,11 @@
   /* color: rgba(255, 23, 7, 0.553); */
   border-radius: 4px;
   transition: transform .5s;
-  cursor: pointer;
 }
 
 .leave-lobby:hover {
-  transform: scale(1.08);
-  transition: transform .5s;
+  transform: scale(1.1);
+  cursor: pointer;
   /* font-size: 45px; */
 }
 
@@ -121,15 +119,13 @@
   align-items: center;
   color: rgb(226, 245, 218);
   // background-image: url('../../../backend/static/meteor.svg');
-  padding: 1%;
-  padding-bottom: 5vh;
-  margin: 1%;
-  // border-bottom: 1px outset #b5b3b03b;
+  padding: 4%;
+  margin: 4%;
+  border-bottom: 1px dashed #b5b3b03b;
   user-select: none;
 }
 
 .astronaut {
-  align-self: center;
   width: 20vw;
   border-radius: 123px;
   // color: #959ba588;
@@ -302,9 +298,19 @@
 }
 
 .send:hover {
-  transform: scale(1.05);
-  transition: .2s;
+  animation: breathe 2s infinite;
   cursor: pointer;
+}
+
+.send:focus {
+  animation: breathe 2s infinite;
+  cursor: pointer;
+}
+
+@keyframes breathe {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 .new-messages {

@@ -44,6 +44,14 @@ img {
   background: antiquewhite;
 }
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline-color: rgb(56, 56, 56);
+    outline-width: 1px;
+}
+
 .stars {
   position: fixed;
   z-index: -1;

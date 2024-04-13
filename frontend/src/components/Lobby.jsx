@@ -5,6 +5,7 @@ import Settings from './Settings.jsx';
 import useSound from 'use-sound';
 import Leave from '../sounds/wrgExit2_short.mp3' 
 import Send from '../sounds/zap.mp3';
+import Cog from '../sounds/cog.mp3'
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg'
 import astronautSvg from '../images/astronaut.svg'
@@ -27,16 +28,22 @@ import { ExpandingTextarea } from './TextInput.js';
 const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
-  const [newMessagesButton, setNewMessagesButton] = useState(false);
+  const [newMessages, setNewMessages] = useState(false);
   const [disconnected, setDisconnected] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
+  const [playCog] = useSound(Cog, {volume: muted ? 0: 0.03});
   const [playLeave] = useSound(Leave, {volume: muted ? 0: 0.1});
-  const listRef = useRef(null);
   const textareaRef = useRef(null);
+  const lobbyBody = document.querySelector('.lobby-body');
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
+
+  const openModal = () => {
+    setSettingsModalOpen(true);
+    playCog();
+  }
 
   /**
    * Leaves the lobby and closes the client's WebSocket connection
@@ -109,10 +116,13 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             if(textareaRef.current) {
               textareaRef.current.style.height = 'auto';
             }
-            // scroll to the bottom after message is sent (had to delay to give a few more ms for the DOM to update)
-            setTimeout(() => {
-              listRef.current.scrollTop = listRef.current.scrollHeight;
-            }, 0)
+            // Scroll to the bottom of the lobby-body after the message is sent
+            // DOM changes barely too slow, setTimeout to add a few ms.
+            if (lobbyBody) {
+              setTimeout(() => {
+                lobbyBody.scrollTop = lobbyBody.scrollHeight;
+              }, 0);
+            }
             return;
           } catch (error) {
             // message failed to send
@@ -139,33 +149,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
    * @returns {boolean} - True if at the bottom; False if not.
    */
 
-  // TODO: Find better solution than 100px for determining scrollwheel distance from bottom
-  const isNearBottom = () => {
-    const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-    return scrollHeight - scrollTop <= clientHeight + 10;
-  };
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     if(isNearBottom()) {
-  //       setNewMessagesButton(false);
-  //     } else {
-  //       setNewMessagesButton(true);
-  //     }
-  //   };
-
-  //   if(listRef.current) {
-  //     listRef.current.addEventListener("scroll", handleScroll);
-
-  //     return () => {
-  //       // need to check listRef once more to make sure it is necessary to remove the reference during unmounting
-  //       if(listRef.current) {
-  //         listRef.current.removeEventListener("scroll", handleScroll);
-  //       }
-  //     };
-  //   }
-  // }, [listRef, setNewMessagesButton]);
-
   useEffect(() => {
     /**
      * Handles incoming messages from server.
@@ -178,6 +161,14 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       let messageContent = JSON.parse(e.data);
 
       setMessageList(prevMessages => groupMessages(messageContent, prevMessages));
+
+      // Check receiving clients' scroll wheel positions in order to display the new message button or snap to the bottom if within threshold.
+      //! check when able to run start script (remove this first if there are troubles)
+      if(lobbyBody) {
+        const { scrollTop, scrollHeight, clientHeight } = lobbyBody;
+        const nearBottom = scrollHeight - scrollTop <= clientHeight + 10;
+        !nearBottom ? setNewMessages(true) : lobbyBody.scrollTop = lobbyBody.scrollHeight;
+      }
 
       // // log the amount of time it took for a message to be sent and received back on the frontend
       // const endTime = performance.now();
@@ -225,7 +216,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <div className='user-title' style={{ color: userColor }}>{user}</div>
         </div>
         <div className='buttons-container-h'>
-          <button className='settings' onClick={() => setSettingsModalOpen(true)}>
+          <button className='settings' onClick={() => openModal()}>
             <img src={settingsSvg} alt='Settings' />
           </button>
           {settingsModalOpen && (
@@ -245,7 +236,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       </div>
       <div className='lobby-content'>
         <div className='lobby-body'>
-          <div className='message-list' ref={listRef}>
+          <div className='message-list'>
             {messageList.slice().reverse().map((messageContent, index) => {
               // define message class based on who sent the message
               return (
@@ -290,13 +281,13 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             Send
           </button>
         </div>
-        {newMessagesButton && (
+        {newMessages && (
           <button
             className={`new-messages`}
             onClick={() => {
-              if (listRef.current) {
-                listRef.current.scrollTop = listRef.current.scrollHeight;
-                setNewMessagesButton(false);
+              if (lobbyBody) {
+                lobbyBody.scrollTop = lobbyBody.scrollHeight;
+                setNewMessages(false);
               }
             }}
           >

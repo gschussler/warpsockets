@@ -7,6 +7,11 @@
 - [x] Limit max username/lobby name length (16 char at the moment)
 - [ ] Limit max number of messages in the chatroom
 - [x] Add onto an already-sent message if the immediate next message is sent by the same user (prevents unnecessary repetition of message-info)
+- [ ] Robust scroll logic
+  - [x] Snap to the bottom if SENDING a message (**reference container of scrollwheel (.lobby-body)**).
+  - [x] Show "New Messages" button IF RECEIVING a message AND not in range determined "near-bottom".
+  - [ ] Remove "New Messages" button in two scenarios: 1. Client scrolls to the bottom manually (need listener) 2. "New Messages" button is clicked (which snaps user to the bottom)
+- [ ] Think of better solution to serve up the backend than port-forwarding (NGINX is a solid start, but needs a better pairing). UPDATE - going to experiment with GCP Compute Engine free tier, keep frontend on vercel?
 
 ## FIX
 - [x] usage of dotenv for external ip in the socket connection from the frontend (possibly find solution not dotenv?)
