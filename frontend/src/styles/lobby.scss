@@ -292,8 +292,7 @@
   border-radius: 5px;
   margin-right: 10px;
   margin-left: 10px;
-  transition: .2s;
-  margin-bottom: 1.7%;
+  margin-bottom: 11px;
   transition: .2s;
 }
 
@@ -304,7 +303,6 @@
 
 .send:focus {
   animation: breathe 2s infinite;
-  cursor: pointer;
 }
 
 @keyframes breathe {
@@ -407,10 +405,13 @@
 
 .disconnected {
   position: absolute;
+  display: flex;
   top: 30%;
   font-size: 70px;
   font-family: 'Gohu Nerd Font';
   color: #930C03;
+  user-select: none;
+  text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
   animation: pulse 1500ms infinite;
 }
 

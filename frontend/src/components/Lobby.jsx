@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/lobby.scss';
 import Settings from './Settings.jsx';
 import useSound from 'use-sound';
-import Leave from '../sounds/wrgExit2_short.mp3' 
+import Leave from '../sounds/wrgExit2_short.mp3';
 import Send from '../sounds/zap.mp3';
-import Cog from '../sounds/cog.mp3'
+import Cog from '../sounds/cog.mp3';
 import leaveSvg from '../images/leave.svg';
-import settingsSvg from '../images/settings.svg'
-import astronautSvg from '../images/astronaut.svg'
+import settingsSvg from '../images/settings.svg';
+import astronautSvg from '../images/astronaut.svg';
 import { MinidenticonImg, groupMessages } from './utils.js';
 import { ExpandingTextarea } from './TextInput.js';
 
@@ -33,10 +33,10 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const [hovered, setHovered] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
-  const [playCog] = useSound(Cog, {volume: muted ? 0: 0.03});
+  const [playCog] = useSound(Cog, {volume: muted ? 0: 0.02});
   const [playLeave] = useSound(Leave, {volume: muted ? 0: 0.1});
   const textareaRef = useRef(null);
-  const lobbyBody = document.querySelector('.lobby-body');
+  const lobbyBodyRef = useRef(null);
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
 
@@ -113,16 +113,15 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             playSend();
             setMessage('');
             // return input box to original height
-            if(textareaRef.current) {
-              textareaRef.current.style.height = 'auto';
-            }
+            textareaRef.current.style.height = 'auto';
             // Scroll to the bottom of the lobby-body after the message is sent
-            // DOM changes barely too slow, setTimeout to add a few ms.
-            if (lobbyBody) {
-              setTimeout(() => {
-                lobbyBody.scrollTop = lobbyBody.scrollHeight;
-              }, 0);
-            }
+            // DOM changes are barely too slow, setTimeout to add a few ms (consider a more exact solution).
+            setTimeout(() => {
+              if(lobbyBodyRef.current) {
+                const { scrollHeight, clientHeight } = lobbyBodyRef.current
+                lobbyBodyRef.current.scrollTo(0, scrollHeight - clientHeight);
+              }
+            }, 0);
             return;
           } catch (error) {
             // message failed to send
@@ -144,6 +143,10 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     }
   };
 
+  useEffect(() => {
+    lobbyBodyRef.current = document.querySelector('.lobby-body');
+  }, []);
+
   /**
    * Checks if the position of the scroll wheel is near the bottom of the lobby.
    * @returns {boolean} - True if at the bottom; False if not.
@@ -162,13 +165,22 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
 
       setMessageList(prevMessages => groupMessages(messageContent, prevMessages));
 
-      // Check receiving clients' scroll wheel positions in order to display the new message button or snap to the bottom if within threshold.
-      //! check when able to run start script (remove this first if there are troubles)
-      if(lobbyBody) {
-        const { scrollTop, scrollHeight, clientHeight } = lobbyBody;
-        const nearBottom = scrollHeight - scrollTop <= clientHeight + 10;
-        !nearBottom ? setNewMessages(true) : lobbyBody.scrollTop = lobbyBody.scrollHeight;
-      }
+      //! new messages logic remains flawed --> useRef solves most problems with changing div dimensions
+      //  however, message grouping logic in groupMessages interferes with the below calculations:
+      //    - bind scroll logic for receiving messages to the groupMessages function? introduces prop drilling unless groupMessages is relocated :(
+      //    - relocate groupMessages
+      setTimeout(() => {
+        if(lobbyBodyRef.current) {
+          const { scrollTop, scrollHeight, clientHeight } = lobbyBodyRef.current;
+          // need a more robust buffer than a hardcoded value (message divs have dynamic height because of groupMessages)
+          if(scrollHeight - clientHeight >= scrollTop + 81.5) {
+            setNewMessages(true);
+          } else {
+            setNewMessages(false);
+            lobbyBodyRef.current.scrollTo(0, scrollHeight - clientHeight);
+          }
+        }
+      })
 
       // // log the amount of time it took for a message to be sent and received back on the frontend
       // const endTime = performance.now();
@@ -235,7 +247,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         </div>
       </div>
       <div className='lobby-content'>
-        <div className='lobby-body'>
+        <div className='lobby-body' ref={lobbyBodyRef}>
           <div className='message-list'>
             {messageList.slice().reverse().map((messageContent, index) => {
               // define message class based on who sent the message
@@ -285,8 +297,9 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <button
             className={`new-messages`}
             onClick={() => {
-              if (lobbyBody) {
-                lobbyBody.scrollTop = lobbyBody.scrollHeight;
+              if (lobbyBodyRef.current) {
+                const { scrollHeight, clientHeight } = lobbyBodyRef.current;
+                lobbyBodyRef.current.scrollTo(0, scrollHeight - clientHeight);
                 setNewMessages(false);
               }
             }}
@@ -296,7 +309,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         )}
         {disconnected && (
           <div className='disconnected'>
-            <p> DISCONNECTED... </p>
+            <p> Signal Lost... </p>
           </div>
         )}
       </div>
