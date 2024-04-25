@@ -143,10 +143,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     }
   };
 
-  useEffect(() => {
-    
-  }, [messageList]);
-
   /**
    * Checks if the position of the scroll wheel is near the bottom of the lobby.
    * @returns {boolean} - True if at the bottom; False if not.
