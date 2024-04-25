@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
-const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, maxLength}) => {
+export const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, maxLength, buttonClicked}) => {
   const adjustTextareaHeight = () => {
     if(textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -9,7 +9,7 @@ const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, maxLength}
   };
 
   return (
-    <div className="expanding-text">
+    <div className={'expanding-text'}>
       <textarea
         ref={textareaRef}
         value={value}
@@ -26,5 +26,3 @@ const ExpandingTextarea = ({ value, onChange, onKeyDown, textareaRef, maxLength}
     </div>
   )
 };
-
-export { ExpandingTextarea };

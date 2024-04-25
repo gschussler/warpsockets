@@ -1,0 +1,55 @@
+// * Outputs a SVG of randomized location/size white pixels
+// * IF USING, change ext to `.go`, otherwise use `.txt`
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"os"
+	"time"
+)
+
+var starColors = []string{"#fff", "#faf9e8", "#fcfad2", "#faf6b1"}
+
+func generateSVG(width, height, numStars int) string {
+	rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	var svg string
+	svg += fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">`, width, height)
+
+	for i := 0; i < numStars; i++ {
+		size := rand.Intn(3) + 1
+		x := rand.Intn(width)
+		y := rand.Intn(height)
+
+		colorIndex := rand.Intn(len(starColors))
+		fill := starColors[colorIndex]
+
+		svg += fmt.Sprintf(`<circle cx="%d" cy="%d" r="%d" fill="%s"/>`, x, y, size, fill)
+	}
+
+	svg += `</svg>`
+	return svg
+}
+
+func main() {
+	width := 1920
+	height := 1080
+	numStars := 200
+
+	svg := generateSVG(width, height, numStars)
+	file, err := os.Create("stars.svg")
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(svg)
+	if err != nil {
+		fmt.Println("Error writing to file:", err)
+		return
+	}
+
+	fmt.Println("SVG file generated successfully!")
+}

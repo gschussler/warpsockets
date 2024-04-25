@@ -1,0 +1,159 @@
+/* styling for App.js */
+.welcome-container {
+  display: grid;
+  grid-template-rows: auto;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20vh;
+  user-select: none;
+  opacity: 1;
+  animation: fade 500ms linear;
+}
+
+.app-h {
+  display: flex;
+  height: 115px;
+  flex-direction: row;
+  column-gap: 15px;
+  justify-content: center;
+  align-items: center;
+  animation: float 4000ms infinite ease-in-out;
+}
+
+.title {
+  color: rgb(226, 245, 218);
+  text-shadow: 0px 2px 4px rgb(56, 56, 56);
+  font-family: "Gohu Nerd Font";
+  font-size: 55px;
+  margin-left: 5px;
+}
+
+.logo-r {
+  align-self: flex-end;
+  width: 6vw;
+  transform: translateX(4px);
+}
+
+.logo-l {
+  align-self: flex-end;
+  width: 6vw;
+}
+
+// .app-sh {
+//   display: flex;
+//   justify-content: center;
+//   color: rgb(218, 240, 245);
+//   text-shadow: 0px 2px 4px rgb(56, 56, 56);
+//   font-family: "Gohu Nerd Font";
+//   font-size: 36px;
+//   margin-top: 15px;
+//   animation: float 4000ms infinite ease-in-out;
+// }
+
+@keyframes float {
+  0% { transform: translatey(0px); }
+  50% { transform: translatey(10px); }
+  100% { transform: translatey(0px); }
+}
+
+.toggle-mute {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.app-input {
+  display: grid;
+  grid-template-rows: repeat(3, auto);
+  grid-template-columns: 400px;
+  justify-content: center;
+  align-items: center;
+  font-family: "ProggyVector";
+}
+
+.app-user,
+.app-lobby {
+  display: grid;
+  border: none;
+  outline: none;
+  align-items: center;
+  grid-template-columns: 140px 1fr;
+  color: rgb(226, 245, 218);
+  font-family: "DinaRemaster";
+  font-size: 25px;
+  gap: 10px;
+}
+
+.app-textarea {
+  height: 37px;
+}
+
+.app-enter-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.app-enter {
+  display: grid;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: none;
+  border-radius: 6px;
+  width: fit-content;
+  color: rgb(34, 35, 33);
+  text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
+  font-family: "Gohu Nerd Font";
+  font-weight: bold;
+  font-size: 25px;
+  place-self: center;
+  cursor: pointer;
+  /* margin-top: 15px; */
+  transition: 0.2s;
+}
+
+.app-enter:hover {
+  transform: scale(1.1);
+}
+
+.app-enter:focus {
+  outline-width: 4px;
+  transform: scale(1.1);
+}
+
+/* small screen/mobile alterations */
+@media only screen and (max-width: 668px) {
+  .welcome-container {
+    display: grid;
+    grid-template-rows: repeat(2, 110px);
+    justify-content: center;
+    align-items: center;
+    height: 95vh;
+  }
+
+  .app-h {
+    display: grid;
+    justify-content: center;
+    color: rgb(226, 245, 218);
+    text-shadow: 0px 2px 4px rgb(56, 56, 56);
+    font-family: "Gohu Nerd Font";
+    font-size: 34px;
+  }
+
+  .app-sh {
+    display: flex;
+    justify-content: center;
+    color: rgb(218, 240, 245);
+    text-shadow: 0px 2px 4px rgb(56, 56, 56);
+    font-family: "Gohu Nerd Font";
+    font-size: 22px;
+  }
+
+  .app-input {
+    display: grid;
+    grid-template-rows: repeat(3, auto);
+    grid-template-columns: 350px;
+    justify-content: center;
+    align-items: center;
+    font-family: "ProggyVector";
+  }
+}

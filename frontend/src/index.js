@@ -6,9 +6,9 @@ import styles from './styles/global.scss';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/*",
     element: <App />,
-  },
+  }
 ])
 
 createRoot(document.getElementById('root')).render(

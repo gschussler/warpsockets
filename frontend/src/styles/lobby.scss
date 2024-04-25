@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: fade 500ms linear;
 }
 
 .lobby-h {
@@ -14,9 +15,9 @@
   width: 100%;
 }
 
-.lobby-welcome {
+.lobby-title {
   font-size: 25px;
-  font-family:"GohuFont uni14 Nerd Font Mono";
+  font-family:"Gohu Nerd Font";
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
   user-select: none;
@@ -26,6 +27,11 @@
   display: flex;
   gap: 10px;
   user-select: none;
+  transition: 300ms ease-in-out;
+}
+
+.user-container:hover {
+  transform: scale(1.1);
 }
 
 .user-title {
@@ -49,11 +55,11 @@
   background: none;
   transition: transform .5s;
   cursor: pointer;
+  user-select: none;
 }
 
 .settings:hover {
   transform: rotate(90deg);
-  transition: transform .5s;
 }
 
 .leave-lobby {
@@ -62,16 +68,14 @@
   border: none;
   background: none;
   /* color: rgba(255, 23, 7, 0.553); */
-  height: 50px;
-  width: 50px;
   border-radius: 4px;
   transition: transform .5s;
-  cursor: pointer;
+  user-select: none;
 }
 
 .leave-lobby:hover {
-  transform: scale(1.08);
-  transition: transform .5s;
+  transform: scale(1.1);
+  cursor: pointer;
   /* font-size: 45px; */
 }
 
@@ -86,31 +90,61 @@
 }
 
 .lobby-body {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
   width: 100%;
   margin: 0 auto;
-  max-height: calc(76vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
-  min-height: calc(76vh);
+  max-height: calc(74vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
+  min-height: calc(74vh);
   overflow-y: scroll;
-  /* border-bottom: 1px solid rgb(49, 50, 46); */
-  /* box-shadow: 0px 20px 0px rgba(49, 50, 46, 0.281); */
+  // scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgb(68, 65, 60) rgba(34, 35, 33, 0); /*thumb and track colors*/
 }
 
-.lobby-c {
+// .lobby-c {
+//   display: flex;
+//   border: 1px solid rgb(226, 245, 218);
+//   border-radius: 4px;
+//   background-color: rgb(34, 35, 33);
+//   color: rgb(226, 245, 218);
+//   text-shadow: 0px 2px 4px rgb(45, 46, 44);
+//   font-family: "ProggyVector";
+// }
+
+.lobby-welcome {
+  // width: 96%;
   display: flex;
-  border: 1px solid rgb(226, 245, 218);
-  border-radius: 4px;
-  background-color: rgb(34, 35, 33);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   color: rgb(226, 245, 218);
-  text-shadow: 0px 2px 4px rgb(45, 46, 44);
-  font-family: "ProggyVector";
+  // background-image: url('../../../backend/static/meteor.svg');
+  padding: 4%;
+  margin: 4%;
+  border-bottom: 1px dashed #b5b3b03b;
+  user-select: none;
+}
+
+.astronaut {
+  width: 20vw;
+  border-radius: 123px;
+  // color: #959ba588;
+}
+
+.astronaut-greet {
+  font-size: 20px;
+  color: #b5b3b0;
+  padding: 5px;
 }
 
 .message-list {
+  width: 100%;
   display: flex;
   flex-direction: column-reverse;
-  // gap: 10px;
+  align-items: center;
+  padding-bottom: 1vh;
 }
 
 /* considering a conditional div that better separates messages */
@@ -125,7 +159,7 @@
   align-self: center;
   color: #b5b3b0;
   /* background-color: #b5b3b006; */
-  font-family: "DinaRemaster";
+  font-family: "Gohu Nerd Font";
   border-radius: 5px;
   cursor: default;
   user-select: none;
@@ -142,17 +176,10 @@
   white-space: pre-line;
 }
 
-.message-content {
-  font-family: "ProggyVector";
-  margin: 5px;
-  line-height: 1.5;
-  // font-size: 18px;
-}
-
 /* current user msg */
 .message-cr {
   align-self: flex-start;
-  // align-items: flex-end;
+  align-items: flex-start;
   padding-left: 10px;
   padding-right: 10px;
   margin: 10px;
@@ -171,13 +198,13 @@
 .message-cl {
   // color: rgb(34, 35, 33);
   // background-color: antiquewhite;
-  color: antiquewhite;
   align-self: flex-start;
   align-items: flex-start;
-  text-align: left;
   padding-left: 10px;
   padding-right: 10px;
+  margin: 10px;
   border-radius: 10px;
+  color: antiquewhite;
   transition: background-color .2s;
 }
 
@@ -187,6 +214,13 @@
   // background-color: rgb(202, 191, 175);
   // color: rgb(29, 30, 28);
   // transition: .3s
+}
+
+.message-content {
+  font-family: "ProggyVector";
+  margin: 5px;
+  line-height: 1.5;
+  // font-size: 18px;
 }
 
 .message-info {
@@ -220,7 +254,7 @@
 .lobby-footer {
   display: flex;
   flex-direction: row;
-  /* align-items: center; */
+  align-items: flex-end;
   position: fixed;
   bottom: 50px;
   resize: none;
@@ -230,8 +264,7 @@
   width: 100%;
   max-height: 90px;
   min-height: 40px;
-  min-width: 50vh;
-  max-width: 50vh;
+  width: 50vh;
   align-self: center;
   scrollbar-color: rgba(47, 43, 36, 0.982) rgba(47, 43, 36, 0.982); /* hiding within background */
 }
@@ -261,17 +294,28 @@
   border-radius: 5px;
   margin-right: 10px;
   margin-left: 10px;
+  margin-bottom: 11px;
   transition: .2s;
 }
 
 .send:hover {
-  transform: scale(1.05);
-  transition: .2s;
+  animation: breathe 2s infinite;
   cursor: pointer;
 }
 
+.send:focus {
+  animation: breathe 2s infinite;
+}
+
+@keyframes breathe {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 .new-messages {
-  background-color: rgba(51, 52, 57, 0.284);
+  display: block;
+  background-color: rgba(51, 52, 57, 0.59);
   backdrop-filter: blur(8px);
   color: rgb(202, 191, 175);
   border: none;
@@ -280,13 +324,8 @@
   position: fixed;
   top: 90px;
   cursor: pointer;
-  display: none;
   font-size: 16px;
   animation: wiggle 1s infinite;
-}
-
-.new-messages.visible {
-  display: block;
 }
 
 @keyframes wiggle {
@@ -311,13 +350,13 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 30%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
   border: none;
   border: 1px solid #cccccc8e;
   border-radius: 10%;
-  padding: 20px;
+  padding: 30px;
   color: antiquewhite;
   background-color: rgba(233, 233, 233, 0.209);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -366,16 +405,40 @@
   cursor: pointer;
 }
 
+.disconnected {
+  position: absolute;
+  display: flex;
+  top: 30%;
+  font-size: 70px;
+  font-family: 'Gohu Nerd Font';
+  color: #930C03;
+  user-select: none;
+  text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+  animation: pulse 1500ms infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* small screen/mobile alterations */
 @media only screen and (max-width: 668px) {
-  .lobby-welcome {
-    font-size: 20px;
-    font-family:"GohuFont uni14 Nerd Font Mono";
-    color: rgb(226, 245, 218);
-    text-shadow: 0px 2px 4px rgb(56, 56, 56);
-    text-align: center;
-    user-select: none;
-  }
+  // .lobby-welcome {
+  //   font-size: 20px;
+  //   font-family:"Gohu Nerd Font";
+  //   color: rgb(226, 245, 218);
+  //   text-shadow: 0px 2px 4px rgb(56, 56, 56);
+  //   text-align: center;
+  //   user-select: none;
+  // }
 
   .lobby-content {
     display: flex;
