@@ -37,6 +37,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const [playLeave] = useSound(Leave, {volume: muted ? 0: 0.1});
   const textareaRef = useRef(null);
   const lobbyBodyRef = useRef(null);
+  const lastMessage = useRef(null);
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
 
@@ -118,8 +119,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             // DOM changes are barely too slow, setTimeout to add a few ms (consider a more exact solution).
             setTimeout(() => {
               if(lobbyBodyRef.current) {
-                const { scrollHeight, clientHeight } = lobbyBodyRef.current
-                lobbyBodyRef.current.scrollTo(0, scrollHeight - clientHeight);
+                lobbyBodyRef.current.scrollTo(0, Infinity);
               }
             }, 0);
             return;
@@ -144,8 +144,8 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   };
 
   useEffect(() => {
-    lobbyBodyRef.current = document.querySelector('.lobby-body');
-  }, []);
+    
+  }, [messageList]);
 
   /**
    * Checks if the position of the scroll wheel is near the bottom of the lobby.
@@ -166,21 +166,24 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       setMessageList(prevMessages => groupMessages(messageContent, prevMessages));
 
       //! new messages logic remains flawed --> useRef solves most problems with changing div dimensions
-      //  however, message grouping logic in groupMessages interferes with the below calculations:
-      //    - bind scroll logic for receiving messages to the groupMessages function? introduces prop drilling unless groupMessages is relocated :(
-      //    - relocate groupMessages
-      setTimeout(() => {
-        if(lobbyBodyRef.current) {
-          const { scrollTop, scrollHeight, clientHeight } = lobbyBodyRef.current;
-          // need a more robust buffer than a hardcoded value (message divs have dynamic height because of groupMessages)
-          if(scrollHeight - clientHeight >= scrollTop + 81.5) {
+      // scroll logic has greatly improved with more knowledge of the scrollwheel and div calculations.
+        // due to lobby-body rendering child divs in column-reverse order, the visual "bottom" of the div is actually the highest possible value: 0.5 (scrollTop === 0 on page load, and setting scrollTo to Infinity ends up at 0).
+        // if the user manually scrolls to the "bottom" of the container: scrollTop === 0.5. There must be a quirk in global or lobby scss that makes this possible.
+      if(lobbyBodyRef.current !== null) {
+        const { scrollTop } = lobbyBodyRef.current;
+        if(lastMessage.current) {
+          // check if the scroll wheel is not at the bottom of the container nor within the range between the bottom and the height of the last sent message. 
+            //! minor logic flaw: lastMessage is referencing the message sent one before the current one despite JSX logic targeting the current message as the reference
+          if(scrollTop !== 0 && scrollTop !== 0.5 && scrollTop * -1 >= lastMessage.current.scrollHeight) {
+            console.log(`returned true -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
             setNewMessages(true);
           } else {
+            console.log(`returned false -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
+            lobbyBodyRef.current.scrollTo(0, Infinity);
             setNewMessages(false);
-            lobbyBodyRef.current.scrollTo(0, scrollHeight - clientHeight);
           }
         }
-      })
+      }
 
       // // log the amount of time it took for a message to be sent and received back on the frontend
       // const endTime = performance.now();
@@ -251,6 +254,8 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <div className='message-list'>
             {messageList.slice().reverse().map((messageContent, index) => {
               // define message class based on who sent the message
+              // determine if this is the last message to have been sent
+              const isLastMessage = index === 0;
               return (
                 <div
                   className={
@@ -259,6 +264,8 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
                     : 'message message-cl'
                   }
                   key={index}
+                  // assign ref to the newest message in the list
+                  ref={isLastMessage ? lastMessage : null}
                 >
                   <div className='message-info'>
                     <p className='user' style={{ color: messageContent.Color }}>{messageContent.User}</p>
@@ -298,8 +305,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             className={`new-messages`}
             onClick={() => {
               if (lobbyBodyRef.current) {
-                const { scrollHeight, clientHeight } = lobbyBodyRef.current;
-                lobbyBodyRef.current.scrollTo(0, scrollHeight - clientHeight);
+                lobbyBodyRef.current.scrollTo(0, Infinity);
                 setNewMessages(false);
               }
             }}

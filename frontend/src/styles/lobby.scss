@@ -55,6 +55,7 @@
   background: none;
   transition: transform .5s;
   cursor: pointer;
+  user-select: none;
 }
 
 .settings:hover {
@@ -69,6 +70,7 @@
   /* color: rgba(255, 23, 7, 0.553); */
   border-radius: 4px;
   transition: transform .5s;
+  user-select: none;
 }
 
 .leave-lobby:hover {
