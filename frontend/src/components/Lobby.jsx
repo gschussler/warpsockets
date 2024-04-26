@@ -144,16 +144,45 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   };
 
   /**
-   * Checks if the position of the scroll wheel is near the bottom of the lobby.
-   * @returns {boolean} - True if at the bottom; False if not.
+   * Tracks updates to the y-position of the scroll wheel in order to remove the new messages button upon manually
+   * scrolling to the bottom of the message list.
+   * @returns {void}
    */
+  useEffect(() => {
+    // add scroll event listener that removes the new messages button from display if a user scrolls near the bottom of the container. at the same time, the scroll wheel snaps to the bottom of the container
+    const handleScroll = () => {
+      if(lobbyBodyRef.current !== null) {
+        const { scrollTop } = lobbyBodyRef.current;
+        // scrollTop is 0 on page load but 0.5 when a user manually scrolls to the bottom. there is no case where the user would not be fully up to date with messages between the value of 0 and 0.5, so >= is fine
+        if(scrollTop >= 0) {
+          setNewMessages(false);
+        }
+      }
+    }
+    // add scroll event listener
+    lobbyBodyRef.current.addEventListener('scroll', handleScroll);
 
+    return () => {
+      // remove scroll event listener on unmount (likely automatic because of built-in useEffect cleanup logic, but good practice)
+      if(lobbyBodyRef.current) {
+        lobbyBodyRef.current.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+
+  /**
+   * Listens for actions sent from the server such as a user message or the current WebSocket's connection/
+   * disconnection state update.
+   * @returns {void}
+   */
   useEffect(() => {
     /**
      * Handles incoming messages from server.
      * - Broadcasted message is parsed and grouped based on user identity and timestamp.
      * - Message is then appended to messageList.
+     * - New messages button is displayed or not based on scroll wheel position.
      * @param {MessageEvent} e - The event containing the incoming message data from server.
+     * @returns {void}
      */
     const handleMessage = (e) => {
       // receive incoming message(s) -- can receive from backend in different order need to fix
@@ -163,20 +192,21 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
 
       //! new messages logic remains flawed --> useRef solves most problems with changing div dimensions
       // scroll logic has greatly improved with more knowledge of the scrollwheel and div calculations.
-        // due to lobby-body rendering child divs in column-reverse order, the visual "bottom" of the div is actually the highest possible value: 0.5 (scrollTop === 0 on page load, and setting scrollTo to Infinity ends up at 0).
-        // if the user manually scrolls to the "bottom" of the container: scrollTop === 0.5. There must be a quirk in global or lobby scss that makes this possible.
+        // due to lobby-body rendering child divs in column-reverse order, the visual "bottom" of the div (or highest possible value) is actually...1 (scrollTop === 0 on page load, and setting scrollTo to Infinity ends up at 0).
+        // if the user manually scrolls to the "bottom" of the container: scrollTop === 1
       if(lobbyBodyRef.current !== null) {
         const { scrollTop } = lobbyBodyRef.current;
         if(lastMessage.current) {
+          console.log(lastMessage.current.scrollHeight);
           // check if the scroll wheel is not at the bottom of the container nor within the range between the bottom and the height of the last sent message. 
-            //! minor logic flaw: lastMessage is referencing the message sent one before the current one despite JSX logic targeting the current message as the reference
-          if(scrollTop !== 0 && scrollTop !== 0.5 && scrollTop * -1 >= lastMessage.current.scrollHeight) {
-            console.log(`returned true -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
+            //! minor flaw: lastMessage.current is referencing the message sent one before the current one despite JSX logic targeting reversed messageList[0] as the React reference. (line 254)
+          if(scrollTop !== 0 && scrollTop * -1 >= lastMessage.current.scrollHeight) {
+            // // console.log(`returned true -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
             setNewMessages(true);
           } else {
-            console.log(`returned false -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
-            lobbyBodyRef.current.scrollTo(0, Infinity);
+            // // console.log(`returned false -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
             setNewMessages(false);
+            lobbyBodyRef.current.scrollTo(0, 1);
           }
         }
       }
@@ -301,7 +331,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             className={`new-messages`}
             onClick={() => {
               if (lobbyBodyRef.current) {
-                lobbyBodyRef.current.scrollTo(0, Infinity);
+                lobbyBodyRef.current.scrollTo(0, 1);
                 setNewMessages(false);
               }
             }}
