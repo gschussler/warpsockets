@@ -6,6 +6,9 @@
   align-items: center;
   margin-top: 20vh;
   user-select: none;
+  font: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
   opacity: 1;
   animation: fade 500ms linear;
 }
@@ -18,13 +21,13 @@
   justify-content: center;
   align-items: center;
   animation: float 4000ms infinite ease-in-out;
+  font-family: "Gohu Nerd Font";
 }
 
 .title {
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
-  font-family: "Gohu Nerd Font";
-  font-size: 55px;
+  font-size: 350%;
   margin-left: 5px;
 }
 
@@ -68,7 +71,6 @@
   grid-template-columns: 400px;
   justify-content: center;
   align-items: center;
-  font-family: "ProggyVector";
 }
 
 .app-user,
@@ -79,13 +81,17 @@
   align-items: center;
   grid-template-columns: 140px 1fr;
   color: rgb(226, 245, 218);
-  font-family: "DinaRemaster";
-  font-size: 25px;
-  gap: 10px;
+  font-family: 'Gohu Nerd Font';
+}
+
+.label-user,
+.label-lobby {
+  font-size: 125%;
 }
 
 .app-textarea {
-  height: 37px;
+  font-size: 110%;
+  height: 67%;
 }
 
 .app-enter-container {
@@ -104,7 +110,7 @@
   text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
   font-family: "Gohu Nerd Font";
   font-weight: bold;
-  font-size: 25px;
+  font-size: 150%;
   place-self: center;
   cursor: pointer;
   /* margin-top: 15px; */
@@ -136,7 +142,7 @@
     color: rgb(226, 245, 218);
     text-shadow: 0px 2px 4px rgb(56, 56, 56);
     font-family: "Gohu Nerd Font";
-    font-size: 34px;
+    // font-size: 34px;
   }
 
   .app-sh {
@@ -145,7 +151,7 @@
     color: rgb(218, 240, 245);
     text-shadow: 0px 2px 4px rgb(56, 56, 56);
     font-family: "Gohu Nerd Font";
-    font-size: 22px;
+    // font-size: 22px;
   }
 
   .app-input {

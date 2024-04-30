@@ -24,14 +24,14 @@ import logoR from '../images/astronaut-galaxy-r.svg'
 const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, setButtonClicked, buttonClicked, playDenied }) => {
   const [playEnter] = useSound(Enter, {volume: muted ? 0: 0.1});
   const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
-  const maxLength = 16;
+  const maxLength = 20;
   const navigate = useNavigate();
 
   const joinLobby = async (e) => {
     setButtonClicked(true);
     if(user !== "" && lobby !== "") {
-      if(user.length > 16 || lobby.length > 16) {
-        console.error('Username and lobby name should be 16 characters or less.')
+      if(user.length > 20 || lobby.length > 20) {
+        console.error('Not sure how you did it, but username and lobby name should be 20 characters or less.')
         return;
       }
       try {
@@ -97,7 +97,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
         </div>
         <div className='app-input'>
           <div className='app-user'>
-            <p className='no-select'>Username:</p>
+            <p className='label-user'>Username:</p>
             <textarea
               className='app-textarea'
               value={user}
@@ -107,7 +107,7 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
             />
           </div>
           <div className='app-lobby'>
-            <p className='no-select'>Lobby Name:</p>
+            <p className='label-lobby'>Lobby Name:</p>
             <textarea
               className='app-textarea'
               value={lobby}

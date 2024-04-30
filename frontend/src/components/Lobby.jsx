@@ -47,7 +47,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   }
 
   /**
-   * Leaves the lobby and closes the client's WebSocket connection
+   * Leaves the lobby and initiates WebSocket closure.
    * @returns {void}
    */
   const leaveLobby = async () => {
@@ -103,23 +103,23 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         const maxRetries = 3;
 
         while (retries < maxRetries) {
-          // try sending to server as normal
           try {
-            // send to server to be broadcasted to lobby
+            // send the message to the server
             await socket.current.send(JSON.stringify(messageContent));
 
-            // add message to message list immediately for sender (currently, crudely changes property names to match server-side Message struct properties.)
+            // add message to message list immediately for the sender
+              // currently message property key labels are hardcoded to match server-side Message struct properties
             setMessageList(prevMessages => groupMessages({ ...messageContent, User: user, Content: message, Color: userColor, FormattedTime: formattedTime(date) }, prevMessages));
 
             playSend();
             setMessage('');
-            // return input box to original height
+            // resize input box to original height
             textareaRef.current.style.height = 'auto';
-            // Scroll to the bottom of the lobby-body after the message is sent
-            // DOM changes are barely too slow, setTimeout to add a few ms (consider a more exact solution).
+            // scroll to the bottom of the lobby-body after the message is sent
+            // DOM changes are barely too slow, setTimeout to add a few ms for React to reflect changes (consider a more exact solution).
             setTimeout(() => {
               if(lobbyBodyRef.current) {
-                lobbyBodyRef.current.scrollTo(0, Infinity);
+                lobbyBodyRef.current.scrollTo(0, 1);
               }
             }, 0);
             return;
@@ -159,11 +159,11 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         }
       }
     }
-    // add scroll event listener
+
     lobbyBodyRef.current.addEventListener('scroll', handleScroll);
 
     return () => {
-      // remove scroll event listener on unmount (likely automatic because of built-in useEffect cleanup logic, but good practice)
+      // built-in useEffect cleanup logic should handle removal, but this is good practice 
       if(lobbyBodyRef.current) {
         lobbyBodyRef.current.removeEventListener('scroll', handleScroll);
       }
@@ -197,7 +197,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       if(lobbyBodyRef.current !== null) {
         const { scrollTop } = lobbyBodyRef.current;
         if(lastMessage.current) {
-          console.log(lastMessage.current.scrollHeight);
+          // console.log(lastMessage.current.scrollHeight);
           // check if the scroll wheel is not at the bottom of the container nor within the range between the bottom and the height of the last sent message. 
             //! minor flaw: lastMessage.current is referencing the message sent one before the current one despite JSX logic targeting reversed messageList[0] as the React reference. (line 254)
           if(scrollTop !== 0 && scrollTop * -1 >= lastMessage.current.scrollHeight) {
@@ -323,7 +323,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             maxLength={160}
           />
           <button className='send' onClick={sendMessage}>
-            Send
+            SEND
           </button>
         </div>
         {newMessages && (

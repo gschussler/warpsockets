@@ -65,9 +65,9 @@ export const groupMessages = (newMessage, messageList) => {
 const getRandomDirection = () => {
   // Assign random angle between 0 and 359 degrees
   const randomAngle = Math.floor(Math.random() * 360);
-  // calculate horizontal and vertical components assuming 500 pixel linear directional movement
-  const deltaX = Math.cos(randomAngle * Math.PI / 180) * 500;
-  const deltaY = Math.sin(randomAngle * Math.PI / 180) * 500;
+  // calculate x and y deltas to be injected into background-position css
+  const deltaX = Math.cos(randomAngle * Math.PI / 180) * 300;
+  const deltaY = Math.sin(randomAngle * Math.PI / 180) * 300;
   return `${deltaX}px ${deltaY}px`;
 }
 

@@ -3,7 +3,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: fade 500ms linear;
+  font: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  animation: fade 500ms cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
 .lobby-h {
@@ -11,13 +14,13 @@
   /* flex-direction: row-reverse; */
   align-items: center;
   justify-content: space-between;
+  font-family:"Gohu Nerd Font";
   max-width: 800px;
   width: 100%;
 }
 
 .lobby-title {
-  font-size: 25px;
-  font-family:"Gohu Nerd Font";
+  font-size: 170%;
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
   user-select: none;
@@ -25,9 +28,9 @@
 
 .user-container {
   display: flex;
-  gap: 10px;
+  gap: .3em;
   user-select: none;
-  transition: 300ms ease-in-out;
+  transition: 300ms cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
 .user-container:hover {
@@ -35,27 +38,25 @@
 }
 
 .user-title {
-  font-family: "ProggyClean Nerd Font Mono";
   /* background-color: rgba(250, 235, 215, 0.105); */
-  font-size: 20px;
+  font-size: 140%;
   font-weight: bold;
   align-self: center;
   border-radius: 20%;
-  padding: 2px;
+  padding: .1em;
 }
 
 .buttons-container-h {
   display: flex;
-  gap: 10px;
+  gap: .6em;
+  user-select: none;
 }
 
 .settings {
   border: none;
-  border-radius: 4px;
   background: none;
-  transition: transform .5s;
+  transition: transform 500ms;
   cursor: pointer;
-  user-select: none;
 }
 
 .settings:hover {
@@ -63,20 +64,15 @@
 }
 
 .leave-lobby {
-  /* font-family: "ProggyVector"; */
-  /* font-size: 50px; */
   border: none;
   background: none;
   /* color: rgba(255, 23, 7, 0.553); */
-  border-radius: 4px;
-  transition: transform .5s;
-  user-select: none;
+  transition: transform 500ms;
+  cursor: pointer;
 }
 
 .leave-lobby:hover {
   transform: scale(1.1);
-  cursor: pointer;
-  /* font-size: 45px; */
 }
 
 .lobby-content {
@@ -128,15 +124,15 @@
 }
 
 .astronaut {
-  width: 20vw;
-  border-radius: 123px;
+  width: 43%;
+  border-radius: 55%;
   // color: #959ba588;
 }
 
 .astronaut-greet {
-  font-size: 20px;
+  font-size: 140%;
   color: #b5b3b0;
-  padding: 5px;
+  padding: .2em;
 }
 
 .message-list {
@@ -159,9 +155,6 @@
   align-self: center;
   color: #b5b3b0;
   /* background-color: #b5b3b006; */
-  font-family: "Gohu Nerd Font";
-  border-radius: 5px;
-  cursor: default;
   user-select: none;
 }
 
@@ -172,81 +165,60 @@
   // max-width: 50%;
   overflow-wrap: break-word;
   word-break: break-word;
-  cursor: default;
   white-space: pre-line;
 }
 
-/* current user msg */
-.message-cr {
+/* cr -> current user msg */
+/* cl -> other users msg */
+.message-cr,
+.message-cl {
   align-self: flex-start;
   align-items: flex-start;
-  padding-left: 10px;
-  padding-right: 10px;
-  margin: 10px;
-  border-radius: 10px;
+  padding-left: .6em;
+  padding-right: .6em;
+  margin: .6em;
+  border-radius: .6em;
   color: antiquewhite;
   transition: background-color .2s;
 }
 
-.message-cr:hover {
+.message-cr:hover,
+.message-cl:hover {
   background-color: rgb(51, 53, 57);
   transition: background-color .2s;
   // background-color: rgb(46, 47, 44);
 }
 
-/* other user in lobby msg */
-.message-cl {
-  // color: rgb(34, 35, 33);
-  // background-color: antiquewhite;
-  align-self: flex-start;
-  align-items: flex-start;
-  padding-left: 10px;
-  padding-right: 10px;
-  margin: 10px;
-  border-radius: 10px;
-  color: antiquewhite;
-  transition: background-color .2s;
-}
-
-.message-cl:hover {
-  background-color: rgba(51, 53, 57);
-  transition: background-color .2s;
-  // background-color: rgb(202, 191, 175);
-  // color: rgb(29, 30, 28);
-  // transition: .3s
-}
-
 .message-content {
   font-family: "ProggyVector";
-  margin: 5px;
-  line-height: 1.5;
-  // font-size: 18px;
+  padding-bottom: .7em;
+  margin: .4em;
 }
 
 .message-info {
   display: flex;
   align-items: center;
-  font-family: "ProggyClean Nerd Font Mono";
+  font-family: "Gohu Nerd Font";
   margin-bottom: -20px;
 }
 
+// needs color repeated because of system messages
 .time {
   display: flex;
   justify-content: right;
-  font-size: 15px;
+  font-size: 75%;
   opacity: 0.5;
   user-select: none;
+  color: rgb(216, 213, 209);
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .user {
   display: flex;
   justify-content: left;
-  margin-right: 10px;
-  font-size: 20px;
-  font-weight: bold;
-  font-size: 24px;
-  border-radius: 5px;
+  margin-right: .4em;
+  font-size: 120%;
+  border-radius: .4em;
   user-select: none;
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
@@ -256,15 +228,15 @@
   flex-direction: row;
   align-items: flex-end;
   position: fixed;
-  bottom: 50px;
+  bottom: 8%;
   resize: none;
 }
 
 .expanding-text textarea {
-  width: 100%;
-  max-height: 90px;
-  min-height: 40px;
-  width: 50vh;
+  // width: 100%;
+  max-height: 8em;
+  min-height: 2.6em;
+  width: 25em;
   align-self: center;
   scrollbar-color: rgba(47, 43, 36, 0.982) rgba(47, 43, 36, 0.982); /* hiding within background */
 }
@@ -289,22 +261,26 @@
   border: 1px solid rgb(229, 244, 240);
   background-color: rgb(34, 35, 33);
   color: rgb(229, 244, 240);
-  width: 80px;
-  height: 30px;
-  border-radius: 5px;
-  margin-right: 10px;
-  margin-left: 10px;
-  margin-bottom: 11px;
-  transition: .2s;
+  width: 5em;
+  height: 2em;
+  border-radius: .4em;
+  margin-right: .7em;
+  margin-left: .7em;
+  margin-bottom: .65em;
+  // transition: 200ms;
+  letter-spacing: .1em;
+  font-family: 'Gohu Nerd Font';
+  font-weight: bold;
+  user-select: none;
 }
 
 .send:hover {
-  animation: breathe 2s infinite;
+  animation: breathe 1000ms infinite;
   cursor: pointer;
 }
 
 .send:focus {
-  animation: breathe 2s infinite;
+  animation: breathe 1000ms infinite;
 }
 
 @keyframes breathe {
@@ -356,12 +332,12 @@
   border: none;
   border: 1px solid #cccccc8e;
   border-radius: 10%;
-  padding: 30px;
+  padding: 2.5em;
   color: antiquewhite;
-  background-color: rgba(233, 233, 233, 0.209);
+  background-color: rgba(233, 233, 233, 0.22);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  transition: .5s;
+  transition: 500ms;
 }
 
 .modal-overlay {
@@ -376,32 +352,31 @@
   align-items: center;
   justify-content: center;
   z-index: 999;
-  transition: backdrop-filter 1s ease;
+  transition: backdrop-filter 1000ms cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
 .settings-header {
   display: grid;
-  grid-template-rows: 50px auto;
+  grid-template-rows: 3em auto;
   user-select: none;
 }
 
 .settings-credits {
   display: grid;
-  grid-template-rows: 35px;
+  grid-template-rows: 2.25em;
 }
 
 .settings-close {
   position: fixed;
   border: none;
   background: none;
-  top: 15px;
-  right: 10px;
-  transition: .2s;
+  top: 1em;
+  right: 1em;
+  transition: 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
 .settings-close:hover {
   transform: scale(1.2);
-  transition: 0.2s;
   cursor: pointer;
 }
 
@@ -409,7 +384,7 @@
   position: absolute;
   display: flex;
   top: 30%;
-  font-size: 70px;
+  font-size: 300%;
   font-family: 'Gohu Nerd Font';
   color: #930C03;
   user-select: none;
