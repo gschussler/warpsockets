@@ -29,3 +29,9 @@ var ReceivedMessage struct {
 	Content string `json:"content"`
 	Color   string `json:"color"`
 }
+
+// Represents an error response message.
+type ErrorResponse struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+}

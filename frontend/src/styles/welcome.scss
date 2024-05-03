@@ -4,8 +4,9 @@
   grid-template-rows: auto;
   justify-content: center;
   align-items: center;
-  margin-top: 20vh;
+  margin-top: 13rem;
   user-select: none;
+  -webkit-user-select: none;
   font: inherit;
   letter-spacing: inherit;
   word-spacing: inherit;
@@ -33,25 +34,13 @@
 
 .logo-r {
   align-self: flex-end;
-  width: 6vw;
-  transform: translateX(4px);
+  transform: translateY(1rem) translateX(-0.4rem);
 }
 
 .logo-l {
   align-self: flex-end;
-  width: 6vw;
+  transform: translateY(1rem) translateX(0.4rem);
 }
-
-// .app-sh {
-//   display: flex;
-//   justify-content: center;
-//   color: rgb(218, 240, 245);
-//   text-shadow: 0px 2px 4px rgb(56, 56, 56);
-//   font-family: "Gohu Nerd Font";
-//   font-size: 36px;
-//   margin-top: 15px;
-//   animation: float 4000ms infinite ease-in-out;
-// }
 
 @keyframes float {
   0% { transform: translatey(0px); }
@@ -100,30 +89,25 @@
 }
 
 .app-enter {
-  display: grid;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding: 0.3rem 0.5rem;
   border: none;
-  border-radius: 6px;
-  width: fit-content;
+  border-radius: 8px;
   color: rgb(34, 35, 33);
   text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
   font-family: "Gohu Nerd Font";
-  font-weight: bold;
+  font-weight: 700;
   font-size: 150%;
   place-self: center;
   cursor: pointer;
-  /* margin-top: 15px; */
-  transition: 0.2s;
+  transition: 200ms;
 }
 
 .app-enter:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
-.app-enter:focus {
-  outline-width: 4px;
-  transform: scale(1.1);
+.app-enter:active {
+  transform: scale(.98);
 }
 
 /* small screen/mobile alterations */

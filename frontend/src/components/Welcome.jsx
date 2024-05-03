@@ -3,7 +3,7 @@
  * @module Welcome
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/welcome.scss';
 import { minidenticon } from 'minidenticons';
@@ -21,17 +21,23 @@ import logoR from '../images/astronaut-galaxy-r.svg'
  * @returns {JSX.Element} Rendered Welcome component.
  */
 
-const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, setButtonClicked, buttonClicked, playDenied }) => {
+const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, setButtonClicked, buttonClicked, playDenied }) => {
   const [playEnter] = useSound(Enter, {volume: muted ? 0: 0.1});
   const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
   const maxLength = 20;
   const navigate = useNavigate();
 
+  const handleActionSelect = (actionName) => {
+    if(actionName !== action) {
+      setAction(actionName);
+    }
+  }
+
   const joinLobby = async (e) => {
     setButtonClicked(true);
     if(user !== "" && lobby !== "") {
       if(user.length > 20 || lobby.length > 20) {
-        console.error('Not sure how you did it, but username and lobby name should be 20 characters or less.')
+        console.error(`Not sure how you've done it, but username and lobby name should be 20 characters or less.`)
         return;
       }
       try {
@@ -42,13 +48,15 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
         const extractedColor = match ? match[1] : 'defaultColor';
         setUserColor(extractedColor);
         // connect WebSocket when the user joins a lobby
-        await connectWebSocket();
+        console.log(`before connectWebSocket invocation ${action}`)
+        await connectWebSocket(action);
         playEnter();
         // then switch display to lobby
         setButtonClicked(false);
         applyShift();
         navigate('/lobby');
       } catch (error) {
+        // should log the error from server if connectWebSocket is what fails
         console.error('Error joining lobby:', error.message);
       }
     } else {
@@ -106,16 +114,22 @@ const Welcome = ({ connectWebSocket, user, setUser, setUserColor, lobby, setLobb
               maxLength={maxLength}
             />
           </div>
-          <div className='app-lobby'>
-            <p className='label-lobby'>Lobby Name:</p>
-            <textarea
-              className='app-textarea'
-              value={lobby}
-              onChange={(e) => setLobby(e.target.value)}
-              placeholder='Create or join a lobby.'
-              maxLength={maxLength}
-            />
+          <div className='action-buttons'>
+            <button onClick={() => handleActionSelect('create')}>CREATE</button>
+            <button onClick={() => handleActionSelect('join')}>JOIN</button>
           </div>
+          { action !== null && (
+            <div className='app-lobby'>
+              <p className='label-lobby'>Lobby Name:</p>
+              <textarea
+                className='app-textarea'
+                value={lobby}
+                onChange={(e) => setLobby(e.target.value)}
+                placeholder='Create or join a lobby.'
+                maxLength={maxLength}
+              />
+            </div>
+          )}
           <div className='app-enter-container'>
             <MinidenticonImg
               style={{ visibility: user !== '' ? 'visible' : 'hidden'}}

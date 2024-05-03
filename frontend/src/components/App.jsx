@@ -13,6 +13,7 @@ import Lobby from './Lobby.jsx';
 import Welcome from './Welcome.jsx';
 
 const App = () => {
+  const [action, setAction] = useState(null);
   const [user, setUser] = useState('');
   const [userColor, setUserColor] = useState('')
   const [lobby, setLobby] = useState('');
@@ -23,6 +24,7 @@ const App = () => {
   const socket = useRef(null);
 
   const connectWebSocket = () => {
+    // console.log(`in connectWebSocket: ${action}`);
     // need to wait until connection is completed. async/await syntax not supported by WebSockets
     return new Promise((resolve, reject) => {
       if(socket.current && socket.current.readyState === WebSocket.OPEN) {
@@ -42,9 +44,28 @@ const App = () => {
       socket.current = new WebSocket(wsPath);
 
       socket.current.onopen = async (e) => {
+        // console.log(`in socket.current.onopen ${action}`)
         // console.log('WebSocket connected');
-        // send lobby information to the server and confirm join action before resolving
-        resolve();
+        // send lobby information to the server along with the client-defined action and confirm join action before resolving
+        const message = {
+          action: action, // 'create' or 'join'
+          user,
+          lobby,
+        };
+        socket.current.send(JSON.stringify(message));
+
+        // AFTER CREATING A LOBBY, YOU CAN STILL JOIN IT AFTER THE LAST USER HAS LEFT (need to fix, could be backend too)
+        socket.current.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+          // console.log(`in onmessage, checking data.type to be: ${data.type}`);
+          if(data.type === 'error') {
+            // console.log(data.message);
+            socket.current.close();
+            reject(new Error(data.message));
+          } else {
+            resolve();
+          }
+        }
       };
 
       socket.current.onclose = (e) => {
@@ -80,6 +101,8 @@ const App = () => {
             lobby={lobby}
             setLobby={setLobby}
             setUser={setUser}
+            action={action}
+            setAction={setAction}
             muted={muted}
             setMuted={setMuted}
             buttonClicked={buttonClicked}
