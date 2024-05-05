@@ -17,7 +17,6 @@ const App = () => {
   const [user, setUser] = useState('');
   const [userColor, setUserColor] = useState('')
   const [lobby, setLobby] = useState('');
-  const [buttonClicked, setButtonClicked] = useState(false);
   const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
   const [muted, setMuted] = useState(false);
   // socket data needs to be accessible by other components through socket.current; Lobby.jsx after the call to join a lobby within Welcome.jsx
@@ -43,7 +42,7 @@ const App = () => {
       // console.log("Creating new WebSocket connection...")
       socket.current = new WebSocket(wsPath);
 
-      socket.current.onopen = async (e) => {
+      socket.current.onopen = (e) => {
         // console.log(`in socket.current.onopen ${action}`)
         // console.log('WebSocket connected');
         // send lobby information to the server along with the client-defined action and confirm join action before resolving
@@ -54,7 +53,6 @@ const App = () => {
         };
         socket.current.send(JSON.stringify(message));
 
-        // AFTER CREATING A LOBBY, YOU CAN STILL JOIN IT AFTER THE LAST USER HAS LEFT (need to fix, could be backend too)
         socket.current.onmessage = (e) => {
           const data = JSON.parse(e.data);
           // console.log(`in onmessage, checking data.type to be: ${data.type}`);
@@ -105,8 +103,6 @@ const App = () => {
             setAction={setAction}
             muted={muted}
             setMuted={setMuted}
-            buttonClicked={buttonClicked}
-            setButtonClicked={setButtonClicked}
             playDenied={playDenied}
           />
         }

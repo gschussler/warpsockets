@@ -57,9 +57,10 @@
 .app-input {
   display: grid;
   grid-template-rows: repeat(3, auto);
-  grid-template-columns: 400px;
+  grid-template-columns: 350px;
   justify-content: center;
   align-items: center;
+  transition: 200ms;
 }
 
 .app-user,
@@ -68,7 +69,8 @@
   border: none;
   outline: none;
   align-items: center;
-  grid-template-columns: 140px 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: 58px 58px;
   color: rgb(226, 245, 218);
   font-family: 'Gohu Nerd Font';
 }
@@ -76,6 +78,41 @@
 .label-user,
 .label-lobby {
   font-size: 125%;
+  padding-top: 2rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.create {
+  padding: 0.2rem 0.4rem;
+  border: none;
+  border-radius: 8px;
+  color: rgb(34, 35, 33);
+  text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
+  font-family: "Gohu Nerd Font";
+  font-weight: 700;
+  font-size: 150%;
+  place-self: center;
+  cursor: pointer;
+  transition: 200ms;
+}
+
+.join {
+  padding: 0.2rem 0.4rem;
+  border: none;
+  border-radius: 8px;
+  color: rgb(34, 35, 33);
+  text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
+  font-family: "Gohu Nerd Font";
+  font-weight: 700;
+  font-size: 150%;
+  place-self: center;
+  cursor: pointer;
+  transition: 200ms;
 }
 
 .app-textarea {

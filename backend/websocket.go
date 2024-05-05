@@ -62,7 +62,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		// used often in following code, assigned to variable
 		lobby := lobbyInfo.Lobby
 
-		// // check if lobby name exists in lobbyConnections -- possibly unnecessary after refactoring create/join actions
+		// // check if lobby name exists in lobbyConnections --> placement changed to allow more logical difference between creating a lobby and joining an existing one
 		// if _, exists := lobbyConnections[lobby]; !exists {
 		// 	lobbyConnections[lobby] = make([]*websocket.Conn, 0)
 		// }
@@ -71,16 +71,18 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		case "join":
 			if _, exists := lobbyConnections[lobby]; !exists {
 				// Lobby doesn't exist, reject join request.
-				log.Println("Sending error response: Lobby does not exist.")
+				// log.Println("Sending error response: Lobby does not exist.")
 				conn.WriteJSON(ErrorResponse{Type: "error", Message: "Lobby does not exist."})
+				conn.Close()
 				return
 			}
 			addUserToLobby(conn, lobby, lobbyInfo)
 		case "create":
 			if _, exists := lobbyConnections[lobby]; exists {
 				// Lobby already exists, reject create request.
-				log.Println("Sending error response: Lobby already exist.")
+				// log.Println("Sending error response: Lobby already exist.")
 				conn.WriteJSON(ErrorResponse{Type: "error", Message: "Lobby already exists."})
+				conn.Close()
 				return
 			}
 			// the lobby doesn't exist yet, so add it as a map entry to lobbyConnections
@@ -109,7 +111,6 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				if len(lobbyConnections[lobby]) == 0 {
 					// delete the lobby key from database
 					deleteEmptyLobbies(lobby)
-
 					// delete lobby from lobbyConnections map once its stored information has properly been deleted from db
 					delete(lobbyConnections, lobby)
 				} else {
@@ -117,11 +118,17 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 					storeMessage(systemMessage)
 					broadcastMessage(lobby, systemMessage, nil)
 				}
+
+				conn.Close()
 				return
 			}
 
+			// JSON formatting is solid, so this error is unlikely (maybe data corruption could throw this error?)
 			if err := json.Unmarshal(msg, &ReceivedMessage); err != nil {
 				log.Printf("Error unmarshaling sent message content: %v", err)
+				// tell the user that they weren't responsible for the connection closing.
+				conn.WriteJSON(ErrorResponse{Type: "error", Message: "An error caused you to lose connection to your lobby."})
+				conn.Close()
 				return
 			}
 
