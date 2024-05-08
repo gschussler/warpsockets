@@ -1,17 +1,15 @@
-/* styling for App.js */
+/* styling for Welcome.jsx */
 .welcome-container {
   display: grid;
-  grid-template-rows: auto;
+  grid-template-rows: auto 40px auto;
   justify-content: center;
   align-items: center;
   margin-top: 12rem;
-  user-select: none;
-  -webkit-user-select: none;
   font: inherit;
   letter-spacing: inherit;
   word-spacing: inherit;
   opacity: 1;
-  animation: fade 500ms linear;
+  animation: fade 600ms linear;
   gap: 1rem;
 }
 
@@ -24,6 +22,8 @@
   align-items: center;
   animation: float 4000ms infinite ease-in-out;
   font-family: "Gohu Nerd Font";
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .title {
@@ -41,6 +41,51 @@
 .logo-l {
   align-self: flex-end;
   transform: translateY(1rem) translateX(0.4rem);
+}
+
+.app-sh {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  font-family: "Gohu Nerd Font";
+  font-size: 105%;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  margin-top: 1rem;
+  border-radius: 10px 10px 1px 1px;
+  transition: 300ms;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.app-sh.ijoin {
+  border: 1px #9cc0e730 groove;
+  background-color: #9cc0e731;
+}
+
+.app-sh.icreate {
+  border: 1px #c8ffd22f groove;
+  background-color: #c8ffd22b;
+}
+
+.subtitle {
+  color: antiquewhite;
+}
+
+.info {
+  display: flex;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.info:hover {
+  transform: scale(1.3);
+}
+
+.info:active {
+  transform: scale(.98);
 }
 
 @keyframes float {
@@ -61,19 +106,21 @@
   grid-template-columns: 400px;
   justify-content: center;
   align-items: center;
+  padding-bottom: 0.5rem;
+  border-radius: 1px 1px 30px 30px;
   transition: 300ms;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .app-input.ijoin {
-  border: 1px #9cc0e77b solid;
-  border-radius: 10px 10px 30px 30px;
-  background-color: #9cc0e717;
+  border: 1px #9cc0e78a ridge;
+  background-color: #9cc0e734;
 }
 
 .app-input.icreate {
-  border: 1px #c8ffd2ac solid;
-  border-radius: 10px 10px 30px 30px;
-  background-color: #c8ffd216;
+  border: 1px #c8ffd2ac ridge;
+  background-color: #c8ffd22d;
 }
 
 .app-user {
@@ -108,13 +155,13 @@
   font-size: 130%;
   padding: .1rem;
   align-self: start;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .action-buttons {
   display: grid;
   justify-self: center;
   align-self: end;
-  gap: 5px;
 }
 
 .create,
@@ -128,7 +175,7 @@
   font-size: 150%;
   place-self: center;
   cursor: pointer;
-  transition: 200ms;
+  transition: 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
 .create {
@@ -142,12 +189,14 @@
 }
 
 .create:hover,
-.join:hover {
+.join:hover,
+.app-enter:hover {
   transform: scale(1.05);
 }
 
 .create:active,
-.join:active {
+.join:active,
+.app-enter:active {
   transform: scale(.98);
 }
 
@@ -155,12 +204,19 @@
   color: black;
   background-color: #c8ffd2;
   text-shadow: none;
+  cursor: default;
 }
 
 .join.selected {
   color: black;
   background-color: #9cc0e7;
   text-shadow: none;
+  cursor: default;
+}
+
+.create.selected:hover,
+.join.selected:hover {
+  transform: none;
 }
 
 .app-textarea {
@@ -179,20 +235,13 @@
   border-radius: 8px;
   color: rgb(34, 35, 33);
   text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
+  background-color: antiquewhite;
   font-family: "Gohu Nerd Font";
   font-weight: 700;
   font-size: 150%;
   place-self: center;
   cursor: pointer;
   transition: 200ms;
-}
-
-.app-enter:hover {
-  transform: scale(1.05);
-}
-
-.app-enter:active {
-  transform: scale(.98);
 }
 
 /* small screen/mobile alterations */

@@ -41,7 +41,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
 
-  const openModal = () => {
+  const openSettings = () => {
     setSettingsModalOpen(true);
     playCog();
   }
@@ -257,7 +257,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <div className='user-title' style={{ color: userColor }}>{user}</div>
         </div>
         <div className='buttons-container-h'>
-          <button className='settings' onClick={() => openModal()}>
+          <button className='settings' onClick={() => openSettings()}>
             <img src={settingsSvg} alt='Settings' />
           </button>
           {settingsModalOpen && (

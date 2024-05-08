@@ -6,8 +6,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/welcome.scss';
+import '../styles/info.scss';
 import { minidenticon } from 'minidenticons';
 import { MinidenticonImg, applyShift } from './utils.js';
+import Info from './Info.jsx';
 import useSound from 'use-sound';
 import Enter from '../sounds/wrgEnter3_short.mp3';
 import Click from '../sounds/mouse-click.mp3';
@@ -15,6 +17,7 @@ import soundOff from '../images/sound-off.svg';
 import soundOn from '../images/sound-on.svg';
 import logoL from '../images/astronaut-galaxy-l.svg'
 import logoR from '../images/astronaut-galaxy-r.svg'
+import infoSH from '../images/question-mark.svg'
 
 /**
  * Handles client information state and other interactions with the landing page.
@@ -22,6 +25,7 @@ import logoR from '../images/astronaut-galaxy-r.svg'
  */
 
 const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, playDenied }) => {
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [playEnter] = useSound(Enter, {volume: muted ? 0: 0.1});
   const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
   const [joinError, setJoinError] = useState(false);
@@ -32,6 +36,10 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
     if(actionName !== action) {
       setAction(actionName);
     }
+  }
+
+  const openInfo = () => {
+    setInfoModalOpen(true);
   }
 
   const joinLobby = async (e) => {
@@ -108,6 +116,17 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
           <img src={logoL} className='logo-l' />
           <h3 className='title'>WarpSockets</h3>
           <img src={logoR} className='logo-r' />
+        </div>
+        <div className={'app-sh' + `${action === 'join' ? ' ijoin' : ' icreate'}`}>
+          <p className='subtitle'> Connect with friends throughout the galaxy! </p>
+          <button className='info' onClick={() => openInfo()}>
+            <img src={infoSH} alt='info' />
+          </button>
+          {infoModalOpen && (
+            <div className='modal-overlay'>
+              <Info closeModal={() => setInfoModalOpen(false)} />
+            </div>
+          )}
         </div>
         <div className={'app-input' + `${action === 'join' ? ' ijoin' : ' icreate'}`}>
           <div className='app-user'>
