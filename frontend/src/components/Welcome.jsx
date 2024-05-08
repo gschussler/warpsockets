@@ -109,34 +109,18 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
           <h3 className='title'>WarpSockets</h3>
           <img src={logoR} className='logo-r' />
         </div>
-        <div className='app-input'>
+        <div className={'app-input' + `${action === 'join' ? ' ijoin' : ' icreate'}`}>
           <div className='app-user'>
-            <p className='label-user'>user</p>
-            <textarea
-              className='app-textarea'
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
-              placeholder='Enter your username...'
-              maxLength={maxLength}
-            />
-          </div>
-          <div className='app-lobby'>
-            <p className='label-lobby'>lobby</p>
-            <textarea
-              className='app-textarea'
-              value={lobby}
-              onChange={(e) => setLobby(e.target.value)}
-              placeholder='Enter a lobby name...'
-              maxLength={maxLength}
-            />
-          </div>
-          {/* flesh out create/join functionality (move to the right side of lobby input?) */}
-          <div className='action-buttons'>
-            <button className='create' onClick={() => handleActionSelect('create')}>CREATE</button>
-            <button className='join' onClick={() => handleActionSelect('join')}>JOIN</button>
-          </div>
-          {/* move to the right of user input field if create/join get moved to the right of lobby */}
-          <div className='app-enter-container'>
+            <div className='container-user'>
+              <p className='label-user'>user</p>
+              <textarea
+                className='app-textarea'
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+                placeholder='Enter your username...'
+                maxLength={maxLength}
+              />
+            </div>
             <MinidenticonImg
               style={{ visibility: user !== '' ? 'visible' : 'hidden'}}
               className="app-avatar"
@@ -144,6 +128,24 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
               saturation="90"
               lightness="55"
             />
+          </div>
+          <div className='app-lobby'>
+            <div className='container-lobby'>
+              <p className='label-lobby'>lobby</p>
+              <textarea
+                className='app-textarea'
+                value={lobby}
+                onChange={(e) => setLobby(e.target.value)}
+                placeholder='Enter a lobby name...'
+                maxLength={maxLength}
+              />
+            </div>
+            <div className='action-buttons'>
+              <button className={'create' + `${action === 'create' ? ' selected' : ''}`} onClick={() => handleActionSelect('create')}>CREATE</button>
+              <button className={'join' + `${action === 'join' ? ' selected' : ''}`} onClick={() => handleActionSelect('join')}>JOIN</button>
+            </div>
+          </div>
+          <div className='app-enter-container'>
             <button className={`app-enter ${joinError ? 'error' : ''}`} onClick={joinLobby}>ENTER</button>
             <button className='toggle-mute' onClick={toggleMute}>
               <img

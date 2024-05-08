@@ -4,7 +4,7 @@
   grid-template-rows: auto;
   justify-content: center;
   align-items: center;
-  margin-top: 13rem;
+  margin-top: 12rem;
   user-select: none;
   -webkit-user-select: none;
   font: inherit;
@@ -12,6 +12,7 @@
   word-spacing: inherit;
   opacity: 1;
   animation: fade 500ms linear;
+  gap: 1rem;
 }
 
 .app-h {
@@ -56,63 +57,110 @@
 
 .app-input {
   display: grid;
-  grid-template-rows: repeat(3, auto);
-  grid-template-columns: 350px;
+  grid-template-rows: 85px 115px 50px;
+  grid-template-columns: 400px;
   justify-content: center;
   align-items: center;
-  transition: 200ms;
+  transition: 300ms;
 }
 
-.app-user,
+.app-input.ijoin {
+  border: 1px #9cc0e77b solid;
+  border-radius: 10px 10px 30px 30px;
+  background-color: #9cc0e717;
+}
+
+.app-input.icreate {
+  border: 1px #c8ffd2ac solid;
+  border-radius: 10px 10px 30px 30px;
+  background-color: #c8ffd216;
+}
+
+.app-user {
+  display: grid;
+  grid-template-columns: 65% 35%;
+  grid-template-rows: 1fr;
+  color: rgb(226, 245, 218);
+  font-family: 'Gohu Nerd Font';
+}
+
 .app-lobby {
+  display: grid;
+  grid-template-columns: 65% 35%;
+  grid-template-rows: 1fr;
+  color: rgb(226, 245, 218);
+  font-family: 'Gohu Nerd Font';
+  padding-bottom: 10px;
+}
+
+.container-user,
+.container-lobby {
   display: grid;
   border: none;
   outline: none;
   align-items: center;
   grid-template-columns: 1fr;
-  grid-template-rows: 58px 58px;
-  color: rgb(226, 245, 218);
-  font-family: 'Gohu Nerd Font';
+  grid-template-rows: 2.8rem;
 }
 
 .label-user,
 .label-lobby {
-  font-size: 125%;
-  padding-top: 2rem;
+  font-size: 130%;
+  padding: .1rem;
+  align-self: start;
 }
 
 .action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+  display: grid;
+  justify-self: center;
+  align-self: end;
+  gap: 5px;
+}
+
+.create,
+.join {
+  padding: 0.1rem 0.3rem;
+  border: none;
+  background-color: transparent;
+  border-radius: 6px;
+  font-family: "Gohu Nerd Font";
+  font-weight: 700;
+  font-size: 150%;
+  place-self: center;
+  cursor: pointer;
+  transition: 200ms;
 }
 
 .create {
-  padding: 0.2rem 0.4rem;
-  border: none;
-  border-radius: 8px;
-  color: rgb(34, 35, 33);
-  text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
-  font-family: "Gohu Nerd Font";
-  font-weight: 700;
-  font-size: 150%;
-  place-self: center;
-  cursor: pointer;
-  transition: 200ms;
+  color: #c8ffd2;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .join {
-  padding: 0.2rem 0.4rem;
-  border: none;
-  border-radius: 8px;
-  color: rgb(34, 35, 33);
-  text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
-  font-family: "Gohu Nerd Font";
-  font-weight: 700;
-  font-size: 150%;
-  place-self: center;
-  cursor: pointer;
-  transition: 200ms;
+  color: #9cc0e7;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.create:hover,
+.join:hover {
+  transform: scale(1.05);
+}
+
+.create:active,
+.join:active {
+  transform: scale(.98);
+}
+
+.create.selected {
+  color: black;
+  background-color: #c8ffd2;
+  text-shadow: none;
+}
+
+.join.selected {
+  color: black;
+  background-color: #9cc0e7;
+  text-shadow: none;
 }
 
 .app-textarea {
@@ -122,7 +170,7 @@
 
 .app-enter-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
 }
 
 .app-enter {

@@ -13,7 +13,7 @@ import Lobby from './Lobby.jsx';
 import Welcome from './Welcome.jsx';
 
 const App = () => {
-  const [action, setAction] = useState(null);
+  const [action, setAction] = useState('join');
   const [user, setUser] = useState('');
   const [userColor, setUserColor] = useState('')
   const [lobby, setLobby] = useState('');
