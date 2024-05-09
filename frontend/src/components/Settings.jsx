@@ -20,7 +20,7 @@ const Settings = ({ closeModal }) => {
         <h3>
           Credits
         </h3>
-        <p>
+        <p className="repo">
           <a href='https://github.com/laurentpayot/minidenticons' target='_blank'>minidenticons</a> by laurentpayot <br/>
           <a href='https://github.com/joshwcomeau/use-sound' target='_blank'>use-sound</a> by joshwcomeau
         </p>

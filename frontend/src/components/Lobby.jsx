@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/lobby.scss';
+import '../styles/settings.scss';
 import Settings from './Settings.jsx';
 import useSound from 'use-sound';
 import Leave from '../sounds/wrgExit2_short.mp3';

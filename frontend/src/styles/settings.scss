@@ -1,0 +1,42 @@
+.settings-modal {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  border: 1px solid #cccccc8e;
+  border-radius: 10%;
+  padding: 2.5em;
+  color: antiquewhite;
+  background-color: rgba(233, 233, 233, 0.22);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: 500ms;
+}
+
+.settings-header {
+  display: grid;
+  grid-template-rows: 3em auto;
+  user-select: none;
+}
+
+.settings-credits {
+  display: grid;
+  grid-template-rows: 2.25em;
+}
+
+.settings-close {
+  position: fixed;
+  border: none;
+  background: none;
+  top: 1em;
+  right: 1em;
+  transition: 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.settings-close:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+}

@@ -10,7 +10,6 @@
   background-color: rgba(52, 52, 52, 0.867);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  transition: 500ms;
   font-family: 'ProggyVector';
 }
 
@@ -26,6 +25,10 @@
 .info-close:hover {
   transform: scale(1.2);
   cursor: pointer;
+}
+
+.info-body {
+  display: grid;
 }
 
 .info-header {
@@ -44,11 +47,8 @@
   color: antiquewhite;
 }
 
-.repo {
-  font-family: 'Gohu Nerd Font';
-}
-
 .small-info-text {
   font-size: 90%;
   color: rgba(200, 182, 158, 0.832);
+  padding: 1em;
 }
