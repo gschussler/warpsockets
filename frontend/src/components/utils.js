@@ -66,8 +66,8 @@ const getRandomDirection = () => {
   // Assign random angle between 0 and 359 degrees
   const randomAngle = Math.floor(Math.random() * 360);
   // calculate x and y deltas to be injected into background-position css
-  const deltaX = Math.cos(randomAngle * Math.PI / 180) * 300;
-  const deltaY = Math.sin(randomAngle * Math.PI / 180) * 300;
+  const deltaX = Math.cos(randomAngle * Math.PI / 180) * 200;
+  const deltaY = Math.sin(randomAngle * Math.PI / 180) * 200;
   return `${deltaX}px ${deltaY}px`;
 }
 

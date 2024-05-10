@@ -13,7 +13,7 @@ const Info = ({ closeModal }) => {
       </div>
       <div className='info-body'>
         <p>
-          The following are instructions to help make use of a <span className='bold-info-text'>WarpSocket</span>...
+          The following are instructions for using a <span className='bold-info-text'>WarpSocket</span>...
         </p>
         <span className='small-info-text'>
             1. Identify yourself with a <span className='bold-info-text'>username</span>. <br />

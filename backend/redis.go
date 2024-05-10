@@ -69,6 +69,11 @@ func getExistingMessages(lobbyID string) []Message {
 
 /* Cleans up an empty lobby when the last remaining user leaves */
 func deleteEmptyLobbies(lobby string) {
+	// check if lobby is empty or null (likely caused by user leaving before joining a lobby)
+	if lobby == "" {
+		log.Println("Empty or null lobby name provided.")
+		return
+	}
 	// delete messages associated with the lobby
 	key := "lobby:" + lobby + ":messages"
 	err := redisClient.Del(context.Background(), key).Err()

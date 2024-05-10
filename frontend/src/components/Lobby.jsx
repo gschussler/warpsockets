@@ -53,7 +53,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
    */
   const leaveLobby = async () => {
     if(socket.current) {
-      await socket.current.close();
+      await socket.current.close(1000, "client left lobby using intended functionality");
       // console.log(`${socket.current.readyState}`);
     }
     setUser('');
@@ -238,7 +238,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         socket.current.removeEventListener('message', handleMessage);
         socket.current.removeEventListener('close', handleSocketClose);
         socket.current.removeEventListener('open', handleSocketOpen);
-        socket.current.close();
+        socket.current.close(1000, "OK - client closed the application with browser functionality");
       };
     }
   }, [socket]);

@@ -11,8 +11,8 @@
   - [x] ~~Add onto an already-sent message if the immediate next message is sent by the same user (prevents unnecessary repetition of message-info)~~
 
 - Welcome Page features
-  - [ ] Separate lobby input method into `Create` and `Join` for more user clarity (username input remains shown)
-    - [ ] If *creating* a lobby and the name exists in the database -> `Lobby already exists...`
+  - [x] ~~Separate lobby input method into `Create` and `Join` for more user clarity (username input remains shown)~~
+    - [x] ~~If *creating* a lobby and the name exists in the database -> `Lobby already exists...`~~
   - [ ] Prevent additional clicks of `ENTER` button until the attempt to connect to the WebSocket is finished
   - [ ] Loading wheel replaces username and lobby input methods on welcome page if lobby entry takes more than 1 second
 
@@ -22,8 +22,11 @@
   - [ ] mobile UI
   - [ ] pay attention to rerendering amount intermittently (keep resources low)
   <!-- - [ ] possibly render user text immediately instead of waiting for sync with db (probably bad practice though) -->
-  - [ ] Holding 'Shift' + 'Enter' when sending a message was sending unknown actions to the backend. Not allowing users to insert new lines into their messages as a temporary solution. But want to support normal functionality at some point.
+  - [ ] Support intuitive function of holding 'Shift' + 'Enter' for the lobby input textbox. *at the moment, that action sends unknown actions to the backend*. Not allowing users to insert new lines into their messages as a temporary solution.
   - [ ] **Think of better solution to serve up the backend than port-forwarding** (NGINX is a solid start, but needs a better pairing). UPDATE - going to experiment with GCP Compute Engine free tier, keep frontend on vercel?
+
+- Welcome fixes
+  - [ ] Get a better handle on WebSocket closure when a request occurs that is designed to fail. The fail case of `create` and `join` is not closing the WebSocket request fast enough to allow retries.
 
 - Lobby fixes
   - [] Scroll logic (one flaw remains regarding the lastMessage state being assigned to one message before last)

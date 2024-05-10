@@ -39,12 +39,12 @@ const App = () => {
       ? `ws://${process.env.EXT_IP}/ws` :
       `ws://localhost:8085/ws`;
 
-      // console.log("Creating new WebSocket connection...")
+      console.log("Creating new WebSocket connection...")
       socket.current = new WebSocket(wsPath);
 
       socket.current.onopen = (e) => {
         // console.log(`in socket.current.onopen ${action}`)
-        // console.log('WebSocket connected');
+        console.log('WebSocket connected');
         // send lobby information to the server along with the client-defined action and confirm join action before resolving
         const message = {
           action: action, // 'create' or 'join'

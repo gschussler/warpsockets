@@ -93,21 +93,21 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
     }
   }
 
-  // 'Enter' should only be used for trying to enter a lobby
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if(e && e.key === 'Enter') {
-        e.preventDefault();
-        joinLobby();
-      }
-    };
+  // // 'Enter' should only be used for trying to enter a lobby
+  // useEffect(() => {
+  //   const handleKeyPress = (e) => {
+  //     if(e && e.key === 'Enter') {
+  //       e.preventDefault();
+  //       joinLobby();
+  //     }
+  //   };
 
-    document.addEventListener('keypress', handleKeyPress);
+  //   document.addEventListener('keypress', handleKeyPress);
 
-    return () => {
-      document.removeEventListener('keypress', handleKeyPress);
-    };
-  }, [joinLobby])
+  //   return () => {
+  //     document.removeEventListener('keypress', handleKeyPress);
+  //   };
+  // }, [joinLobby])
 
   return (
     <div className='Welcome'>
