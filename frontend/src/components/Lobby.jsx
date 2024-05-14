@@ -188,6 +188,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     const handleMessage = (e) => {
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
+      console.log(messageContent);
 
       setMessageList(prevMessages => groupMessages(messageContent, prevMessages));
 

@@ -27,6 +27,7 @@
 
 - Welcome fixes
   - [ ] Get a better handle on WebSocket closure when a request occurs that is designed to fail. The fail case of `create` and `join` is not closing the WebSocket request fast enough to allow retries.
+    - SOLUTION IN PROGRESS: Initial HTTP request that will allow upgrade to a WebSocket in the two passing cases ('create' and `!exists` OR 'join' and `exists`). Send error response back in either of the rejection cases
 
 - Lobby fixes
   - [] Scroll logic (one flaw remains regarding the lastMessage state being assigned to one message before last)

@@ -58,7 +58,7 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
         setUserColor(extractedColor);
         // connect WebSocket when the user joins a lobby
         // console.log(`before connectWebSocket invocation ${action}`)
-        await connectWebSocket(action);
+        await connectWebSocket();
         playEnter();
         // then switch display to lobby
         setJoinError(false);

@@ -55,9 +55,8 @@ const App = () => {
 
         socket.current.onmessage = (e) => {
           const data = JSON.parse(e.data);
-          // console.log(`in onmessage, checking data.type to be: ${data.type}`);
+          // console.log(`data.type check, 'undefined' if success: ${data.type}`);
           if(data.type === 'error') {
-            // console.log(data.message);
             socket.current.close();
             reject(new Error(data.message));
           } else {
@@ -69,7 +68,7 @@ const App = () => {
       socket.current.onclose = (e) => {
         // console.log('WebSocket closed code: ', e.code)
         // console.log('WebSocket closed');
-        reject(new Error('WebSocket closed'));
+        reject(new Error('WebSocket closed: ', e.code));
       };
     });
   };
@@ -79,8 +78,10 @@ const App = () => {
     return () => {
       // need socket closure if user returns to the landing page from a lobby
       if(socket.current) {
-        console.log('Closing WebSocket connection...')
+        console.log('Closing WebSocket connection for unmount...')
         socket.current.close();
+      } else {
+        console.log('Websocket connection already closed or not initialized.')
       }
       //otherwise, socket closure is handled server-side upon losing connection to client
     };

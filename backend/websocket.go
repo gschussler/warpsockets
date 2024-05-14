@@ -12,6 +12,43 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// // fleshed out close handler function
+// func closeWebSocket(conn *websocket.Conn) error {
+// 	// send close message
+// 	deadline := time.Now().Add(time.Minute)
+// 	err := conn.WriteControl(
+// 		websocket.CloseMessage,
+// 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
+// 		deadline,
+// 	)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// set deadline for reading the next message to prevent hanging
+// 	err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// read messages until the close message is confirmed to prevent data loss
+// 	for {
+// 		_, _, err = conn.NextReader()
+// 		if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+// 			break
+// 		}
+// 		if err != nil {
+// 			break
+// 		}
+// 	}
+// 	// close TCP connection
+// 	err = conn.Close()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -45,17 +82,13 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		retries = 0
 		// prime handleWebSocket to gracefully close the WebSocket connection no matter the return scenario
 		// also trying to send message along with the closure, could find a better way
-		// defer conn.Close()
-		defer conn.SetCloseHandler(func(code int, text string) error {
-			closeMessage := []byte("Closed normally")
-
-			err := conn.WriteControl(websocket.CloseMessage, closeMessage, time.Now().Add(time.Second))
-			if err != nil {
-				log.Println("Error sending close message:", err)
-			}
-			// call default close handler
-			return nil
-		})
+		defer conn.Close()
+		// defer func() {
+		// 	err := closeWebSocket(conn)
+		// 	if err != nil {
+		// 		log.Println("Error closing WebSocket connection: ", err)
+		// 	}
+		// }()
 
 		// import LobbyInfo struct from models.go
 		var lobbyInfo LobbyInfo
@@ -76,13 +109,14 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		// frequently referenced by the following operations of handleWebSocket
 		lobby := lobbyInfo.Lobby
 		user := lobbyInfo.User
+		action := lobbyInfo.Action
 
 		// // check if lobby name exists in lobbyConnections --> placement changed to allow more logical difference between creating a lobby and joining an existing one
 		// if _, exists := lobbyConnections[lobby]; !exists {
 		// 	lobbyConnections[lobby] = make([]*websocket.Conn, 0)
 		// }
 
-		switch lobbyInfo.Action {
+		switch action {
 		case "join":
 			if _, exists := lobbyConnections[lobby]; !exists {
 				// Lobby doesn't exist, reject join request.
@@ -104,7 +138,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			addUserToLobby(conn, lobby, user)
 		default:
 			// not set on closing the connection because of an unknown action at this point
-			log.Printf("Unknown action: %s", lobbyInfo.Action)
+			log.Printf("Unknown action: %s", action)
 		}
 
 		for {
