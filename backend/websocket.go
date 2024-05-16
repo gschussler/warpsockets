@@ -109,37 +109,40 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		// frequently referenced by the following operations of handleWebSocket
 		lobby := lobbyInfo.Lobby
 		user := lobbyInfo.User
-		action := lobbyInfo.Action
+		// action := lobbyInfo.Action
 
-		// // check if lobby name exists in lobbyConnections --> placement changed to allow more logical difference between creating a lobby and joining an existing one
-		// if _, exists := lobbyConnections[lobby]; !exists {
+		// add `lobby` to lobbyConnections if it doesn't exist yet
+		if _, exists := lobbyConnections[lobby]; !exists {
+			lobbyConnections[lobby] = make([]*websocket.Conn, 0)
+		}
+
+		// switch action {
+		// case "join":
+		// 	if _, exists := lobbyConnections[lobby]; !exists {
+		// 		// Lobby doesn't exist, reject join request.
+		// 		log.Printf(`"%s" tried to join a lobby that doesn't exist.`, user)
+		// 		conn.WriteJSON(ErrorResponse{Type: "error", Message: "Lobby does not exist."})
+		// 		return
+		// 	}
+		// 	// lobby exists, add user to lobbyConnections[lobby]
+		// 	addUserToLobby(conn, lobby, user)
+		// case "create":
+		// 	if _, exists := lobbyConnections[lobby]; exists {
+		// 		// Lobby already exists, reject create request.
+		// 		log.Printf(`"%s" tried to create a lobby that already exists.`, user)
+		// 		conn.WriteJSON(ErrorResponse{Type: "error", Message: "Lobby already exists."})
+		// 		return
+		// 	}
+		// 	// the lobby doesn't exist yet, so add it as a map entry to lobbyConnections
 		// 	lobbyConnections[lobby] = make([]*websocket.Conn, 0)
+		// 	addUserToLobby(conn, lobby, user)
+		// default:
+		// 	// not set on closing the connection because of an unknown action at this point
+		// 	log.Printf("Unknown action: %s", action)
 		// }
 
-		switch action {
-		case "join":
-			if _, exists := lobbyConnections[lobby]; !exists {
-				// Lobby doesn't exist, reject join request.
-				log.Printf(`"%s" tried to join a lobby that doesn't exist.`, user)
-				conn.WriteJSON(ErrorResponse{Type: "error", Message: "Lobby does not exist."})
-				return
-			}
-			// lobby exists, add user to lobbyConnections[lobby]
-			addUserToLobby(conn, lobby, user)
-		case "create":
-			if _, exists := lobbyConnections[lobby]; exists {
-				// Lobby already exists, reject create request.
-				log.Printf(`"%s" tried to create a lobby that already exists.`, user)
-				conn.WriteJSON(ErrorResponse{Type: "error", Message: "Lobby already exists."})
-				return
-			}
-			// the lobby doesn't exist yet, so add it as a map entry to lobbyConnections
-			lobbyConnections[lobby] = make([]*websocket.Conn, 0)
-			addUserToLobby(conn, lobby, user)
-		default:
-			// not set on closing the connection because of an unknown action at this point
-			log.Printf("Unknown action: %s", action)
-		}
+		// associate user's requested lobby with the WebSocket connection
+		addUserToLobby(conn, lobby, user)
 
 		for {
 			// read a message from the WebSocket

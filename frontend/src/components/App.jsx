@@ -22,55 +22,63 @@ const App = () => {
   // socket data needs to be accessible by other components through socket.current; Lobby.jsx after the call to join a lobby within Welcome.jsx
   const socket = useRef(null);
 
-  const connectWebSocket = () => {
-    // console.log(`in connectWebSocket: ${action}`);
-    // need to wait until connection is completed. async/await syntax not supported by WebSockets
-    return new Promise((resolve, reject) => {
-      if(socket.current && socket.current.readyState === WebSocket.OPEN) {
-        // the WebSocket connection is already open, resolve immediately
-        // likely to occur when leaving a lobby then trying to enter another
-        console.log("WebSocket is already open.")
-        resolve();
-      }
-      // the WebSocket connection is not open, create a new connection
-      // assign external IP to `EXT_IP` in a .env created in frontend dir
-      // add the .env to your `.gitignore` to avoid pushing it to GitHub
-      const wsPath = process.env.NODE_ENV === 'production'
-      ? `ws://${process.env.EXT_IP}/ws` :
-      `ws://localhost:8085/ws`;
-
-      console.log("Creating new WebSocket connection...")
-      socket.current = new WebSocket(wsPath);
-
-      socket.current.onopen = (e) => {
-        // console.log(`in socket.current.onopen ${action}`)
-        console.log('WebSocket connected');
-        // send lobby information to the server along with the client-defined action and confirm join action before resolving
-        const message = {
-          action: action, // 'create' or 'join'
-          user,
-          lobby,
-        };
-        socket.current.send(JSON.stringify(message));
-
-        socket.current.onmessage = (e) => {
-          const data = JSON.parse(e.data);
-          // console.log(`data.type check, 'undefined' if success: ${data.type}`);
-          if(data.type === 'error') {
-            socket.current.close();
-            reject(new Error(data.message));
-          } else {
-            resolve();
-          }
-        }
-      };
-
-      socket.current.onclose = (e) => {
-        // console.log('WebSocket closed code: ', e.code)
-        // console.log('WebSocket closed');
-        reject(new Error('WebSocket closed: ', e.code));
-      };
+  const checkLobbyExist = async (action, user, lobby) => {
+    // console.log(action, user, lobby)
+    const checkPath = process.env.NODE_ENV === 'production'
+      ? `http://${process.env.EXT_IP}/check-lobby`
+      : `http://localhost:8085/check-lobby`;
+  
+    const response = await fetch(checkPath, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ action, user, lobby }),
     });
+    
+    if (!response.ok) {
+      throw new Error();
+    }
+
+    return await response.json();
+  };
+
+  const connectWebSocket = async () => {
+    try {
+      // check for lobby's existence in db before continuing with WebSocket upgrade
+      await checkLobbyExist(action, user, lobby);
+      // async/await syntax not supported by WebSockets, so the ws upgrade itself requires a Promise
+      return new Promise((resolve, reject) => {
+        if(socket.current && socket.current.readyState === WebSocket.OPEN) {
+          // already open ws connection could occur when leaving a lobby and immediately trying to enter another
+          console.log("WebSocket is already open.")
+          resolve();
+        }
+        // the WebSocket connection is not open, create a new connection
+        // `EXT_IP` variable in .env that needs to be in top-level of frontend dir
+          // add .env to your `.gitignore` to avoid pushing it to GitHub
+        const wsPath = process.env.NODE_ENV === 'production'
+        ? `ws://${process.env.EXT_IP}/ws` :
+        `ws://localhost:8085/ws`;
+
+        // console.log("Creating new WebSocket connection...")
+        socket.current = new WebSocket(wsPath);
+
+        socket.current.onopen = (e) => {
+          // console.log(`in socket.current.onopen ${action}`)
+          // console.log('WebSocket connected');
+          resolve();
+        };
+
+        socket.current.onclose = (e) => {
+          // console.log('WebSocket closed code: ', e.code)
+          // console.log('WebSocket closed');
+          reject(new Error('WebSocket closed: ', e.code));
+        };
+      });
+    } catch (error) {
+      return Promise.reject(error);
+    }
   };
 
   useEffect(() => {

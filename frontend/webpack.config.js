@@ -37,7 +37,15 @@ module.exports = {
     compress: true,
     historyApiFallback: true,
     proxy: {
-      '/api': 'http://localhost:8085', // Proxy API requests to Go backend
+      '/api': {
+        target: 'http://localhost:8085', // Proxy API requests to Go backend
+        changeOrigin: true,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        }
+      }
     },
     static: {
       directory: path.resolve(__dirname, 'dist'), // server React files

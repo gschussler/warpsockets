@@ -10,8 +10,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 )
 
 // declare a channel to receive signals for graceful shutdown (ctrl + c)
@@ -19,11 +19,11 @@ var shutdown = make(chan os.Signal, 1)
 
 func main() {
 	// handle cors
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders: []string{"Content-Type"},
-	})
+	c := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
+		handlers.AllowedHeaders([]string{"Content-Type"}),
+	)
 
 	// init Redis db
 	initRedis()
@@ -32,8 +32,20 @@ func main() {
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
 	router := mux.NewRouter()
+
+	// use to help debug routing problems
+	// router.Use(loggingMiddleware)
+
 	// server static to load fonts
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	// accept reqs to check lobby existence
+	router.HandleFunc("/check-lobby", checkLobbyExist).Methods("POST")
+	// accept reqs to upgrade HTTP to WebSocket connection
+	router.HandleFunc("/ws", handleWebSocket)
+	// serve frontend dir (default path always last to properly expose other routes)
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("../frontend/dist")))
+
+	handler := c(router)
 
 	go func() {
 		<-shutdown
@@ -59,12 +71,20 @@ func main() {
 	// start http server for homepage
 	// prepare WebSocket for incoming connections
 	log.Println("server started on port 8085")
-	// wrap http.Handle in c.Handler if you bring CORS settings back
-	http.Handle("/", c.Handler(http.FileServer(http.Dir("../frontend/dist"))))
-	http.HandleFunc("/ws", handleWebSocket)
-
-	err := http.ListenAndServe(":8085", nil)
+	srv := &http.Server{
+		Addr:    ":8085",
+		Handler: handler,
+	}
+	err := srv.ListenAndServe()
 	if err != nil {
 		log.Fatal("Error starting server: ", err)
 	}
 }
+
+// // loggingMiddleware logs the incoming HTTP requests -- uncomment along with its router for logging
+// func loggingMiddleware(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		log.Printf("Received request: %s %s", r.Method, r.RequestURI)
+// 		next.ServeHTTP(w, r)
+// 	})
+// }

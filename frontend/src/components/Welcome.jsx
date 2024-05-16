@@ -66,10 +66,13 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
         navigate('/lobby');
       } catch (error) {
         // should log the error from server if connectWebSocket is what fails
-        console.error('Error joining lobby:', error.message);
-        setJoinError(true);
-        if(!muted) {
-          playDenied();
+        if(error.message) {
+          console.error('Error joining lobby ', error.message);
+        } else {
+          setJoinError(true);
+          if(!muted) {
+            playDenied();
+          }
         }
       }
     } else {
