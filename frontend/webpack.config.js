@@ -38,17 +38,12 @@ module.exports = {
     historyApiFallback: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8085', // Proxy API requests to Go backend
+        target: 'http://localhost:8085', // proxy API requests to Go backend (don't need CORS for development build)
         changeOrigin: true,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-          'Access-Control-Allow-Headers': 'Content-Type',
-        }
       }
     },
     static: {
-      directory: path.resolve(__dirname, 'dist'), // server React files
+      directory: path.resolve(__dirname, 'dist'), // serve React files
       publicPath: '/dist',
     },
   },

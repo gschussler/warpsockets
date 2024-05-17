@@ -56,7 +56,7 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
         const match = /fill="([^"]+)"/.exec(generatedAvatar);
         const extractedColor = match ? match[1] : 'defaultColor';
         setUserColor(extractedColor);
-        // connect WebSocket when the user joins a lobby
+        // connect WebSocket when the user tries to join a lobby
         // console.log(`before connectWebSocket invocation ${action}`)
         await connectWebSocket();
         playEnter();

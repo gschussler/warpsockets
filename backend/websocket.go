@@ -111,7 +111,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		user := lobbyInfo.User
 		// action := lobbyInfo.Action
 
-		// add `lobby` to lobbyConnections if it doesn't exist yet
+		// add the `lobby` to lobbyConnections if it doesn't exist yet
 		if _, exists := lobbyConnections[lobby]; !exists {
 			lobbyConnections[lobby] = make([]*websocket.Conn, 0)
 		}
@@ -141,11 +141,11 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		// 	log.Printf("Unknown action: %s", action)
 		// }
 
-		// associate user's requested lobby with the WebSocket connection
+		// associate the client's WebSocket connection id and username with the requested lobby
 		addUserToLobby(conn, lobby, user)
 
 		for {
-			// read a message from the WebSocket
+			// as long as the client's WebSocket connection remains, read a message from the WebSocket when it arrives
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
 				// log.Println("Error sent. Reading message: ", err)
