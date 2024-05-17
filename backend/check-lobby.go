@@ -22,7 +22,8 @@ func checkLobbyExist(w http.ResponseWriter, r *http.Request) {
 		Lobby  string `json:"lobby"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Response{Type: "error", Message: "Invalid request body."})
 		return
 	}
 
@@ -31,19 +32,22 @@ func checkLobbyExist(w http.ResponseWriter, r *http.Request) {
 	case "create":
 		if _, exists := lobbyConnections[requestData.Lobby]; exists {
 			log.Printf(`"%s" tried to create a lobby that already exists.`, requestData.User)
-			http.Error(w, "Lobby already exists", http.StatusConflict)
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(Response{Type: "error", Message: "Lobby already exists."})
 			return
 		}
 		// if lobby doesn't exist, do nothing so that the OK response can be sent to client.
 	case "join":
 		if _, exists := lobbyConnections[requestData.Lobby]; !exists {
 			log.Printf(`"%s" tried to join a lobby that doesn't exist.`, requestData.User)
-			http.Error(w, "Lobby does not exist", http.StatusConflict)
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(Response{Type: "error", Message: "Lobby does not exist."})
 			return
 		}
 		// if lobby exists, do nothing so that the OK response can be sent to client.
 	default:
-		http.Error(w, "Invalid action", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Response{Type: "error", Message: "Invalid action."})
 		return
 	}
 

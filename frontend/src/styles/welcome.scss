@@ -245,6 +245,11 @@
   transition: 200ms;
 }
 
+.error {
+  background-color: rgb(171, 32, 32);
+  transition: background-color 0.2s;
+}
+
 /* small screen/mobile alterations */
 @media only screen and (max-width: 668px) {
   .welcome-container {

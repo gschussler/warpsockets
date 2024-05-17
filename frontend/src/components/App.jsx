@@ -35,12 +35,16 @@ const App = () => {
       },
       body: JSON.stringify({ action, user, lobby }),
     });
+
+    const data = await response.json()
     
     if (!response.ok) {
-      throw new Error();
+      const errorMessage = new Error(`${data.message}` || `Failed to check lobby existence`);
+      errorMessage.status = response.status;
+      throw errorMessage;
     }
 
-    return await response.json();
+    return data;
   };
 
   const connectWebSocket = async () => {

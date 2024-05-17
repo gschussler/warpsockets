@@ -43,49 +43,49 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
   }
 
   const joinLobby = async (e) => {
-    if(user !== "" && lobby !== "") {
-      if(user.length > 20 || lobby.length > 20) {
-        setJoinError(true);
-        console.error(`Not sure how you've done it, but username and lobby name should be 20 characters or less.`)
-        return;
-      }
-      try {
-        // console.log('Attempting to join lobby...')
-        // set user color for the lobby
-        const generatedAvatar = minidenticon(user, '90', '55')
-        const match = /fill="([^"]+)"/.exec(generatedAvatar);
-        const extractedColor = match ? match[1] : 'defaultColor';
-        setUserColor(extractedColor);
-        // connect WebSocket when the user tries to join a lobby
-        // console.log(`before connectWebSocket invocation ${action}`)
-        await connectWebSocket();
-        playEnter();
-        // then switch display to lobby
-        setJoinError(false);
-        applyShift();
-        navigate('/lobby');
-      } catch (error) {
-        // should log the error from server if connectWebSocket is what fails
-        if(error.message) {
-          console.error('Error joining lobby ', error.message);
-        } else {
-          setJoinError(true);
-          if(!muted) {
-            playDenied();
-          }
+    try {
+      if(user !== "" && lobby !== "") {
+        if(user.length < 20 || lobby.length < 20) {
+          // console.log('Attempting to join lobby...')
+          // set user color for the lobby
+          const generatedAvatar = minidenticon(user, '90', '55')
+          const match = /fill="([^"]+)"/.exec(generatedAvatar);
+          const extractedColor = match ? match[1] : 'defaultColor';
+          setUserColor(extractedColor);
+
+          // connect WebSocket when the user tries to join a lobby
+          // console.log(`before connectWebSocket invocation ${action}`)
+          await connectWebSocket();
+          playEnter();
+          // then switch display to lobby
+          // setJoinError(false);
+          applyShift();
+          navigate('/lobby');
         }
       }
-    } else {
-      // reset button back to normal state. need a delay because this is called immediately after setButtonClicked(true)
-      setJoinError(true);
-      if(!muted) {
-        playDenied();
+    } catch (error) {
+      if(error.status === 404) {
+        // do something other than just logging when an intended error occurs
+        handleJoinError(error.message);
+      } else {
+        // log unexpected errors
+        handleJoinError('Error joining lobby: ' + error.message)
       }
+    }
+  }
+
+  const handleJoinError = (message = null) => {
+    setJoinError(true);
+    if(message) {
+      console.error(message);
+    }
+    if(!muted) {
+      playDenied();
     }
     setTimeout(() => {
       setJoinError(false);
     }, 100);
-  };
+  }
 
   const toggleMute = () => {
     setMuted((prevMuted) => !prevMuted);
