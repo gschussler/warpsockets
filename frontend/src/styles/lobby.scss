@@ -10,10 +10,9 @@
 }
 
 .lobby-h {
-  display: flex;
-  /* flex-direction: row-reverse; */
+  display: grid;
+  grid-template-columns: 38% 48% 14%;
   align-items: center;
-  justify-content: space-between;
   font-family:"Gohu Nerd Font";
   max-width: 800px;
   width: 100%;
@@ -24,13 +23,17 @@
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
   user-select: none;
+  justify-self: start;
+  cursor: pointer;
 }
 
 .user-container {
   display: flex;
+  justify-self: end;
   gap: .3em;
   user-select: none;
   transition: 300ms cubic-bezier(0.39, 0.575, 0.565, 1);
+  cursor: pointer;
 }
 
 .user-container:hover {
@@ -48,6 +51,7 @@
 
 .buttons-container-h {
   display: flex;
+  justify-content: end;
   gap: .6em;
   user-select: none;
 }
@@ -91,7 +95,8 @@
   justify-content: space-between;
   width: 100%;
   margin: 0 auto;
-  max-height: calc(74vh); /* needed to subtract the height of the lobby-footer to avoid overlap */
+  max-height: calc(74vh); /* needed to subtract 
+  the height of the lobby-footer to avoid overlap */
   min-height: calc(74vh);
   overflow-y: scroll;
   // scroll-behavior: smooth;
@@ -228,7 +233,7 @@
   flex-direction: row;
   align-items: flex-end;
   position: fixed;
-  bottom: 8%;
+  bottom: 2.5rem;
   resize: none;
   user-select: none;
 }
@@ -348,30 +353,42 @@
 }
 
 /* small screen/mobile alterations */
-@media only screen and (max-width: 668px) {
-  // .lobby-welcome {
-  //   font-size: 20px;
-  //   font-family:"Gohu Nerd Font";
-  //   color: rgb(226, 245, 218);
-  //   text-shadow: 0px 2px 4px rgb(56, 56, 56);
-  //   text-align: center;
-  //   user-select: none;
-  // }
-
-  .lobby-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+@media only screen and (max-width: 720px) {
+  .lobby-h {
+    max-width: 720px;
+    grid-template-columns: 40% 40% 20%;
   }
 
-  .lobby-footer {
-    display: flex;
-    flex-direction: row;
-    /* align-items: center; */
-    position: fixed;
-    bottom: 50px;
-    resize: none;
-    max-width: 375px;
+  .lobby-title {
+    font-size: 130%;
+  }
+
+  .user-container {
+    justify-self: center;
+  }
+
+  .user-title {
+    font-size: 110%;
+  }
+
+  .buttons-container-h {
+    transform: scale(0.9);
+  }
+
+  .lobby-content {
+    width: 95%;
+    margin-right: 0.7rem;
+  }
+
+  .lobby-welcome {
+    font-size: 80%;
+  }
+
+  .message-list {
+    font-size: 85%;
+  }
+
+  .expanding-text textarea {
+    width: 16rem;
   }
 }

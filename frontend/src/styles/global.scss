@@ -100,14 +100,15 @@ button:focus {
   width: 50px;
   justify-self: center;
   align-self: end;
+  padding-bottom: 5px;
 }
 
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  top: 0%;
+  left: 0%;
   height: 100%;
+  width: 100%;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   display: flex;
@@ -158,4 +159,13 @@ Point fontfaces to server-side fonts.
   src: url('../../../backend/static/ProggyVector-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
+}
+
+@media only screen and (max-width: 720px) {
+  .app-avatar {
+    height: 30px;
+    width: 30px;
+    align-self: flex-end;
+    padding-bottom: 10px;
+  }
 }

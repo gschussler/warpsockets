@@ -1,10 +1,10 @@
 /* styling for Welcome.jsx */
 .welcome-container {
   display: grid;
-  grid-template-rows: auto 40px auto;
+  grid-template-rows: auto 2.5rem auto;
   justify-content: center;
   align-items: center;
-  margin-top: 12rem;
+  margin-top: 10%;
   font: inherit;
   letter-spacing: inherit;
   word-spacing: inherit;
@@ -94,12 +94,6 @@
   100% { transform: translatey(0px); }
 }
 
-.toggle-mute {
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
 .app-input {
   display: grid;
   grid-template-rows: 85px 115px 50px;
@@ -124,7 +118,8 @@
   background-color: #c8ffd22d;
 }
 
-.app-user {
+.app-user,
+.app-lobby {
   display: grid;
   grid-template-columns: 65% 35%;
   grid-template-rows: 1fr;
@@ -133,11 +128,6 @@
 }
 
 .app-lobby {
-  display: grid;
-  grid-template-columns: 65% 35%;
-  grid-template-rows: 1fr;
-  color: rgb(226, 245, 218);
-  font-family: 'Gohu Nerd Font';
   padding-bottom: 10px;
 }
 
@@ -148,7 +138,7 @@
   outline: none;
   align-items: center;
   grid-template-columns: 1fr;
-  grid-template-rows: 2.8rem;
+  grid-template-rows: 2.5rem;
 }
 
 .label-user,
@@ -245,6 +235,12 @@
   transition: 200ms;
 }
 
+.toggle-mute {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
 .error {
   background-color: rgb(171, 32, 32);
   transition: background-color 0.2s;
@@ -319,39 +315,49 @@
 }
 
 /* small screen/mobile alterations */
-@media only screen and (max-width: 668px) {
+@media only screen and (max-width: 720px) {
   .welcome-container {
-    display: grid;
-    grid-template-rows: repeat(2, 110px);
-    justify-content: center;
-    align-items: center;
-    height: 95vh;
+    grid-template-rows: auto 1.7rem auto;
+    grid-template-columns: 22.5rem;
+    margin-top: 20%;
+    margin-right: 0.9rem;
   }
 
   .app-h {
-    display: grid;
-    justify-content: center;
-    color: rgb(226, 245, 218);
-    text-shadow: 0px 2px 4px rgb(56, 56, 56);
-    font-family: "Gohu Nerd Font";
-    // font-size: 34px;
+    column-gap: 5px;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .logo-l,
+  .logo-r {
+    transform: scale(0.85) translateY(0.8rem);
   }
 
   .app-sh {
-    display: flex;
     justify-content: center;
-    color: rgb(218, 240, 245);
-    text-shadow: 0px 2px 4px rgb(56, 56, 56);
-    font-family: "Gohu Nerd Font";
-    // font-size: 22px;
+    font-size: 80%;
+  }
+
+  .info {
+    transform: scale(0.9);
   }
 
   .app-input {
-    display: grid;
-    grid-template-rows: repeat(3, auto);
-    grid-template-columns: 350px;
-    justify-content: center;
-    align-items: center;
-    font-family: "ProggyVector";
+    grid-template-columns: 330px;
+    font-size: 95%;
+  }
+
+  .app-user,
+  .app-lobby {
+    grid-template-columns: 70% 30%;
+  }
+
+  .action-buttons {
+    padding-left: 5px;
+    font-size: 95%;
+    gap: 2px;
   }
 }

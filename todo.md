@@ -9,6 +9,7 @@
   - [x] ~~Limit max username/lobby name length (16 char at the moment)~~
   - [ ] Limit max number of messages in the lobby
   - [x] ~~Add onto an already-sent message if the immediate next message is sent by the same user (prevents unnecessary repetition of message-info)~~
+  - [ ] Change user name display to a dropdown to the left of the header buttons (because of lobby/user name length interactions with css)
 
 - Welcome Page features
   - [x] ~~Separate lobby input method into `Create` and `Join` for more user clarity (username input remains shown)~~

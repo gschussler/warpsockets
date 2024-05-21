@@ -311,42 +311,42 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             <img src={astronautSvg} alt='Welcome!' className='astronaut'/>
           </div>
         </div>
-        <div className='lobby-footer'>
-          <ExpandingTextarea
-            textareaRef={textareaRef}
-            value={message}
-            onChange={(e) => {setMessage(e.target.value)}}
-            onKeyDown={(e) => {
-              if(e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-            maxLength={160}
-          />
-          <button className='send' onClick={sendMessage}>
-            SEND
-          </button>
-        </div>
-        {newMessages && (
-          <button
-            className={`new-messages`}
-            onClick={() => {
-              if (lobbyBodyRef.current) {
-                lobbyBodyRef.current.scrollTo(0, 1);
-                setNewMessages(false);
-              }
-            }}
-          >
-            ↓ New Messages ↓
-          </button>
-        )}
-        {disconnected && (
-          <div className='disconnected'>
-            <p> Signal Lost... </p>
-          </div>
-        )}
       </div>
+      <div className='lobby-footer'>
+        <ExpandingTextarea
+          textareaRef={textareaRef}
+          value={message}
+          onChange={(e) => {setMessage(e.target.value)}}
+          onKeyDown={(e) => {
+            if(e.key === 'Enter') {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
+          maxLength={160}
+        />
+        <button className='send' onClick={sendMessage}>
+          SEND
+        </button>
+      </div>
+      {newMessages && (
+        <button
+          className={`new-messages`}
+          onClick={() => {
+            if (lobbyBodyRef.current) {
+              lobbyBodyRef.current.scrollTo(0, 1);
+              setNewMessages(false);
+            }
+          }}
+        >
+          ↓ New Messages ↓
+        </button>
+      )}
+      {disconnected && (
+        <div className='disconnected'>
+          <p> Signal Lost... </p>
+        </div>
+      )}
     </div>
   );
 };
