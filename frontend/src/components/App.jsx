@@ -19,6 +19,7 @@ const App = () => {
   const [lobby, setLobby] = useState('');
   const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
   const [muted, setMuted] = useState(false);
+  const [loading, setLoading] = useState(false);
   // socket data needs to be accessible by other components through socket.current; Lobby.jsx after the call to join a lobby within Welcome.jsx
   const socket = useRef(null);
 
@@ -106,6 +107,8 @@ const App = () => {
         element={
           <Welcome
             connectWebSocket={connectWebSocket}
+            loading={loading}
+            setLoading={setLoading}
             socket={socket}
             user={user}
             setUserColor={setUserColor}

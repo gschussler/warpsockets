@@ -13,8 +13,8 @@
 - Welcome Page features
   - [x] ~~Separate lobby input method into `Create` and `Join` for more user clarity (username input remains shown)~~
     - [x] ~~If *creating* a lobby and the name exists in the database -> `Lobby already exists...`~~
-  - [ ] Prevent additional clicks of `ENTER` button until the attempt to connect to the WebSocket is finished
-  - [ ] Loading wheel replaces username and lobby input methods on welcome page if lobby entry takes more than 1 second
+  - [ ] Prevent additional clicks of `ENTER` button until the attempt to connect to the WebSocket is finished (item below is the solution I'm going with atm)
+  - [ ] **A loading wheel replaces `ENTER` button during attempt to enter lobby.** - last feature addition before updating portfolio with the project
 
 ## FIX
 - General fixes
@@ -28,6 +28,7 @@
 - Welcome fixes
   - [ ] Get a better handle on WebSocket closure when a request occurs that is designed to fail. The fail case of `create` and `join` is not closing the WebSocket request fast enough to allow retries.
     - SOLUTION IN PROGRESS: Initial HTTP request that will allow upgrade to a WebSocket in the two passing cases ('create' and `!exists` OR 'join' and `exists`). Send error response back in either of the rejection cases
+    - Update 5/17: Functioning properly, but unable to upgrade WebSocket if accessing production mode of client-side from the same machine and network the server runs on. Possibly solvable by learning more about NGINX, because all other cases work well.
 
 - Lobby fixes
   - [] Scroll logic (one flaw remains regarding the lastMessage state being assigned to one message before last)

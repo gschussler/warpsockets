@@ -24,7 +24,7 @@ import infoSH from '../images/question-mark.svg'
  * @returns {JSX.Element} Rendered Welcome component.
  */
 
-const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, playDenied }) => {
+const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, user, setUser, setUserColor, lobby, setLobby, muted, setMuted, playDenied }) => {
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [playEnter] = useSound(Enter, {volume: muted ? 0: 0.1});
   const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
@@ -43,9 +43,15 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
   }
 
   const joinLobby = async (e) => {
+    let loadingTimeout;
     try {
       if(user !== "" && lobby !== "") {
-        if(user.length < 20 || lobby.length < 20) {
+        if(user.length <= 20 || lobby.length <= 20) {
+          loadingTimeout = setTimeout(() => setLoading(true), 50);
+
+          // simulate a delay in the enter operation for testing
+          // await new Promise(resolve => setTimeout(resolve, 3500));
+
           // console.log('Attempting to join lobby...')
           // set user color for the lobby
           const generatedAvatar = minidenticon(user, '90', '55')
@@ -56,12 +62,18 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
           // connect WebSocket when the user tries to join a lobby
           // console.log(`before connectWebSocket invocation ${action}`)
           await connectWebSocket();
+          setLoading(false);
           playEnter();
           // then switch display to lobby
           // setJoinError(false);
           applyShift();
           navigate('/lobby');
         }
+      } else {
+        // slight wait to emulate ping to server
+        setTimeout(() => {
+          handleJoinError();
+        }, 30)
       }
     } catch (error) {
       if(error.status === 404) {
@@ -71,10 +83,14 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
         // log unexpected errors
         handleJoinError('Error joining lobby: ' + error.message)
       }
+    } finally {
+      clearTimeout(loadingTimeout);
+      setLoading(false);
     }
   }
 
   const handleJoinError = (message = null) => {
+    setLoading(false);
     setJoinError(true);
     if(message) {
       console.error(message);
@@ -93,6 +109,13 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
     stop();
     if(muted) {
       playClick();
+    }
+  }
+
+  // pass as a JSX property to prevent Enter key from performing unwanted effects
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
     }
   }
 
@@ -139,6 +162,7 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
                 className='app-textarea'
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder='Enter your username...'
                 maxLength={maxLength}
               />
@@ -158,6 +182,7 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
                 className='app-textarea'
                 value={lobby}
                 onChange={(e) => setLobby(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder='Enter a lobby name...'
                 maxLength={maxLength}
               />
@@ -168,7 +193,11 @@ const Welcome = ({ connectWebSocket, action, setAction, user, setUser, setUserCo
             </div>
           </div>
           <div className='app-enter-container'>
-            <button className={`app-enter ${joinError ? 'error' : ''}`} onClick={joinLobby}>ENTER</button>
+            { loading ? (
+              <div className={`lds-ellipsis` + `${action === 'join' ? ' lj' : ' lc'}`}><div></div><div></div><div></div><div></div></div>
+            ): (
+              <button className={`app-enter ${joinError ? 'error' : ''}`} onClick={joinLobby}>ENTER</button>
+            )}
             <button className='toggle-mute' onClick={toggleMute}>
               <img
                 src={muted ? soundOff : soundOn}
