@@ -1,7 +1,7 @@
 .settings-modal {
+  position: fixed;
   display: flex;
   flex-direction: column;
-  position: fixed;
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -10,7 +10,7 @@
   border-radius: 10%;
   padding: 2.5em;
   color: antiquewhite;
-  background-color: rgba(233, 233, 233, 0.22);
+  background-color: rgba(52, 52, 52, 0.867);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   transition: 500ms;
@@ -39,4 +39,11 @@
 .settings-close:hover {
   transform: scale(1.2);
   cursor: pointer;
+}
+
+@media only screen and (max-width: 720px) {
+  .settings-modal {
+    grid-template-columns: 200px;
+    transform: translate(-112%, 15%);
+  }
 }

@@ -1,8 +1,8 @@
 .info-modal {
+  position: absolute;
   display: grid;
   grid-template-columns: 550px;
   font-size: 110%;
-  position: absolute;
   border: 1px ridge #cccccc8e;
   border-radius: 6%;
   padding: 30px 55px 55px 55px;
@@ -53,7 +53,7 @@
   padding: 1em;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 720px) {
   .info-modal {
     grid-template-columns: auto;
     grid-template-rows: 100px 420px 100px;

@@ -14,8 +14,11 @@
 - Welcome Page features
   - [x] ~~Separate lobby input method into `Create` and `Join` for more user clarity (username input remains shown)~~
     - [x] ~~If *creating* a lobby and the name exists in the database -> `Lobby already exists...`~~
-  - [ ] Prevent additional clicks of `ENTER` button until the attempt to connect to the WebSocket is finished (item below is the solution I'm going with atm)
-  - [ ] **A loading wheel replaces `ENTER` button during attempt to enter lobby.** - last feature addition before updating portfolio with the project
+  - [x] Prevent additional clicks of `ENTER` button until the attempt to connect to the WebSocket is finished (item below is the solution I'm going with atm)
+  - [x] **A loading wheel replaces `ENTER` button during attempt to enter lobby.** - last feature addition before updating portfolio with the project
+
+  README considerations
+  - [ ] Add that node.js, go, redis, and nginx must be installed on the machine that hosts the server
 
 ## FIX
 - General fixes

@@ -118,6 +118,11 @@ button:focus {
   transition: backdrop-filter 1000ms cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
+.dim {
+  transition: 500ms;
+  opacity: 0.4;
+}
+
 /* Width */
 ::-webkit-scrollbar {
   width: 8px;

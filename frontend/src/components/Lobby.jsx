@@ -79,63 +79,67 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     // startTimeRef.current  = performance.now();
     if(socket.current.readyState === 1) {
       if(message !== '') {
-        const messageContent = {
-          lobby: lobby,
-          user: user,
-          content: message,
-          color: userColor
-        };
+        // remove leading or trailing whitespace
+        const trimmedMessage = message.trim();
+        if(trimmedMessage.length > 0) {
+          const messageContent = {
+            lobby: lobby,
+            user: user,
+            content: trimmedMessage,
+            color: userColor
+          };
 
-        //* Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent through socket.)
-        let date = new Date();
-        const formattedTime = (date) => {
-          let hrs = date.getHours();
-          const meridiem = hrs > 11 ? ' PM' : ' AM';
-          hrs = hrs % 12 || 12;
+          //* Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent through socket.)
+          let date = new Date();
+          const formattedTime = (date) => {
+            let hrs = date.getHours();
+            const meridiem = hrs > 11 ? ' PM' : ' AM';
+            hrs = hrs % 12 || 12;
 
-          let mins = date.getMinutes();
-          if(mins < 10) mins  = '0' + mins;
+            let mins = date.getMinutes();
+            if(mins < 10) mins  = '0' + mins;
 
-          return `${hrs}:${mins}${meridiem}`;
-        }
-        
-        // if message fails to send, retry sending
-        let retries = 0;
-        const maxRetries = 3;
-
-        while (retries < maxRetries) {
-          try {
-            // send the message to the server
-            await socket.current.send(JSON.stringify(messageContent));
-
-            // add message to message list immediately for the sender
-              // currently message property key labels are hardcoded to match server-side Message struct properties
-            setMessageList(prevMessages => groupMessages({ ...messageContent, User: user, Content: message, Color: userColor, FormattedTime: formattedTime(date) }, prevMessages));
-
-            playSend();
-            setMessage('');
-            // resize input box to original height
-            textareaRef.current.style.height = 'auto';
-            // scroll to the bottom of the lobby-body after the message is sent
-            // DOM changes are barely too slow, setTimeout to add a few ms for React to reflect changes (consider a more exact solution).
-            setTimeout(() => {
-              if(lobbyBodyRef.current) {
-                lobbyBodyRef.current.scrollTo(0, 1);
-              }
-            }, 0);
-            return;
-          } catch (error) {
-            // message failed to send
-            console.error('Failed to send message:', error);
-            retries++;
-            // retry sending the message with delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            return `${hrs}:${mins}${meridiem}`;
           }
+          
+          // if message fails to send, retry sending
+          let retries = 0;
+          const maxRetries = 3;
+
+          while (retries < maxRetries) {
+            try {
+              // send the message to the server
+              await socket.current.send(JSON.stringify(messageContent));
+
+              // add message to message list immediately for the sender
+                // currently message property key labels are hardcoded to match server-side Message struct properties
+              setMessageList(prevMessages => groupMessages({ ...messageContent, User: user, Content: trimmedMessage, Color: userColor, FormattedTime: formattedTime(date) }, prevMessages));
+
+              playSend();
+              setMessage('');
+              // resize input box to original height
+              textareaRef.current.style.height = 'auto';
+              // scroll to the bottom of the lobby-body after the message is sent
+              // DOM changes are barely too slow, setTimeout to add a few ms for React to reflect changes (consider a more exact solution).
+              setTimeout(() => {
+                if(lobbyBodyRef.current) {
+                  lobbyBodyRef.current.scrollTo(0, 1);
+                }
+              }, 0);
+              return;
+            } catch (error) {
+              // message failed to send
+              console.error('Failed to send message:', error);
+              retries++;
+              // retry sending the message with delay
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          }
+          // reached max tries --> need to display something to user.
+          console.error('Max retry count reached. Failed to send message.');
+        } else {
+          playDenied();
         }
-        // reached max tries --> need to display something to user.
-        console.error('Max retry count reached. Failed to send message.');
-      } else {
-        playDenied();
       }
     } else {
       setMessage('');
@@ -259,7 +263,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <div className='user-title' style={{ color: userColor }}>{user}</div>
         </div>
         <div className='buttons-container-h'>
-          <button className='settings' onClick={() => openSettings()}>
+          <button className='settings' onMouseDown={() => openSettings()}>
             <img src={settingsSvg} alt='Settings' />
           </button>
           {settingsModalOpen && (
@@ -269,7 +273,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           )}
           <button 
             className="leave-lobby"
-            onClick={leaveLobby}
+            onMouseDown={leaveLobby}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
@@ -318,14 +322,14 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           value={message}
           onChange={(e) => {setMessage(e.target.value)}}
           onKeyDown={(e) => {
-            if(e.key === 'Enter') {
+            if(e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
               sendMessage();
             }
           }}
           maxLength={160}
         />
-        <button className='send' onClick={sendMessage}>
+        <button className='send' onMouseDown={sendMessage}>
           SEND
         </button>
       </div>

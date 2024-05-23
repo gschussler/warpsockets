@@ -144,8 +144,8 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
           <img src={logoR} className='logo-r' />
         </div>
         <div className={'app-sh' + `${action === 'join' ? ' ijoin' : ' icreate'}`}>
-          <p className='subtitle'> Connect with friends throughout the galaxy! </p>
-          <button className='info' onClick={() => openInfo()}>
+          <p className='subtitle'> Chat with friends throughout the galaxy! </p>
+          <button className='info' onMouseDown={() => openInfo()}>
             <img src={infoSH} alt='info' />
           </button>
           {infoModalOpen && (
@@ -163,7 +163,7 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder='Enter your username...'
+                placeholder='pilot'
                 maxLength={maxLength}
               />
             </div>
@@ -183,22 +183,22 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
                 value={lobby}
                 onChange={(e) => setLobby(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder='Enter a lobby name...'
+                placeholder='terra incognita'
                 maxLength={maxLength}
               />
             </div>
             <div className='action-buttons'>
-              <button className={'create' + `${action === 'create' ? ' selected' : ''}`} onClick={() => handleActionSelect('create')}>CREATE</button>
-              <button className={'join' + `${action === 'join' ? ' selected' : ''}`} onClick={() => handleActionSelect('join')}>JOIN</button>
+              <button className={'create' + `${action === 'create' ? ' selected' : ''}`} onMouseDown={() => handleActionSelect('create')}>CREATE</button>
+              <button className={'join' + `${action === 'join' ? ' selected' : ''}`} onMouseDown={() => handleActionSelect('join')}>JOIN</button>
             </div>
           </div>
           <div className='app-enter-container'>
             { loading ? (
               <div className={`lds-ellipsis` + `${action === 'join' ? ' lj' : ' lc'}`}><div></div><div></div><div></div><div></div></div>
             ): (
-              <button className={`app-enter ${joinError ? 'error' : ''}`} onClick={joinLobby}>ENTER</button>
+              <button className={`app-enter ${joinError ? 'error' : ''}`} onMouseDown={joinLobby}>ENTER</button>
             )}
-            <button className='toggle-mute' onClick={toggleMute}>
+            <button className='toggle-mute' onMouseDown={toggleMute}>
               <img
                 src={muted ? soundOff : soundOn}
                 alt={muted ? 'Unmute' : 'Mute'}

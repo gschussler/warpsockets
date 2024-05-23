@@ -278,21 +278,15 @@
   font-family: 'Gohu Nerd Font';
   font-weight: bold;
   user-select: none;
-}
-
-.send:hover {
-  animation: breathe 1000ms infinite;
   cursor: pointer;
 }
 
-.send:focus {
-  animation: breathe 1000ms infinite;
+.send:hover {
+  transform: scale(1.05);
 }
 
-@keyframes breathe {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+.send:active {
+  transform: scale(.98);
 }
 
 .new-messages {
@@ -338,6 +332,8 @@
   user-select: none;
   text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
   animation: pulse 1500ms infinite;
+  background-color: rgba(51, 53, 57, 0.775);
+  background: local;
 }
 
 @keyframes pulse {

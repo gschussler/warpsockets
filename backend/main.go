@@ -33,8 +33,8 @@ func main() {
 
 	router := mux.NewRouter()
 
-	// use to help debug routing problems
-	router.Use(loggingMiddleware)
+	// // use to help debug routing problems
+	// router.Use(loggingMiddleware)
 
 	// server static to load fonts
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -81,10 +81,10 @@ func main() {
 	}
 }
 
-// loggingMiddleware logs the incoming HTTP requests -- uncomment along with its router for logging
-func loggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Received request: %s %s", r.Method, r.RequestURI)
-		next.ServeHTTP(w, r)
-	})
-}
+// // loggingMiddleware logs the incoming HTTP requests -- uncomment along with its router for logging
+// func loggingMiddleware(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		log.Printf("Received request: %s %s", r.Method, r.RequestURI)
+// 		next.ServeHTTP(w, r)
+// 	})
+// }
