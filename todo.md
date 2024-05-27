@@ -30,9 +30,9 @@
   - [ ] **Think of better solution to serve up the backend than port-forwarding** (NGINX is a solid start, but needs a better pairing). UPDATE - going to experiment with GCP Compute Engine free tier, keep frontend on vercel?
 
 - Welcome fixes
-  - [ ] Get a better handle on WebSocket closure when a request occurs that is designed to fail. The fail case of `create` and `join` is not closing the WebSocket request fast enough to allow retries.
+  - [x] Get a better handle on WebSocket closure when a request occurs that is designed to fail. The fail case of `create` and `join` is not closing the WebSocket request fast enough to allow retries.
     - SOLUTION IN PROGRESS: Initial HTTP request that will allow upgrade to a WebSocket in the two passing cases ('create' and `!exists` OR 'join' and `exists`). Send error response back in either of the rejection cases
-    - Update 5/17: Functioning properly, but unable to upgrade WebSocket if accessing production mode of client-side from the same machine and network the server runs on. Possibly solvable by learning more about NGINX, because all other cases work well.
+    - Update 5/17: *Functioning properly, but unable to upgrade WebSocket if accessing production mode of client-side from the same machine and network the server runs on. Possibly solvable by learning more about NGINX, because all other cases work well.*
 
 - Lobby fixes
   - [] Scroll logic (one flaw remains regarding the lastMessage state being assigned to one message before last)
@@ -41,14 +41,14 @@
     - [x] ~~Remove "New Messages" button in two scenarios~~
       - [x] ~~Client scrolls to the bottom manually (need listener)~~
       - [x] ~~"New Messages" button is clicked (which snaps user to the bottom)~~
-    - [ ] Remove awkward scroll wheel movement when a new message div is added to message-list (maybe because lobby-body's scrollHeight changes?)
+    - [ ] Remove awkward scroll wheel movement when a new message div is added to message-list (maybe because lobby-body's scrollHeight changes are not timed with virtual dom diff?)
 
 ## REFACTOR
 - [x] ~~A WebSocket connection should only be instantiated when a user enters a lobby, not upon coming to the site itself~~
 - [x] ~~Reduce served font file sizes~~
 - [x] ~~Use React Router as good practice instead of conditional.~~
-- [ ] New name ideas
-  - WarpSockets
+- [x] New name ideas
+  - **WarpSockets**
 - [ ] Modularize mute logic (the more frequent sounds can be seperately muted)
 - [ ] Include keyboard shortcuts for more common tasks (ex: leave lobby might need an explicit keyboard shortcut)
 - [ ] CSS Styling generalization to avoid repetition

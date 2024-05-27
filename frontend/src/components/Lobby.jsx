@@ -31,7 +31,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const [messageList, setMessageList] = useState([]);
   const [newMessages, setNewMessages] = useState(false);
   const [disconnected, setDisconnected] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
   const [playCog] = useSound(Cog, {volume: muted ? 0: 0.02});
@@ -141,6 +140,8 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           playDenied();
         }
       }
+      playDenied();
+      return
     } else {
       setMessage('');
       playDenied();
@@ -263,19 +264,12 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <div className='user-title' style={{ color: userColor }}>{user}</div>
         </div>
         <div className='buttons-container-h'>
-          <button className='settings' onMouseDown={() => openSettings()}>
+          <button className='settings' onMouseDown={openSettings} onKeyDown={(e) => {if(e.key === 'Enter') openSettings()}}>
             <img src={settingsSvg} alt='Settings' />
           </button>
-          {settingsModalOpen && (
-            <div className='modal-overlay'>
-              <Settings closeModal={() => setSettingsModalOpen(false)} />
-            </div>
-          )}
           <button 
             className="leave-lobby"
             onMouseDown={leaveLobby}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
           >
             <img src={leaveSvg} alt='Leave' />
           </button>
@@ -329,7 +323,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           }}
           maxLength={160}
         />
-        <button className='send' onMouseDown={sendMessage}>
+        <button className='send' onMouseDown={sendMessage} onKeyDown={(e) => {if(e.key === 'Enter') sendMessage()}}>
           SEND
         </button>
       </div>
@@ -351,6 +345,11 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <p> Signal Lost... </p>
         </div>
       )}
+      {settingsModalOpen && (
+        <div className='modal-overlay'>
+          <Settings closeModal={() => setSettingsModalOpen(false)} />
+        </div>
+      )}      
     </div>
   );
 };

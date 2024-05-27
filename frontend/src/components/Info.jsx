@@ -7,7 +7,7 @@ const Info = ({ closeModal }) => {
       <div className='info-header'>
         <h2>ENGINEER'S LOG</h2>
         <p>Greetings, user.</p>
-        <button className='info-close' onMouseDown={closeModal}>
+        <button className='info-close' onMouseDown={closeModal} onKeyDown={(e) => {if(e.key === "Enter") closeModal()}}>
           <img src={Return} alt='Close' />
         </button>
       </div>

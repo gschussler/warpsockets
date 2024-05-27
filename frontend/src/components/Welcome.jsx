@@ -113,9 +113,10 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
   }
 
   // pass as a JSX property to prevent Enter key from performing unwanted effects
-  const handleKeyDown = (e) => {
+  const handleEnterKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
+      joinLobby();
     }
   }
 
@@ -145,7 +146,7 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
         </div>
         <div className={'app-sh' + `${action === 'join' ? ' ijoin' : ' icreate'}`}>
           <p className='subtitle'> Chat with friends throughout the galaxy! </p>
-          <button className='info' onMouseDown={() => openInfo()}>
+          <button className='info' onMouseDown={() => openInfo()} onKeyDown={(e) => {if(e.key === "Enter") openInfo()}}>
             <img src={infoSH} alt='info' />
           </button>
           {infoModalOpen && (
@@ -162,7 +163,7 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
                 className='app-textarea'
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
-                onKeyDown={handleKeyDown}
+                onKeyDown={handleEnterKeyDown}
                 placeholder='pilot'
                 maxLength={maxLength}
               />
@@ -182,23 +183,43 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
                 className='app-textarea'
                 value={lobby}
                 onChange={(e) => setLobby(e.target.value)}
-                onKeyDown={handleKeyDown}
+                onKeyDown={handleEnterKeyDown}
                 placeholder='terra incognita'
                 maxLength={maxLength}
               />
             </div>
             <div className='action-buttons'>
-              <button className={'create' + `${action === 'create' ? ' selected' : ''}`} onMouseDown={() => handleActionSelect('create')}>CREATE</button>
-              <button className={'join' + `${action === 'join' ? ' selected' : ''}`} onMouseDown={() => handleActionSelect('join')}>JOIN</button>
+              <button
+                className={'create' + `${action === 'create' ? ' selected' : ''}`}
+                onMouseDown={() => handleActionSelect('create')}
+                onKeyDown={(e) => {
+                  if(e.key === 'Enter') {
+                    handleActionSelect('create')
+                  }
+                }}
+              >
+                CREATE
+              </button>
+              <button
+                className={'join' + `${action === 'join' ? ' selected' : ''}`}
+                onMouseDown={() => handleActionSelect('join')}
+                onKeyDown={(e) => {
+                  if(e.key === 'Enter') {
+                    handleActionSelect('join')
+                  }
+                }}
+              >
+                JOIN
+              </button>
             </div>
           </div>
           <div className='app-enter-container'>
             { loading ? (
               <div className={`lds-ellipsis` + `${action === 'join' ? ' lj' : ' lc'}`}><div></div><div></div><div></div><div></div></div>
             ): (
-              <button className={`app-enter ${joinError ? 'error' : ''}`} onMouseDown={joinLobby}>ENTER</button>
+              <button className={`app-enter ${joinError ? 'error' : ''}`} onMouseDown={joinLobby} onKeyDown={handleEnterKeyDown}>ENTER</button>
             )}
-            <button className='toggle-mute' onMouseDown={toggleMute}>
+            <button className='toggle-mute' onMouseDown={toggleMute} onKeyDown={(e) => {if(e.key === "Enter")toggleMute()}}>
               <img
                 src={muted ? soundOff : soundOn}
                 alt={muted ? 'Unmute' : 'Mute'}
