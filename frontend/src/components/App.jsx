@@ -26,8 +26,8 @@ const App = () => {
   const checkLobbyExist = async (action, user, lobby) => {
     // console.log(action, user, lobby)
     const checkPath = process.env.NODE_ENV === 'production'
-      ? `http://${process.env.EXT_IP}/check-lobby`
-      : `http://localhost:8085/check-lobby`;
+      ? `https://${process.env.EXT_IP}/check-lobby`
+      : `https://localhost:8085/check-lobby`;
   
     const response = await fetch(checkPath, {
       method: 'POST',
