@@ -1,13 +1,16 @@
-/* styling for App.js */
+/* styling for Welcome.jsx */
 .welcome-container {
   display: grid;
-  grid-template-rows: auto;
+  grid-template-rows: auto 2.5rem auto;
   justify-content: center;
   align-items: center;
-  margin-top: 20vh;
-  user-select: none;
+  margin-top: 10%;
+  font: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
   opacity: 1;
-  animation: fade 500ms linear;
+  animation: fade 600ms linear;
+  gap: 1rem;
 }
 
 .app-h {
@@ -18,42 +21,216 @@
   justify-content: center;
   align-items: center;
   animation: float 4000ms infinite ease-in-out;
+  font-family: "Gohu Nerd Font";
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .title {
   color: rgb(226, 245, 218);
   text-shadow: 0px 2px 4px rgb(56, 56, 56);
-  font-family: "Gohu Nerd Font";
-  font-size: 55px;
+  font-size: 350%;
   margin-left: 5px;
 }
 
 .logo-r {
   align-self: flex-end;
-  width: 6vw;
-  transform: translateX(4px);
+  transform: translateY(1rem) translateX(-0.4rem);
 }
 
 .logo-l {
   align-self: flex-end;
-  width: 6vw;
+  transform: translateY(1rem) translateX(0.4rem);
 }
 
-// .app-sh {
-//   display: flex;
-//   justify-content: center;
-//   color: rgb(218, 240, 245);
-//   text-shadow: 0px 2px 4px rgb(56, 56, 56);
-//   font-family: "Gohu Nerd Font";
-//   font-size: 36px;
-//   margin-top: 15px;
-//   animation: float 4000ms infinite ease-in-out;
-// }
+.app-sh {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  font-family: "Gohu Nerd Font";
+  font-size: 105%;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  margin-top: 1rem;
+  border-radius: 10px 10px 1px 1px;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: 300ms;
+}
+
+.app-sh.ijoin {
+  border: 1px #9cc0e730 groove;
+  background-color: #9cc0e731;
+}
+
+.app-sh.icreate {
+  border: 1px #c8ffd22f groove;
+  background-color: #c8ffd22b;
+}
+
+.subtitle {
+  color: antiquewhite;
+}
+
+.info {
+  display: flex;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.info:hover {
+  transform: scale(1.3);
+}
+
+.info:active {
+  transform: scale(.98);
+}
 
 @keyframes float {
   0% { transform: translatey(0px); }
   50% { transform: translatey(10px); }
   100% { transform: translatey(0px); }
+}
+
+.app-input {
+  display: grid;
+  grid-template-rows: 85px 115px 50px;
+  grid-template-columns: 400px;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  border-radius: 1px 1px 30px 30px;
+  backdrop-filter: blur(1px);
+  user-select: none;
+  -webkit-user-select: none;
+  transition: 300ms;
+}
+
+.app-input.ijoin {
+  border: 1px #9cc0e78a ridge;
+  background-color: #9cc0e734;
+}
+
+.app-input.icreate {
+  border: 1px #c8ffd2ac ridge;
+  background-color: #c8ffd22d;
+}
+
+.app-user,
+.app-lobby {
+  display: grid;
+  grid-template-columns: 65% 35%;
+  grid-template-rows: 1fr;
+  color: rgb(226, 245, 218);
+  font-family: 'Gohu Nerd Font';
+}
+
+.app-lobby {
+  padding-bottom: 10px;
+}
+
+.container-user,
+.container-lobby {
+  display: grid;
+  border: none;
+  outline: none;
+  align-items: center;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2.5rem;
+}
+
+.label-user,
+.label-lobby {
+  font-size: 130%;
+  padding: .1rem;
+  align-self: start;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.action-buttons {
+  display: grid;
+  justify-self: center;
+  align-self: end;
+}
+
+.create,
+.join {
+  padding: 0.1rem 0.3rem;
+  border: none;
+  background-color: transparent;
+  border-radius: 6px;
+  font-family: "Gohu Nerd Font";
+  font-weight: 700;
+  font-size: 150%;
+  place-self: center;
+  cursor: pointer;
+  transition: 200ms cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.create {
+  color: #c8ffd2;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.join {
+  color: #9cc0e7;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.create:hover,
+.join:hover,
+.app-enter:hover {
+  transform: scale(1.05);
+}
+
+.create:active,
+.join:active,
+.app-enter:active {
+  transform: scale(.98);
+}
+
+.create.selected {
+  color: black;
+  background-color: #c8ffd2;
+  text-shadow: none;
+}
+
+.join.selected {
+  color: black;
+  background-color: #9cc0e7;
+  text-shadow: none;
+}
+
+.create.selected:hover,
+.join.selected:hover {
+  transform: none;
+}
+
+.app-textarea {
+  font-size: 110%;
+  height: 67%;
+}
+
+.app-enter-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.app-enter {
+  padding: 0.3rem 0.5rem;
+  border: none;
+  border-radius: 8px;
+  color: rgb(34, 35, 33);
+  text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
+  background-color: antiquewhite;
+  font-family: "Gohu Nerd Font";
+  font-weight: 700;
+  font-size: 150%;
+  place-self: center;
+  cursor: pointer;
+  transition: 200ms;
 }
 
 .toggle-mute {
@@ -62,98 +239,123 @@
   cursor: pointer;
 }
 
-.app-input {
-  display: grid;
-  grid-template-rows: repeat(3, auto);
-  grid-template-columns: 400px;
-  justify-content: center;
-  align-items: center;
-  font-family: "ProggyVector";
+.error {
+  background-color: rgb(171, 32, 32);
+  transition: background-color 0.2s;
 }
 
-.app-user,
-.app-lobby {
-  display: grid;
-  border: none;
-  outline: none;
-  align-items: center;
-  grid-template-columns: 140px 1fr;
-  color: rgb(226, 245, 218);
-  font-family: "DinaRemaster";
-  font-size: 25px;
-  gap: 10px;
+.lds-ellipsis.lj {
+  color: #4592e5
 }
 
-.app-textarea {
-  height: 37px;
+.lds-ellipsis.lc {
+  color: #69a587
 }
 
-.app-enter-container {
-  display: flex;
-  justify-content: space-around;
+.lds-ellipsis,
+.lds-ellipsis div {
+  box-sizing: border-box;
 }
-
-.app-enter {
-  display: grid;
-  padding-left: 15px;
-  padding-right: 15px;
-  border: none;
-  border-radius: 6px;
-  width: fit-content;
-  color: rgb(34, 35, 33);
-  text-shadow: 0px 2px 4px rgb(218, 240, 245, 0.775);
-  font-family: "Gohu Nerd Font";
-  font-weight: bold;
-  font-size: 25px;
-  place-self: center;
-  cursor: pointer;
-  /* margin-top: 15px; */
-  transition: 0.2s;
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
 }
-
-.app-enter:hover {
-  transform: scale(1.1);
+.lds-ellipsis div {
+  position: absolute;
+  top: 33.33333px;
+  width: 13.33333px;
+  height: 13.33333px;
+  border-radius: 50%;
+  background: currentColor;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
-
-.app-enter:focus {
-  outline-width: 4px;
-  transform: scale(1.1);
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
 }
 
 /* small screen/mobile alterations */
-@media only screen and (max-width: 668px) {
+@media only screen and (max-width: 720px) {
   .welcome-container {
-    display: grid;
-    grid-template-rows: repeat(2, 110px);
-    justify-content: center;
-    align-items: center;
-    height: 95vh;
+    grid-template-rows: auto 1.7rem auto;
+    grid-template-columns: 22.5rem;
+    margin-top: 20%;
+    margin-right: 0.9rem;
   }
 
   .app-h {
-    display: grid;
-    justify-content: center;
-    color: rgb(226, 245, 218);
-    text-shadow: 0px 2px 4px rgb(56, 56, 56);
-    font-family: "Gohu Nerd Font";
-    font-size: 34px;
+    column-gap: 5px;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .logo-l,
+  .logo-r {
+    transform: scale(0.85) translateY(0.8rem);
   }
 
   .app-sh {
-    display: flex;
     justify-content: center;
-    color: rgb(218, 240, 245);
-    text-shadow: 0px 2px 4px rgb(56, 56, 56);
-    font-family: "Gohu Nerd Font";
-    font-size: 22px;
+    font-size: 80%;
+  }
+
+  .info {
+    transform: scale(0.9);
   }
 
   .app-input {
-    display: grid;
-    grid-template-rows: repeat(3, auto);
-    grid-template-columns: 350px;
-    justify-content: center;
-    align-items: center;
-    font-family: "ProggyVector";
+    grid-template-columns: 330px;
+    font-size: 95%;
+  }
+
+  .app-user,
+  .app-lobby {
+    grid-template-columns: 70% 30%;
+  }
+
+  .action-buttons {
+    padding-left: 5px;
+    font-size: 95%;
+    gap: 2px;
   }
 }

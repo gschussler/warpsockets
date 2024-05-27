@@ -69,6 +69,11 @@ func getExistingMessages(lobbyID string) []Message {
 
 /* Cleans up an empty lobby when the last remaining user leaves */
 func deleteEmptyLobbies(lobby string) {
+	// check if lobby is empty or null (likely caused by user leaving before joining a lobby)
+	if lobby == "" {
+		log.Println("Empty or null lobby name provided.")
+		return
+	}
 	// delete messages associated with the lobby
 	key := "lobby:" + lobby + ":messages"
 	err := redisClient.Del(context.Background(), key).Err()
@@ -90,9 +95,10 @@ func deleteEmptyLobbies(lobby string) {
 		if err.Error() != "redis: client is closed" {
 			log.Printf("Error deleting lobby key %s %v", lobbyKey, err)
 		}
-		// } else {
-		// 	log.Printf("Deleted lobby key for '%s' lobby", lobby) // check that lobby key is also removed from Redis
 	}
+	// } else {
+	// 	log.Printf("Deleted lobby key for '%s' lobby", lobby) // check that lobby key is also removed from Redis
+	// }
 }
 
 /* Flush entire Redis db and close. Called upon server shutdown */

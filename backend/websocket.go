@@ -12,6 +12,43 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// // fleshed out close handler function
+// func closeWebSocket(conn *websocket.Conn) error {
+// 	// send close message
+// 	deadline := time.Now().Add(time.Minute)
+// 	err := conn.WriteControl(
+// 		websocket.CloseMessage,
+// 		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""),
+// 		deadline,
+// 	)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// set deadline for reading the next message to prevent hanging
+// 	err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// read messages until the close message is confirmed to prevent data loss
+// 	for {
+// 		_, _, err = conn.NextReader()
+// 		if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+// 			break
+// 		}
+// 		if err != nil {
+// 			break
+// 		}
+// 	}
+// 	// close TCP connection
+// 	err = conn.Close()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -43,7 +80,15 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		retries = 0
-		// defer conn.Close() // possibly preventing closure when user leaves lobby
+		// prime handleWebSocket to gracefully close the WebSocket connection no matter the return scenario
+		// also trying to send message along with the closure, could find a better way
+		defer conn.Close()
+		// defer func() {
+		// 	err := closeWebSocket(conn)
+		// 	if err != nil {
+		// 		log.Println("Error closing WebSocket connection: ", err)
+		// 	}
+		// }()
 
 		// import LobbyInfo struct from models.go
 		var lobbyInfo LobbyInfo
@@ -55,67 +100,86 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			} else {
 				log.Println("Error reading lobby information", err)
 			}
+			// pass the lobby from the client-side WebSocket upgrade message into the deletion function so it is not
+			// improperly referenced during cleanup
 			deleteEmptyLobbies(lobbyInfo.Lobby)
 			return
 		}
 
-		// used often in following code, assigned to variable
+		// frequently referenced by the following operations of handleWebSocket
 		lobby := lobbyInfo.Lobby
+		user := lobbyInfo.User
+		// action := lobbyInfo.Action
 
-		// check if lobby name exists in lobbyConnections
+		// add the `lobby` to lobbyConnections if it doesn't exist yet
 		if _, exists := lobbyConnections[lobby]; !exists {
 			lobbyConnections[lobby] = make([]*websocket.Conn, 0)
 		}
 
-		switch lobbyInfo.Action {
-		case "join":
-			// add the connection to the lobby's list of clients
-			lobbyConnections[lobby] = append(lobbyConnections[lobby], conn)
-			log.Printf(`"%s" connected to Lobby "%s" -- Socket opened`, lobbyInfo.User, lobby)
+		// switch action {
+		// case "join":
+		// 	if _, exists := lobbyConnections[lobby]; !exists {
+		// 		// Lobby doesn't exist, reject join request.
+		// 		log.Printf(`"%s" tried to join a lobby that doesn't exist.`, user)
+		// 		conn.WriteJSON(ErrorResponse{Type: "error", Message: "Lobby does not exist."})
+		// 		return
+		// 	}
+		// 	// lobby exists, add user to lobbyConnections[lobby]
+		// 	addUserToLobby(conn, lobby, user)
+		// case "create":
+		// 	if _, exists := lobbyConnections[lobby]; exists {
+		// 		// Lobby already exists, reject create request.
+		// 		log.Printf(`"%s" tried to create a lobby that already exists.`, user)
+		// 		conn.WriteJSON(ErrorResponse{Type: "error", Message: "Lobby already exists."})
+		// 		return
+		// 	}
+		// 	// the lobby doesn't exist yet, so add it as a map entry to lobbyConnections
+		// 	lobbyConnections[lobby] = make([]*websocket.Conn, 0)
+		// 	addUserToLobby(conn, lobby, user)
+		// default:
+		// 	// not set on closing the connection because of an unknown action at this point
+		// 	log.Printf("Unknown action: %s", action)
+		// }
 
-			systemMessage := generateSystemMessage("arrived", lobby, lobbyInfo.User, "#b5b3b0")
-
-			// retrieve existing messages from Redis
-			existingMessages := getExistingMessages(lobby)
-			for _, message := range existingMessages {
-				// send each message to the connected client
-				msgJSON, err := json.Marshal(message)
-				if err != nil {
-					log.Printf("Error serializing existing message: %v", err)
-					continue
-				}
-				conn.WriteMessage(websocket.TextMessage, msgJSON)
-			}
-			storeMessage(systemMessage)
-			broadcastMessage(lobby, systemMessage, nil)
-		default:
-			log.Printf("Unknown action: %s", lobbyInfo.Action)
-		}
+		// associate the client's WebSocket connection id and username with the requested lobby
+		addUserToLobby(conn, lobby, user)
 
 		for {
-			// Read a message from the WebSocket
+			// as long as the client's WebSocket connection remains, read a message from the WebSocket when it arrives
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
-				// log.Println("Error reading message: ", err)
+				// log.Println("Error sent. Reading message: ", err)
 
-				systemMessage := generateSystemMessage("departed", lobby, lobbyInfo.User, "#b5b3b0")
+				systemMessage := generateSystemMessage("departed", lobby, user, "#b5b3b0")
 
-				// remove connection from the lobby
+				// remove reference to user connection from the lobby
+				// log.Printf(`Removing "%s" from Lobby "%s"`, user, lobby)
 				removeUserFromLobby(lobby, conn)
-				log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, lobbyInfo.User, lobby)
 
-				// check if lobby is empty in order to delete messages from Redis
+				// // Log the lobbyConnections map after attempting to remove the connection, check if problems with
+				// log.Printf("After removal - Lobby: %s, Connections: %v", lobby, lobbyConnections[lobby])
+
+				// if the lobby is empty after the removal of this user, remove all lobby references
 				if len(lobbyConnections[lobby]) == 0 {
+					// delete the lobby key from database
 					deleteEmptyLobbies(lobby)
+					// delete lobby from lobbyConnections map once its stored information has properly been deleted from db
+					delete(lobbyConnections, lobby)
 				} else {
+					// there are still other users in the lobby, broadcast that this user has left
 					storeMessage(systemMessage)
 					broadcastMessage(lobby, systemMessage, nil)
 				}
+
+				log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, user, lobby)
 				return
 			}
 
+			// JSON formatting is solid, so this error is unlikely (maybe data corruption could throw this error?)
 			if err := json.Unmarshal(msg, &ReceivedMessage); err != nil {
 				log.Printf("Error unmarshaling sent message content: %v", err)
+				// tell the user that aren't responsible for the connection closing caused by returning this error.
+				conn.WriteJSON(ErrorResponse{Type: "error", Message: "An internal error caused you to lose connection to your lobby."})
 				return
 			}
 
@@ -126,7 +190,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			message := Message{
 				ID:            generateMessageID(),
 				Lobby:         lobby,
-				User:          lobbyInfo.User,
+				User:          user,
 				Content:       ReceivedMessage.Content,
 				Color:         ReceivedMessage.Color,
 				Time:          time.Now(),
@@ -140,18 +204,43 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func addUserToLobby(conn *websocket.Conn, lobby string, user string) {
+	// add the connection to the lobby's list of clients
+	lobbyConnections[lobby] = append(lobbyConnections[lobby], conn)
+	log.Printf(`"%s" connected to Lobby "%s" -- Socket opened`, user, lobby)
+
+	systemMessage := generateSystemMessage("arrived", lobby, user, "#b5b3b0")
+
+	// retrieve existing messages from Redis
+	existingMessages := getExistingMessages(lobby)
+	for _, message := range existingMessages {
+		// send each message to the connected client
+		msgJSON, err := json.Marshal(message)
+		if err != nil {
+			log.Printf("Error serializing existing message: %v", err)
+			continue
+		}
+		conn.WriteMessage(websocket.TextMessage, msgJSON)
+	}
+	storeMessage(systemMessage)
+	broadcastMessage(lobby, systemMessage, nil)
+}
+
 func generateMessageID() string {
 	id := uuid.New()
 	return id.String()
 }
 
 func removeUserFromLobby(lobby string, conn *websocket.Conn) {
+	// // Log the lobbyConnections map before attempting to remove the connection
+	// log.Printf("Before removal - Lobby: %s, Connections: %v", lobby, lobbyConnections[lobby])
+
 	// remove a connection from the list of clients in the specified lobby
 	connections := lobbyConnections[lobby]
 	for i, c := range connections {
 		if c == conn {
 			lobbyConnections[lobby] = append(connections[:i], connections[i+1:]...)
-			conn.Close()
+			// conn.Close() -- wanting to remove from lobbyConnections array, connection closing comes later
 			break
 		}
 	}

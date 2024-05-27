@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/lobby.scss';
+import '../styles/settings.scss';
 import Settings from './Settings.jsx';
 import useSound from 'use-sound';
 import Leave from '../sounds/wrgExit2_short.mp3';
@@ -30,7 +31,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const [messageList, setMessageList] = useState([]);
   const [newMessages, setNewMessages] = useState(false);
   const [disconnected, setDisconnected] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
   const [playCog] = useSound(Cog, {volume: muted ? 0: 0.02});
@@ -41,18 +41,18 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
 
-  const openModal = () => {
+  const openSettings = () => {
     setSettingsModalOpen(true);
     playCog();
   }
 
   /**
-   * Leaves the lobby and closes the client's WebSocket connection
+   * Leaves the lobby and initiates WebSocket closure.
    * @returns {void}
    */
   const leaveLobby = async () => {
     if(socket.current) {
-      await socket.current.close();
+      await socket.current.close(1000, "client left lobby using intended functionality");
       // console.log(`${socket.current.readyState}`);
     }
     setUser('');
@@ -78,64 +78,70 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     // startTimeRef.current  = performance.now();
     if(socket.current.readyState === 1) {
       if(message !== '') {
-        const messageContent = {
-          lobby: lobby,
-          user: user,
-          content: message,
-          color: userColor
-        };
+        // remove leading or trailing whitespace
+        const trimmedMessage = message.trim();
+        if(trimmedMessage.length > 0) {
+          const messageContent = {
+            lobby: lobby,
+            user: user,
+            content: trimmedMessage,
+            color: userColor
+          };
 
-        //* Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent through socket.)
-        let date = new Date();
-        const formattedTime = (date) => {
-          let hrs = date.getHours();
-          const meridiem = hrs > 11 ? ' PM' : ' AM';
-          hrs = hrs % 12 || 12;
+          //* Displays sent message instantly for sender. (latency of broadcast is consistently ~50-300ms for receiving users. There could be desync if the message is not successfully sent through socket.)
+          let date = new Date();
+          const formattedTime = (date) => {
+            let hrs = date.getHours();
+            const meridiem = hrs > 11 ? ' PM' : ' AM';
+            hrs = hrs % 12 || 12;
 
-          let mins = date.getMinutes();
-          if(mins < 10) mins  = '0' + mins;
+            let mins = date.getMinutes();
+            if(mins < 10) mins  = '0' + mins;
 
-          return `${hrs}:${mins}${meridiem}`;
-        }
-        
-        // if message fails to send, retry sending
-        let retries = 0;
-        const maxRetries = 3;
-
-        while (retries < maxRetries) {
-          // try sending to server as normal
-          try {
-            // send to server to be broadcasted to lobby
-            await socket.current.send(JSON.stringify(messageContent));
-
-            // add message to message list immediately for sender (currently, crudely changes property names to match server-side Message struct properties.)
-            setMessageList(prevMessages => groupMessages({ ...messageContent, User: user, Content: message, Color: userColor, FormattedTime: formattedTime(date) }, prevMessages));
-
-            playSend();
-            setMessage('');
-            // return input box to original height
-            textareaRef.current.style.height = 'auto';
-            // Scroll to the bottom of the lobby-body after the message is sent
-            // DOM changes are barely too slow, setTimeout to add a few ms (consider a more exact solution).
-            setTimeout(() => {
-              if(lobbyBodyRef.current) {
-                lobbyBodyRef.current.scrollTo(0, Infinity);
-              }
-            }, 0);
-            return;
-          } catch (error) {
-            // message failed to send
-            console.error('Failed to send message:', error);
-            retries++;
-            // retry sending the message with delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            return `${hrs}:${mins}${meridiem}`;
           }
+          
+          // if message fails to send, retry sending
+          let retries = 0;
+          const maxRetries = 3;
+
+          while (retries < maxRetries) {
+            try {
+              // send the message to the server
+              await socket.current.send(JSON.stringify(messageContent));
+
+              // add message to message list immediately for the sender
+                // currently message property key labels are hardcoded to match server-side Message struct properties
+              setMessageList(prevMessages => groupMessages({ ...messageContent, User: user, Content: trimmedMessage, Color: userColor, FormattedTime: formattedTime(date) }, prevMessages));
+
+              playSend();
+              setMessage('');
+              // resize input box to original height
+              textareaRef.current.style.height = 'auto';
+              // scroll to the bottom of the lobby-body after the message is sent
+              // DOM changes are barely too slow, setTimeout to add a few ms for React to reflect changes (consider a more exact solution).
+              setTimeout(() => {
+                if(lobbyBodyRef.current) {
+                  lobbyBodyRef.current.scrollTo(0, 1);
+                }
+              }, 0);
+              return;
+            } catch (error) {
+              // message failed to send
+              console.error('Failed to send message:', error);
+              retries++;
+              // retry sending the message with delay
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          }
+          // reached max tries --> need to display something to user.
+          console.error('Max retry count reached. Failed to send message.');
+        } else {
+          playDenied();
         }
-        // reached max tries --> need to display something to user.
-        console.error('Max retry count reached. Failed to send message.');
-      } else {
-        playDenied();
       }
+      playDenied();
+      return
     } else {
       setMessage('');
       playDenied();
@@ -144,39 +150,70 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   };
 
   /**
-   * Checks if the position of the scroll wheel is near the bottom of the lobby.
-   * @returns {boolean} - True if at the bottom; False if not.
+   * Tracks updates to the y-position of the scroll wheel in order to remove the new messages button upon manually
+   * scrolling to the bottom of the message list.
+   * @returns {void}
    */
+  useEffect(() => {
+    // add scroll event listener that removes the new messages button from display if a user scrolls near the bottom of the container. at the same time, the scroll wheel snaps to the bottom of the container
+    const handleScroll = () => {
+      if(lobbyBodyRef.current !== null) {
+        const { scrollTop } = lobbyBodyRef.current;
+        // scrollTop is 0 on page load but 0.5 when a user manually scrolls to the bottom. there is no case where the user would not be fully up to date with messages between the value of 0 and 0.5, so >= is fine
+        if(scrollTop >= 0) {
+          setNewMessages(false);
+        }
+      }
+    }
 
+    lobbyBodyRef.current.addEventListener('scroll', handleScroll);
+
+    return () => {
+      // built-in useEffect cleanup logic should handle removal, but this is good practice 
+      if(lobbyBodyRef.current) {
+        lobbyBodyRef.current.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+
+  /**
+   * Listens for actions sent from the server such as a user message or the current WebSocket's connection/
+   * disconnection state update.
+   * @returns {void}
+   */
   useEffect(() => {
     /**
      * Handles incoming messages from server.
      * - Broadcasted message is parsed and grouped based on user identity and timestamp.
      * - Message is then appended to messageList.
+     * - New messages button is displayed or not based on scroll wheel position.
      * @param {MessageEvent} e - The event containing the incoming message data from server.
+     * @returns {void}
      */
     const handleMessage = (e) => {
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
+      // console.log(messageContent);
 
       setMessageList(prevMessages => groupMessages(messageContent, prevMessages));
 
       //! new messages logic remains flawed --> useRef solves most problems with changing div dimensions
       // scroll logic has greatly improved with more knowledge of the scrollwheel and div calculations.
-        // due to lobby-body rendering child divs in column-reverse order, the visual "bottom" of the div is actually the highest possible value: 0.5 (scrollTop === 0 on page load, and setting scrollTo to Infinity ends up at 0).
-        // if the user manually scrolls to the "bottom" of the container: scrollTop === 0.5. There must be a quirk in global or lobby scss that makes this possible.
+        // due to lobby-body rendering child divs in column-reverse order, the visual "bottom" of the div (or highest possible value) is actually...1 (scrollTop === 0 on page load, and setting scrollTo to Infinity ends up at 0).
+        // if the user manually scrolls to the "bottom" of the container: scrollTop === 1
       if(lobbyBodyRef.current !== null) {
         const { scrollTop } = lobbyBodyRef.current;
         if(lastMessage.current) {
+          // console.log(lastMessage.current.scrollHeight);
           // check if the scroll wheel is not at the bottom of the container nor within the range between the bottom and the height of the last sent message. 
-            //! minor logic flaw: lastMessage is referencing the message sent one before the current one despite JSX logic targeting the current message as the reference
-          if(scrollTop !== 0 && scrollTop !== 0.5 && scrollTop * -1 >= lastMessage.current.scrollHeight) {
-            console.log(`returned true -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
+            //! minor flaw: lastMessage.current is referencing the message sent one before the current one despite JSX logic targeting reversed messageList[0] as the React reference. (line 254)
+          if(scrollTop !== 0 && scrollTop * -1 >= lastMessage.current.scrollHeight) {
+            // // console.log(`returned true -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
             setNewMessages(true);
           } else {
-            console.log(`returned false -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
-            lobbyBodyRef.current.scrollTo(0, Infinity);
+            // // console.log(`returned false -- scrollT: ${scrollTop} lMsH: ${lastMessage.current.scrollHeight}`)
             setNewMessages(false);
+            lobbyBodyRef.current.scrollTo(0, 1);
           }
         }
       }
@@ -207,7 +244,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         socket.current.removeEventListener('message', handleMessage);
         socket.current.removeEventListener('close', handleSocketClose);
         socket.current.removeEventListener('open', handleSocketOpen);
-        socket.current.close();
+        socket.current.close(1000, "OK - client closed the application with browser functionality");
       };
     }
   }, [socket]);
@@ -227,19 +264,12 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
           <div className='user-title' style={{ color: userColor }}>{user}</div>
         </div>
         <div className='buttons-container-h'>
-          <button className='settings' onClick={() => openModal()}>
+          <button className='settings' onMouseDown={openSettings} onKeyDown={(e) => {if(e.key === 'Enter') openSettings()}}>
             <img src={settingsSvg} alt='Settings' />
           </button>
-          {settingsModalOpen && (
-            <div className='modal-overlay'>
-              <Settings closeModal={() => setSettingsModalOpen(false)} />
-            </div>
-          )}
           <button 
             className="leave-lobby"
-            onClick={leaveLobby}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            onMouseDown={leaveLobby}
           >
             <img src={leaveSvg} alt='Leave' />
           </button>
@@ -279,42 +309,47 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
             <img src={astronautSvg} alt='Welcome!' className='astronaut'/>
           </div>
         </div>
-        <div className='lobby-footer'>
-          <ExpandingTextarea
-            textareaRef={textareaRef}
-            value={message}
-            onChange={(e) => {setMessage(e.target.value)}}
-            onKeyDown={(e) => {
-              if(e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-            maxLength={160}
-          />
-          <button className='send' onClick={sendMessage}>
-            Send
-          </button>
-        </div>
-        {newMessages && (
-          <button
-            className={`new-messages`}
-            onClick={() => {
-              if (lobbyBodyRef.current) {
-                lobbyBodyRef.current.scrollTo(0, Infinity);
-                setNewMessages(false);
-              }
-            }}
-          >
-            ↓ New Messages ↓
-          </button>
-        )}
-        {disconnected && (
-          <div className='disconnected'>
-            <p> Signal Lost... </p>
-          </div>
-        )}
       </div>
+      <div className='lobby-footer'>
+        <ExpandingTextarea
+          textareaRef={textareaRef}
+          value={message}
+          onChange={(e) => {setMessage(e.target.value)}}
+          onKeyDown={(e) => {
+            if(e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
+          maxLength={160}
+        />
+        <button className='send' onMouseDown={sendMessage} onKeyDown={(e) => {if(e.key === 'Enter') sendMessage()}}>
+          SEND
+        </button>
+      </div>
+      {newMessages && (
+        <button
+          className={`new-messages`}
+          onClick={() => {
+            if (lobbyBodyRef.current) {
+              lobbyBodyRef.current.scrollTo(0, 1);
+              setNewMessages(false);
+            }
+          }}
+        >
+          ↓ New Messages ↓
+        </button>
+      )}
+      {disconnected && (
+        <div className='disconnected'>
+          <p> Signal Lost... </p>
+        </div>
+      )}
+      {settingsModalOpen && (
+        <div className='modal-overlay'>
+          <Settings closeModal={() => setSettingsModalOpen(false)} />
+        </div>
+      )}      
     </div>
   );
 };
