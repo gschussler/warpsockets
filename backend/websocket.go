@@ -271,6 +271,7 @@ func broadcastMessage(lobby string, message Message, senderConn *websocket.Conn)
 func generateSystemMessage(action, lobby, user, color string) Message {
 	return Message{
 		ID:            generateMessageID(),
+		Type:          [2]string{action, user},
 		Lobby:         lobby,
 		User:          "System",
 		Content:       fmt.Sprintf("%s has %s.", user, action),

@@ -9,7 +9,7 @@
   - [x] ~~Limit max username/lobby name length (16 char at the moment)~~
   - [ ] Limit max number of messages in the lobby
   - [x] ~~Add onto an already-sent message if the immediate next message is sent by the same user (prevents unnecessary repetition of message-info)~~
-  - [ ] Change user name display to a dropdown to the left of the header buttons (because of lobby/user name length interactions with css)
+  - [ ] Change user name display to a dropdown to the left of the header buttons (because of lobby/user name length interactions with css) -- also make it a list of ALL users in the lobby with their minidenticons next to them
 
 - Welcome Page features
   - [x] ~~Separate lobby input method into `Create` and `Join` for more user clarity (username input remains shown)~~
@@ -42,6 +42,8 @@
       - [x] ~~Client scrolls to the bottom manually (need listener)~~
       - [x] ~~"New Messages" button is clicked (which snaps user to the bottom)~~
     - [ ] Remove awkward scroll wheel movement when a new message div is added to message-list (maybe because lobby-body's scrollHeight changes are not timed with virtual dom diff?)
+    - [ ] Figure out reconnection logic (should users be able to try and reload? or does that result in them leaving the lobby).
+      - At the moment, the user stays at warpsockets.xyz/lobby without being in a lobby. So that is bad
 
 ## REFACTOR
 - [x] ~~A WebSocket connection should only be instantiated when a user enters a lobby, not upon coming to the site itself~~

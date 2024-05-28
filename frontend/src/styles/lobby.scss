@@ -56,6 +56,36 @@
   user-select: none;
 }
 
+.users {
+  color: white;
+}
+
+.dropdown {
+  position: relative;
+  top: 40px; /* Adjust as necessary */
+  left: 0;  /* Adjust as necessary */
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  width: 200px; /* Adjust as necessary */
+}
+
+.user-list {
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.user-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.user-list li:hover {
+  background-color: #ddd;
+}
+
 .settings {
   border: none;
   background: none;

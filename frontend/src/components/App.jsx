@@ -25,9 +25,10 @@ const App = () => {
 
   const checkLobbyExist = async (action, user, lobby) => {
     // console.log(action, user, lobby)
+    // `https://${process.env.EXT_IP}/check-lobby`
     const checkPath = process.env.NODE_ENV === 'production'
-      ? `https://${process.env.EXT_IP}/check-lobby`
-      : `https://localhost:8085/check-lobby`;
+      ? `https://warpsockets.xyz/check-lobby`
+      : `http://localhost:8085/check-lobby`;
   
     const response = await fetch(checkPath, {
       method: 'POST',
@@ -62,9 +63,10 @@ const App = () => {
         // the WebSocket connection is not open, create a new connection
         // `EXT_IP` variable in .env that needs to be in top-level of frontend dir
           // add .env to your `.gitignore` to avoid pushing it to GitHub
+        // `ws://${process.env.EXT_IP}/ws` <-- old way to expose server
         const wsPath = process.env.NODE_ENV === 'production'
-        ? `ws://${process.env.EXT_IP}/ws` :
-        `ws://localhost:8085/ws`;
+        ? `wss://warpsockets.xyz/ws` // registered a domain and configured with nginx
+        : `ws://localhost:8085/ws`;
 
         // console.log("Creating new WebSocket connection...")
         socket.current = new WebSocket(wsPath);

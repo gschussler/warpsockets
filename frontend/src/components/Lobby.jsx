@@ -29,17 +29,25 @@ import { ExpandingTextarea } from './TextInput.js';
 const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
+  const [userList, setUserList] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [newMessages, setNewMessages] = useState(false);
   const [disconnected, setDisconnected] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
   const [playCog] = useSound(Cog, {volume: muted ? 0: 0.02});
   const [playLeave] = useSound(Leave, {volume: muted ? 0: 0.1});
+  const dropdownRef = useRef(null);
   const textareaRef = useRef(null);
   const lobbyBodyRef = useRef(null);
   const lastMessage = useRef(null);
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
+
+  // toggle userlist dropdown visibility
+  const toggleUserList = () => {
+    setShowDropdown(prevShowDropdown => !prevShowDropdown);
+  };
 
   const openSettings = () => {
     setSettingsModalOpen(true);
@@ -176,6 +184,20 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     };
   }, []);
 
+  // close the userList dropdown if clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   /**
    * Listens for actions sent from the server such as a user message or the current WebSocket's connection/
    * disconnection state update.
@@ -194,6 +216,19 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
       // console.log(messageContent);
+
+      // system messages send either an "arrived" or "departed" type along with the associated user,
+      // add the user to the userList
+      if(messageContent.Type) {
+        // extract the two strings sent on the Type property
+        const [action, sentUser] = messageContent.Type;
+        // manipulate userList based on user arrival or departure
+        if(action === "arrived") {
+          setUserList((prevList) => [...prevList, sentUser])
+        } else if(action === "departed") {
+          setUserList((prevList) => prevList.filter(user => user !== sentUser))
+        }
+      }
 
       setMessageList(prevMessages => groupMessages(messageContent, prevMessages));
 
@@ -229,6 +264,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     };
 
     const handleSocketOpen = () => {
+      setUserList((prevList) => [...prevList, user]);
       setDisconnected(false);
     }
 
@@ -253,17 +289,18 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     <div className='lobby'>
       <div className='lobby-h'>
         <p className='lobby-title'>lobby: {lobby}</p>
-        <div className='user-container'>
-          <div className='app-avatar'>
-            <MinidenticonImg
-              username={user}
-              saturation="90"
-              lightness="55"
-            />
-          </div>
-          <div className='user-title' style={{ color: userColor }}>{user}</div>
-        </div>
         <div className='buttons-container-h'>
+          {showDropdown ? (
+            <div ref={dropdownRef} className='dropdown'>
+              <ul className='user-list'>
+                {userList.map((user, index) => (
+                  <li key={index}>{user}</li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <button className='users' onClick={toggleUserList}>Users</button>
+          )}
           <button className='settings' onMouseDown={openSettings} onKeyDown={(e) => {if(e.key === 'Enter') openSettings()}}>
             <img src={settingsSvg} alt='Settings' />
           </button>
