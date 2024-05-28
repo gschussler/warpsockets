@@ -7,10 +7,11 @@ import useSound from 'use-sound';
 import Leave from '../sounds/wrgExit2_short.mp3';
 import Send from '../sounds/zap.mp3';
 import Cog from '../sounds/cog.mp3';
+import usersSvg from '../images/friends.svg';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg';
 import astronautSvg from '../images/astronaut.svg';
-import { MinidenticonImg, groupMessages } from './utils.js';
+import { generateAvatarAndColor, groupMessages } from './utils.js';
 import { ExpandingTextarea } from './TextInput.js';
 
 /**
@@ -26,7 +27,7 @@ import { ExpandingTextarea } from './TextInput.js';
  * @returns {JSX.Element} - Rendered Lobby component
  */
 
-const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied }) => {
+const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied, playNormal }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [userList, setUserList] = useState([]);
@@ -47,6 +48,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   // toggle userlist dropdown visibility
   const toggleUserList = () => {
     setShowDropdown(prevShowDropdown => !prevShowDropdown);
+    playNormal();
   };
 
   const openSettings = () => {
@@ -224,7 +226,11 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         const [action, sentUser] = messageContent.Type;
         // manipulate userList based on user arrival or departure
         if(action === "arrived") {
-          setUserList((prevList) => [...prevList, sentUser])
+          if(sentUser === user) {
+            setUserList((prevList) => [...prevList, `${sentUser} (you)`])
+          } else {
+            setUserList((prevList) => [...prevList, sentUser])
+          }
         } else if(action === "departed") {
           setUserList((prevList) => prevList.filter(user => user !== sentUser))
         }
@@ -264,7 +270,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     };
 
     const handleSocketOpen = () => {
-      setUserList((prevList) => [...prevList, user]);
       setDisconnected(false);
     }
 
@@ -288,20 +293,18 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   return (
     <div className='lobby'>
       <div className='lobby-h'>
-        <p className='lobby-title'>lobby: {lobby}</p>
+        <p className='lobby-title'>{lobby}</p>
         <div className='buttons-container-h'>
-          {showDropdown ? (
-            <div ref={dropdownRef} className='dropdown'>
-              <ul className='user-list'>
-                {userList.map((user, index) => (
-                  <li key={index}>{user}</li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <button className='users' onClick={toggleUserList}>Users</button>
-          )}
-          <button className='settings' onMouseDown={openSettings} onKeyDown={(e) => {if(e.key === 'Enter') openSettings()}}>
+          <button className={'users' + `${showDropdown ? ' selected' : ''}`}
+            onMouseDown={(e) => {e.stopPropagation(); toggleUserList(); }}
+            onKeyDown={(e) => {if(e.key === 'Enter') toggleUserList()}}
+          >
+            <img src={usersSvg} alt='Users' />
+          </button>
+          <button className='settings'
+            onMouseDown={openSettings}
+            onKeyDown={(e) => {if(e.key === 'Enter') openSettings()}}
+          >
             <img src={settingsSvg} alt='Settings' />
           </button>
           <button 
@@ -313,6 +316,22 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         </div>
       </div>
       <div className='lobby-content'>
+          {showDropdown && (
+            <div ref={dropdownRef} className='dropdown'>
+              <ul className='user-list'>
+                {userList.map((user, index) => {
+                  const { avatar, color } = generateAvatarAndColor(user);
+                  return (
+                    <li key={index}>
+                      <img className='app-avatar' src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
+                        alt={user} style={{ marginRight: '8px'}} />
+                      <span style={{ color }}>{user}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
         <div className='lobby-body' ref={lobbyBodyRef}>
           <div className='message-list'>
             {messageList.slice().reverse().map((messageContent, index) => {

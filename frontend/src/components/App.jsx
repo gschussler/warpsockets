@@ -9,6 +9,7 @@ import { Routes, Route } from 'react-router-dom';
 import '../styles/global.scss';
 import useSound from "use-sound";
 import Denied from '../sounds/keycard-denial.mp3';
+import Normal from '../sounds/button-normal.mp3'
 import Lobby from './Lobby.jsx';
 import Welcome from './Welcome.jsx';
 
@@ -18,6 +19,7 @@ const App = () => {
   const [userColor, setUserColor] = useState('')
   const [lobby, setLobby] = useState('');
   const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
+  const [playNormal] = useSound(Normal, {volume: muted ? 0: 0.03})
   const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(false);
   // socket data needs to be accessible by other components through socket.current; Lobby.jsx after the call to join a lobby within Welcome.jsx
@@ -138,6 +140,7 @@ const App = () => {
             muted={muted}
             setMuted={setMuted}
             playDenied={playDenied}
+            playNormal={playNormal}
           />
         }
       />
