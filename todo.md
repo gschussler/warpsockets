@@ -50,7 +50,11 @@
 - [x] ~~Reduce served font file sizes~~
 - [x] ~~Use React Router as good practice instead of conditional.~~
 - [x] New name ideas
-  - **WarpSockets**
+  - **warpsockets**
 - [ ] Modularize mute logic (the more frequent sounds can be seperately muted)
 - [ ] Include keyboard shortcuts for more common tasks (ex: leave lobby might need an explicit keyboard shortcut)
 - [ ] CSS Styling generalization to avoid repetition
+- [ ] Add actual settings to the settings modal
+  - [ ] Toggle snap to bottom
+  - [ ] Light/Dark mode
+  - [ ] be able to mute from lobby

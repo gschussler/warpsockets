@@ -68,15 +68,34 @@
 }
 
 .dropdown {
+  display: grid;
   position: absolute;
-  top: 0;
-  right: 15px;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
-  background-color: rgba(63, 66, 71, 0.95);
+  top: 0;
+  right: 100px;
+  backdrop-filter: blur(6px);
+  background-color: rgba(86, 90, 96, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.24);
   border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  overflow-y: scroll;
+  scrollbar-color: rgba(86, 90, 96, 0) rgba(86, 90, 96, 0);
+  scrollbar-width: none;
+  font-family: 'Gohu Nerd Font';
+  font-size: 120%;
   user-select: none;
   transition: 300ms;
+  z-index: 1000;
+}
+
+.dropdown-h {
+  color: antiquewhite;
+  justify-self: end;
+  align-self: center;
+  font-weight: bold;
+  margin: 5px 10px 0 0;
+  padding: 5px;
 }
 
 .user-list {
@@ -85,6 +104,7 @@
   list-style-type: none;
   padding: 5px;
   margin: 0;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .user-list li {
@@ -100,6 +120,11 @@
 
 .user-list li:hover {
   background-color: rgba(45, 47, 50, 0.6);
+}
+
+.user-avatar {
+  height: 40px;
+  width: 40px;
 }
 
 .settings:hover {
@@ -142,7 +167,7 @@
 //   border-radius: 4px;
 //   background-color: rgb(34, 35, 33);
 //   color: rgb(226, 245, 218);
-//   text-shadow: 0px 2px 4px rgb(45, 46, 44);
+//   text-shadow: 0px 2px 4px rgb(45, 46, 29);
 //   font-family: "ProggyVector";
 // }
 
@@ -223,7 +248,7 @@
 .message-cl:hover {
   background-color: rgb(51, 53, 57);
   transition: background-color .2s;
-  // background-color: rgb(46, 47, 44);
+  // background-color: rgb(46, 47, 29);
 }
 
 .message-content {
@@ -296,9 +321,9 @@
 }
 
 .send {
-  border: 1px solid rgb(229, 244, 240);
+  border: 1px solid rgb(229, 229, 240);
   background-color: rgb(34, 35, 33);
-  color: rgb(229, 244, 240);
+  color: rgb(229, 229, 240);
   width: 5em;
   height: 2em;
   border-radius: .4em;
@@ -409,6 +434,7 @@
   }
 
   .users.selected {
+    transform: scale(0.7);
     padding-bottom: 15px;
   }
 
@@ -423,6 +449,10 @@
     border-left: 12px solid transparent;
     border-right: 12px solid transparent;
     border-top: 12px solid #fff;
+  }
+
+  .dropdown {
+    right: 55px;
   }
 
   .lobby-welcome {

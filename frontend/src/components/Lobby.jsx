@@ -45,6 +45,20 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
 
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      // can't manipulate modern before unload browser event, but legacy browser text can be set
+      e.preventDefault();
+      e.returnValue = 'Are you sure you want to leave? Connection to the lobby will be lost.';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   // toggle userlist dropdown visibility
   const toggleUserList = () => {
     setShowDropdown(prevShowDropdown => !prevShowDropdown);
@@ -61,15 +75,18 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
    * @returns {void}
    */
   const leaveLobby = async () => {
-    if(socket.current) {
-      await socket.current.close(1000, "client left lobby using intended functionality");
-      // console.log(`${socket.current.readyState}`);
+    const confirmed = window.confirm('Are you sure you want to leave? Connection to the lobby will be lost.')
+    if(confirmed) {
+      if(socket.current) {
+        await socket.current.close(1000, "client left lobby using intended functionality");
+        // console.log(`${socket.current.readyState}`);
+      }
+      setUser('');
+      setLobby('');
+      playLeave();
+      lobbyBackgroundShift();
+      navigate('/');
     }
-    setUser('');
-    setLobby('');
-    playLeave();
-    lobbyBackgroundShift();
-    navigate('/');
   }
 
   const lobbyBackgroundShift = () => {
@@ -226,11 +243,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         const [action, sentUser] = messageContent.Type;
         // manipulate userList based on user arrival or departure
         if(action === "arrived") {
-          if(sentUser === user) {
-            setUserList((prevList) => [...prevList, `${sentUser} (you)`])
-          } else {
-            setUserList((prevList) => [...prevList, sentUser])
-          }
+          setUserList((prevList) => [...prevList, sentUser])
         } else if(action === "departed") {
           setUserList((prevList) => prevList.filter(user => user !== sentUser))
         }
@@ -318,12 +331,13 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       <div className='lobby-content'>
           {showDropdown && (
             <div ref={dropdownRef} className='dropdown'>
+              <span className='dropdown-h'>Users</span>
               <ul className='user-list'>
                 {userList.map((user, index) => {
                   const { avatar, color } = generateAvatarAndColor(user);
                   return (
                     <li key={index}>
-                      <img className='app-avatar' src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
+                      <img className='user-avatar' src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
                         alt={user} style={{ marginRight: '8px'}} />
                       <span style={{ color }}>{user}</span>
                     </li>

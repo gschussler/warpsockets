@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useRef, useEffect } from "react";
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import '../styles/global.scss';
 import useSound from "use-sound";
 import Denied from '../sounds/keycard-denial.mp3';
@@ -18,12 +18,13 @@ const App = () => {
   const [user, setUser] = useState('');
   const [userColor, setUserColor] = useState('')
   const [lobby, setLobby] = useState('');
+  const [loading, setLoading] = useState(false);
   const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
   const [playNormal] = useSound(Normal, {volume: muted ? 0: 0.03})
   const [muted, setMuted] = useState(false);
-  const [loading, setLoading] = useState(false);
   // socket data needs to be accessible by other components through socket.current; Lobby.jsx after the call to join a lobby within Welcome.jsx
   const socket = useRef(null);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const checkLobbyExist = async (action, user, lobby) => {
     // console.log(action, user, lobby)
@@ -76,12 +77,14 @@ const App = () => {
         socket.current.onopen = (e) => {
           // console.log(`in socket.current.onopen ${action}`)
           // console.log('WebSocket connected');
+          setSocketConnected(true);
           resolve();
         };
 
         socket.current.onclose = (e) => {
           // console.log('WebSocket closed code: ', e.code)
           // console.log('WebSocket closed');
+          setSocketConnected(false);
           reject(new Error('WebSocket closed: ', e.code));
         };
       });
@@ -130,18 +133,22 @@ const App = () => {
       <Route
         path="/lobby"
         element={
-          <Lobby
-            socket={socket}
-            user={user}
-            userColor={userColor}
-            lobby={lobby}
-            setLobby={setLobby}
-            setUser={setUser}
-            muted={muted}
-            setMuted={setMuted}
-            playDenied={playDenied}
-            playNormal={playNormal}
-          />
+          socketConnected ? (
+            <Lobby
+              socket={socket}
+              user={user}
+              userColor={userColor}
+              lobby={lobby}
+              setLobby={setLobby}
+              setUser={setUser}
+              muted={muted}
+              setMuted={setMuted}
+              playDenied={playDenied}
+              playNormal={playNormal}
+            />
+          ) : (
+            <Navigate to='/' />
+          )
         }
       />
     </Routes>

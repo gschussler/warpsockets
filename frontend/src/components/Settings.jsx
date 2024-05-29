@@ -9,12 +9,12 @@ const Settings = ({ closeModal }) => {
       </button>
       <div className='settings-header'>
         <h2>Settings</h2>
-        <p>
+        {/* <p>
           To be added: <br />
           - toggle keep scroll at bottom <br />
           - light mode / dark mode <br />
           - message sounds on/off <br />
-        </p>
+        </p> */}
       </div>
       <div className='settings-credits'>
         <h3>
