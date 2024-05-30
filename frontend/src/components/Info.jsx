@@ -13,13 +13,13 @@ const Info = ({ closeModal }) => {
       </div>
       <div className='info-body'>
         <p>
-          The following are prerequisites for communication via <span className='bold-info-text'>WarpSockets</span>...
+          The following are prerequisites for communication via <span className='bold-info-text'>warpsockets</span>...
         </p>
         <span className='small-info-text'>
             1. Input your <span className='bold-info-text'>username</span> and destination <span className='bold-info-text'>lobby</span>.
             <br />
             <br />
-            2. <span className='bold-info-text' style={{color: '#c8ffd2'}}>CREATE</span> a new lobby or <span className='bold-info-text' style={{color: '#9cc0e7'}}>JOIN</span> one already existing. <br />
+            2. Select whether you will <span className='bold-info-text' style={{color: '#c8ffd2'}}>CREATE</span> a new lobby or <span className='bold-info-text' style={{color: '#9cc0e7'}}>JOIN</span> one already existing. <br />
             <br />
             3. <span className='bold-info-text'>ENTER</span>.
         </span>

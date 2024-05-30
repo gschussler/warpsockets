@@ -45,20 +45,6 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
 
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      // can't manipulate modern before unload browser event, but legacy browser text can be set
-      e.preventDefault();
-      e.returnValue = 'Are you sure you want to leave? Connection to the lobby will be lost.';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
-
   // toggle userlist dropdown visibility
   const toggleUserList = () => {
     setShowDropdown(prevShowDropdown => !prevShowDropdown);
@@ -75,18 +61,15 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
    * @returns {void}
    */
   const leaveLobby = async () => {
-    const confirmed = window.confirm('Are you sure you want to leave? Connection to the lobby will be lost.')
-    if(confirmed) {
-      if(socket.current) {
-        await socket.current.close(1000, "client left lobby using intended functionality");
-        // console.log(`${socket.current.readyState}`);
-      }
-      setUser('');
-      setLobby('');
-      playLeave();
-      lobbyBackgroundShift();
-      navigate('/');
+    if(socket.current) {
+      await socket.current.close(1000, "client left lobby using intended functionality");
+      // console.log(`${socket.current.readyState}`);
     }
+    setUser('');
+    setLobby('');
+    playLeave();
+    lobbyBackgroundShift();
+    navigate('/');
   }
 
   const lobbyBackgroundShift = () => {
@@ -310,19 +293,20 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
         <div className='buttons-container-h'>
           <button className={'users' + `${showDropdown ? ' selected' : ''}`}
             onMouseDown={(e) => {e.stopPropagation(); toggleUserList(); }}
-            onKeyDown={(e) => {if(e.key === 'Enter') toggleUserList()}}
+            onKeyDown={(e) => {if(e.key === 'Enter') toggleUserList(); }}
           >
             <img src={usersSvg} alt='Users' />
           </button>
           <button className='settings'
             onMouseDown={openSettings}
-            onKeyDown={(e) => {if(e.key === 'Enter') openSettings()}}
+            onKeyDown={(e) => {if(e.key === 'Enter') openSettings(); }}
           >
             <img src={settingsSvg} alt='Settings' />
           </button>
           <button 
             className="leave-lobby"
             onMouseDown={leaveLobby}
+            onKeyDown={(e) => {if(e.key === 'Enter') leaveLobby(); }}
           >
             <img src={leaveSvg} alt='Leave' />
           </button>
