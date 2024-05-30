@@ -25,6 +25,13 @@ export const MinidenticonImg = React.memo(({ username, saturation, lightness, ..
   return (<img src={svgURI} alt={username} {...props} />)
 });
 
+export function generateAvatarAndColor(username, saturation = '90', lightness = '55') {
+  const generatedAvatar = minidenticon(username, saturation, lightness);
+  const match = /fill="([^"]+)"/.exec(generatedAvatar);
+  const extractedColor = match ? match[1] : '#000000'; // Default to black if no match
+  return { avatar: generatedAvatar, color: extractedColor };
+}
+
 /**
  * Groups messages based on timestamp.
  * @param {string} newMessage Message content to be added to and grouped within the message list (must be parsed first if received from the server).

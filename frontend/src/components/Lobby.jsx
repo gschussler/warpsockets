@@ -7,10 +7,11 @@ import useSound from 'use-sound';
 import Leave from '../sounds/wrgExit2_short.mp3';
 import Send from '../sounds/zap.mp3';
 import Cog from '../sounds/cog.mp3';
+import usersSvg from '../images/friends.svg';
 import leaveSvg from '../images/leave.svg';
 import settingsSvg from '../images/settings.svg';
 import astronautSvg from '../images/astronaut.svg';
-import { MinidenticonImg, groupMessages } from './utils.js';
+import { generateAvatarAndColor, groupMessages } from './utils.js';
 import { ExpandingTextarea } from './TextInput.js';
 
 /**
@@ -26,20 +27,29 @@ import { ExpandingTextarea } from './TextInput.js';
  * @returns {JSX.Element} - Rendered Lobby component
  */
 
-const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied }) => {
+const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMuted, playDenied, playNormal }) => {
   const [message, setMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
+  const [userList, setUserList] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [newMessages, setNewMessages] = useState(false);
   const [disconnected, setDisconnected] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [playSend] = useSound(Send, {volume: muted ? 0: 0.05});
   const [playCog] = useSound(Cog, {volume: muted ? 0: 0.02});
   const [playLeave] = useSound(Leave, {volume: muted ? 0: 0.1});
+  const dropdownRef = useRef(null);
   const textareaRef = useRef(null);
   const lobbyBodyRef = useRef(null);
   const lastMessage = useRef(null);
   const navigate = useNavigate();
   // const startTimeRef = useRef(null);
+
+  // toggle userlist dropdown visibility
+  const toggleUserList = () => {
+    setShowDropdown(prevShowDropdown => !prevShowDropdown);
+    playNormal();
+  };
 
   const openSettings = () => {
     setSettingsModalOpen(true);
@@ -176,6 +186,20 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
     };
   }, []);
 
+  // close the userList dropdown if clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   /**
    * Listens for actions sent from the server such as a user message or the current WebSocket's connection/
    * disconnection state update.
@@ -194,6 +218,19 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
       // receive incoming message(s) -- can receive from backend in different order need to fix
       let messageContent = JSON.parse(e.data);
       // console.log(messageContent);
+
+      // system messages send either an "arrived" or "departed" type along with the associated user,
+      // add the user to the userList
+      if(messageContent.Type) {
+        // extract the two strings sent on the Type property
+        const [action, sentUser] = messageContent.Type;
+        // manipulate userList based on user arrival or departure
+        if(action === "arrived") {
+          setUserList((prevList) => [...prevList, sentUser])
+        } else if(action === "departed") {
+          setUserList((prevList) => prevList.filter(user => user !== sentUser))
+        }
+      }
 
       setMessageList(prevMessages => groupMessages(messageContent, prevMessages));
 
@@ -252,30 +289,47 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   return (
     <div className='lobby'>
       <div className='lobby-h'>
-        <p className='lobby-title'>lobby: {lobby}</p>
-        <div className='user-container'>
-          <div className='app-avatar'>
-            <MinidenticonImg
-              username={user}
-              saturation="90"
-              lightness="55"
-            />
-          </div>
-          <div className='user-title' style={{ color: userColor }}>{user}</div>
-        </div>
+        <p className='lobby-title'>{lobby}</p>
         <div className='buttons-container-h'>
-          <button className='settings' onMouseDown={openSettings} onKeyDown={(e) => {if(e.key === 'Enter') openSettings()}}>
+          <button className={'users' + `${showDropdown ? ' selected' : ''}`}
+            onMouseDown={(e) => {e.stopPropagation(); toggleUserList(); }}
+            onKeyDown={(e) => {if(e.key === 'Enter') toggleUserList(); }}
+          >
+            <img src={usersSvg} alt='Users' />
+          </button>
+          <button className='settings'
+            onMouseDown={openSettings}
+            onKeyDown={(e) => {if(e.key === 'Enter') openSettings(); }}
+          >
             <img src={settingsSvg} alt='Settings' />
           </button>
           <button 
             className="leave-lobby"
             onMouseDown={leaveLobby}
+            onKeyDown={(e) => {if(e.key === 'Enter') leaveLobby(); }}
           >
             <img src={leaveSvg} alt='Leave' />
           </button>
         </div>
       </div>
       <div className='lobby-content'>
+          {showDropdown && (
+            <div ref={dropdownRef} className='dropdown'>
+              <span className='dropdown-h'>Users</span>
+              <ul className='user-list'>
+                {userList.map((user, index) => {
+                  const { avatar, color } = generateAvatarAndColor(user);
+                  return (
+                    <li key={index}>
+                      <img className='user-avatar' src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
+                        alt={user} style={{ marginRight: '8px'}} />
+                      <span style={{ color }}>{user}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
         <div className='lobby-body' ref={lobbyBodyRef}>
           <div className='message-list'>
             {messageList.slice().reverse().map((messageContent, index) => {

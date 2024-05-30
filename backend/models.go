@@ -8,6 +8,7 @@ import (
 // Chat messages
 type Message struct {
 	ID            string
+	Type          [2]string
 	Lobby         string
 	User          string
 	Content       string

@@ -5,10 +5,11 @@
  */
 
 import React, { useState, useRef, useEffect } from "react";
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import '../styles/global.scss';
 import useSound from "use-sound";
 import Denied from '../sounds/keycard-denial.mp3';
+import Normal from '../sounds/button-normal.mp3'
 import Lobby from './Lobby.jsx';
 import Welcome from './Welcome.jsx';
 
@@ -17,17 +18,20 @@ const App = () => {
   const [user, setUser] = useState('');
   const [userColor, setUserColor] = useState('')
   const [lobby, setLobby] = useState('');
-  const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
-  const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [playDenied] = useSound(Denied, {volume: muted ? 0: 0.03});
+  const [playNormal] = useSound(Normal, {volume: muted ? 0: 0.03})
+  const [muted, setMuted] = useState(false);
   // socket data needs to be accessible by other components through socket.current; Lobby.jsx after the call to join a lobby within Welcome.jsx
   const socket = useRef(null);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const checkLobbyExist = async (action, user, lobby) => {
     // console.log(action, user, lobby)
+    // `https://${process.env.EXT_IP}/check-lobby`
     const checkPath = process.env.NODE_ENV === 'production'
-      ? `https://${process.env.EXT_IP}/check-lobby`
-      : `https://localhost:8085/check-lobby`;
+      ? `https://warpsockets.xyz/check-lobby`
+      : `http://localhost:8085/check-lobby`;
   
     const response = await fetch(checkPath, {
       method: 'POST',
@@ -62,9 +66,10 @@ const App = () => {
         // the WebSocket connection is not open, create a new connection
         // `EXT_IP` variable in .env that needs to be in top-level of frontend dir
           // add .env to your `.gitignore` to avoid pushing it to GitHub
+        // `ws://${process.env.EXT_IP}/ws` <-- old way to expose server
         const wsPath = process.env.NODE_ENV === 'production'
-        ? `ws://${process.env.EXT_IP}/ws` :
-        `ws://localhost:8085/ws`;
+        ? `wss://warpsockets.xyz/ws` // registered a domain and configured with nginx
+        : `ws://localhost:8085/ws`;
 
         // console.log("Creating new WebSocket connection...")
         socket.current = new WebSocket(wsPath);
@@ -72,12 +77,14 @@ const App = () => {
         socket.current.onopen = (e) => {
           // console.log(`in socket.current.onopen ${action}`)
           // console.log('WebSocket connected');
+          setSocketConnected(true);
           resolve();
         };
 
         socket.current.onclose = (e) => {
           // console.log('WebSocket closed code: ', e.code)
           // console.log('WebSocket closed');
+          setSocketConnected(false);
           reject(new Error('WebSocket closed: ', e.code));
         };
       });
@@ -126,17 +133,22 @@ const App = () => {
       <Route
         path="/lobby"
         element={
-          <Lobby
-            socket={socket}
-            user={user}
-            userColor={userColor}
-            lobby={lobby}
-            setLobby={setLobby}
-            setUser={setUser}
-            muted={muted}
-            setMuted={setMuted}
-            playDenied={playDenied}
-          />
+          socketConnected ? (
+            <Lobby
+              socket={socket}
+              user={user}
+              userColor={userColor}
+              lobby={lobby}
+              setLobby={setLobby}
+              setUser={setUser}
+              muted={muted}
+              setMuted={setMuted}
+              playDenied={playDenied}
+              playNormal={playNormal}
+            />
+          ) : (
+            <Navigate to='/' />
+          )
         }
       />
     </Routes>

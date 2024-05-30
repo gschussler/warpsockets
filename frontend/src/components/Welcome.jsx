@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/welcome.scss';
 import '../styles/info.scss';
 import { minidenticon } from 'minidenticons';
-import { MinidenticonImg, applyShift } from './utils.js';
+import { MinidenticonImg, generateAvatarAndColor, applyShift } from './utils.js';
 import Info from './Info.jsx';
 import useSound from 'use-sound';
 import Enter from '../sounds/wrgEnter3_short.mp3';
@@ -54,10 +54,7 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
 
           // console.log('Attempting to join lobby...')
           // set user color for the lobby
-          const generatedAvatar = minidenticon(user, '90', '55')
-          const match = /fill="([^"]+)"/.exec(generatedAvatar);
-          const extractedColor = match ? match[1] : 'defaultColor';
-          setUserColor(extractedColor);
+          setUserColor(generateAvatarAndColor(user).color);
 
           // connect WebSocket when the user tries to join a lobby
           // console.log(`before connectWebSocket invocation ${action}`)
@@ -141,7 +138,7 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
       <div className='welcome-container'>
         <div className='app-h'>
           <img src={logoL} className='logo-l' />
-          <h3 className='title'>WarpSockets</h3>
+          <h3 className='title'>warpsockets</h3>
           <img src={logoR} className='logo-r' />
         </div>
         <div className={'app-sh' + `${action === 'join' ? ' ijoin' : ' icreate'}`}>
