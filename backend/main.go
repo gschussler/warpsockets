@@ -70,6 +70,7 @@ func main() {
 
 	// start http server for homepage
 	// prepare WebSocket for incoming connections
+	// should work in containerized environment -- specified only the port, not the IP
 	log.Println("server started on port 8085")
 	srv := &http.Server{
 		Addr:    ":8085",
