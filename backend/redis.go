@@ -14,9 +14,9 @@ var redisClient *redis.Client
 /* initialize Redis db for server */
 func initRedis() {
 	redisClient = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // port 6379 is redis default port
-		Password: "",               // not caring about a password at the moment
-		DB:       0,                // again default database
+		Addr:     "redis:6379", // port 6379 is redis default port
+		Password: "",           // not caring about a password at the moment
+		DB:       0,            // again default database
 	})
 
 	// ping server to check for successful connection

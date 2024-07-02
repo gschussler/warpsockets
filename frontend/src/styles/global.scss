@@ -80,7 +80,7 @@ button:focus {
   left: 0;
   height: 100%;
   width: 100%;
-  background-image: url('../../../backend/static/stars.svg');
+  background-image: url('../images/stars.svg');
   background-size: 50%;
   transition: background-position 1000ms cubic-bezier(0.39, 0.575, 0.565, 1);
 }
@@ -155,14 +155,14 @@ Point fontfaces to server-side fonts.
 
 @font-face {
   font-family: 'Gohu Nerd Font';
-  src: url('../../../backend/static/GohuFontSmaller.woff') format('woff');
+  src: url('..//static/GohuFontSmaller.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'ProggyVector';
-  src: url('../../../backend/static/ProggyVector-Regular.woff') format('woff');
+  src: url('../static/ProggyVector-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
