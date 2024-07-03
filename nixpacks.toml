@@ -1,0 +1,5 @@
+# Try to get nixpacks runtime to detect Go.
+providers = ["...", "go"]
+
+[phases.setup]
+nixPkgs = ["...", "nodejs", "redis"]
