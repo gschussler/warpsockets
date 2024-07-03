@@ -4,7 +4,7 @@
 FROM node:18-alpine AS f-builder
 
 # Install build tools (missing from image it seems)
-RUN apk add --no-cache make gcc g++ python3
+RUN apk add --no-cache make gcc g++ python3 wget curl
 
 # Set the working directory inside the container
 WORKDIR /app/frontend
@@ -56,6 +56,9 @@ COPY --from=f-builder /app/frontend/dist /app/static
 
 # Expose HTTP server
 EXPOSE 8085
+
+ENV REDIS_HOST=redis
+ENV REDIS_PASSWORD=ganymede
 
 # Run the executable
 CMD ["./main"]
