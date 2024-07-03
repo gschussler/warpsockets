@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"os"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -14,13 +13,10 @@ var redisClient *redis.Client
 
 /* initialize Redis db for server */
 func initRedis() {
-	redisHost := os.Getenv("REDIS_HOST")
-	redisPassword := os.Getenv("REDIS_PASSWORD")
-
 	redisClient = redis.NewClient(&redis.Options{
-		Addr:     redisHost + ":6379", // port 6379 is redis default port, need hostname that is not localhost
-		Password: redisPassword,       // password required for authentication
-		DB:       0,                   // again default database
+		Addr:     "redis:6379", // port 6379 is redis default port
+		Password: "",           // not caring about a password at the moment
+		DB:       0,            // again default database
 	})
 
 	// ping server to check for successful connection

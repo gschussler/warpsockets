@@ -57,8 +57,5 @@ COPY --from=f-builder /app/frontend/dist /app/static
 # Expose HTTP server
 EXPOSE 8085
 
-ENV REDIS_HOST=redis
-ENV REDIS_PASSWORD=ganymede
-
 # Run the executable
 CMD ["./main"]
