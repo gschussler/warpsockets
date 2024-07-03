@@ -9,6 +9,7 @@ services:
       - 8085:8085
     environment:
       - REDIS_HOST=redis
+      - REDIS_PASSWORD=ganymede
     depends_on:
       - redis
     
@@ -16,3 +17,6 @@ services:
     image: redis:alpine
     ports:
     - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=ganymede
+    command: redis-server --requirepass ganymede
