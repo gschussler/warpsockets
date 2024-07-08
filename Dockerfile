@@ -43,7 +43,7 @@ FROM golang:latest
 WORKDIR /app
 
 # Copy built frontend from frontend-build stage
-COPY --from=frontend-build /app/frontend/build /app/frontend/build
+COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 
 # Copy built backend from backend-build stage
 COPY --from=backend-build /app/backend/main /app/main
