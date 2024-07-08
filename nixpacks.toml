@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ["...", "go", "nodejs", "redis"]
-
-[phases.build]
-cmds = ["cd frontend && npm install && npm run build", "cd backend && go build -o word-roulette_go ."]
-
-[start]
-cmd = "cd backend && chmod +x ./word-roulette_go && ./word-roulette_go"
