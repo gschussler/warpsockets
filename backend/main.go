@@ -36,8 +36,8 @@ func main() {
 	// // use to help debug routing problems
 	// router.Use(loggingMiddleware)
 
-	// server static to load fonts
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	// // server static to load fonts -- moved assets to frontend
+	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	// accept reqs to check lobby existence
 	router.HandleFunc("/check-lobby", checkLobbyExist).Methods("POST")
 	// accept reqs to upgrade HTTP to WebSocket connection
