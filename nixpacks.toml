@@ -5,4 +5,4 @@ nixPkgs = ["...", "go", "nodejs", "redis"]
 cmds = ["cd frontend && npm install && npm run build", "cd backend && go build -o word-roulette_go ."]
 
 [start]
-cmd = "./start.sh"
+cmd = "cd backend && chmod +x ./word-roulette_go && ./word-roulette_go"
