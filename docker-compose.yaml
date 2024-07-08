@@ -1,15 +1,9 @@
 version: '3.8'
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-    networks:
-      - warp-network
-  
   backend:
     build:
-      context: ./backend
+      context: .
     ports:
       - "8085:8085"
     environment:
@@ -17,7 +11,6 @@ services:
       - REDIS_PORT=6379
     depends_on:
       - redis
-      - frontend
     networks:
       - warp-network
   
