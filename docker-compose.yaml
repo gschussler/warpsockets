@@ -11,8 +11,16 @@ services:
       - REDIS_PORT=6379
     depends_on:
       - redis
+    networks:
+      - warp-network
   
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
+    networks:
+      - warp-network
+
+networks:
+  warp-network:
+    driver: bridge
