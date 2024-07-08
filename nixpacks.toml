@@ -1,5 +1,8 @@
-# Try to get nixpacks runtime to detect Go.
-providers = ["...", "go"]
-
 [phases.setup]
-nixPkgs = ["...", "nodejs", "redis"]
+nixPkgs = ["...", "go", "nodejs", "redis"]
+
+[phases.build]
+cmds = ["cd frontend && npm install && npm run build", "cd backend && go build -o word-roulette_go ."]
+
+[start]
+cmd = "./start.sh"
