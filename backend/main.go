@@ -43,7 +43,7 @@ func main() {
 	// accept reqs to upgrade HTTP to WebSocket connection
 	router.HandleFunc("/ws", handleWebSocket)
 	// serve frontend dir (default path always last to properly expose other routes)
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir("../frontend/dist")))
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./frontend/dist")))
 
 	handler := c(router)
 
