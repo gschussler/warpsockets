@@ -76,13 +76,13 @@ button:focus {
 .stars {
   position: absolute;
   z-index: -1;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
+  inset: -50%;
+  // height: 100%;
+  // width: 100%;
   background-image: url('../images/stars.svg');
-  background-size: 50%;
-  transition: background-position 1000ms cubic-bezier(0.39, 0.575, 0.565, 1);
+  // background-repeat: no-repeat;
+  background-size: 30%;
+  transition: transform 1250ms cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
 .stars::after {

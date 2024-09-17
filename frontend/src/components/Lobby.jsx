@@ -75,7 +75,7 @@ const Lobby = ({ socket, user, userColor, lobby, setLobby, setUser, muted, setMu
   const lobbyBackgroundShift = () => {
     const stars = document.querySelector('.stars');
     // Return to star background to original position
-    stars.style.backgroundPosition = '0 0';
+    stars.style.transform = 'none';
   }
 
   /**
