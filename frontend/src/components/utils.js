@@ -75,13 +75,14 @@ const getRandomDirection = () => {
   // calculate x and y deltas to be injected into background-position css
   const deltaX = Math.cos(randomAngle * Math.PI / 180) * 200;
   const deltaY = Math.sin(randomAngle * Math.PI / 180) * 200;
-  return `${deltaX}px ${deltaY}px`;
+  return [`${deltaX}px`, `${deltaY}px`];
 }
 
 // apply getRandomDirection to the stars div
 export const applyShift = () => {
   const stars = document.querySelector('.stars');
-  stars.style.backgroundPosition = getRandomDirection();
+  const [x, y] = getRandomDirection();
+  stars.style.transform = `translate(${x}, ${y})`;
 }
 
 
