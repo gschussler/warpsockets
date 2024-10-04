@@ -137,9 +137,9 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
     <div className='Welcome'>
       <div className='welcome-container'>
         <div className='app-h'>
-          <img src={logoL} className='logo-l' />
+          <img src={logoL} className='logo-l' alt="astronaut_lower"/>
           <h3 className='title'>warpsockets</h3>
-          <img src={logoR} className='logo-r' />
+          <img src={logoR} className='logo-r' alt="astronaut_upper"/>
         </div>
         <div className={'app-sh' + `${action === 'join' ? ' ijoin' : ' icreate'}`}>
           <p className='subtitle'> Chat with friends throughout the galaxy! </p>
