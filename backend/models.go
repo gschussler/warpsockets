@@ -3,6 +3,8 @@ package main
 
 import (
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 // Chat messages
@@ -22,6 +24,11 @@ type LobbyInfo struct {
 	Lobby  string `json:"lobby"`
 	User   string `json:"user"`
 	Action string `json:"action"`
+}
+
+type LobbyUser struct {
+	Conn *websocket.Conn
+	User string
 }
 
 var ReceivedMessage struct {

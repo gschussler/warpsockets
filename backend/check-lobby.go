@@ -30,21 +30,32 @@ func checkLobbyExist(w http.ResponseWriter, r *http.Request) {
 	// action switch case to determine whether the lobby's existence matters or not for allowing WebSocket upgrade
 	switch requestData.Action {
 	case "create":
-		if _, exists := lobbyConnections[requestData.Lobby]; exists {
+		if _, exists := lobbyConnections.Load(requestData.Lobby); exists {
 			log.Printf(`"%s" tried to create a lobby that already exists.`, requestData.User)
-			w.WriteHeader(http.StatusNotFound)
+			w.WriteHeader(http.StatusConflict)
 			json.NewEncoder(w).Encode(Response{Type: "error", Message: "Lobby already exists."})
 			return
 		}
 		// if lobby doesn't exist, do nothing so that the OK response can be sent to client.
 	case "join":
-		if _, exists := lobbyConnections[requestData.Lobby]; !exists {
+		if _, exists := lobbyConnections.Load(requestData.Lobby); !exists {
 			log.Printf(`"%s" tried to join a lobby that doesn't exist.`, requestData.User)
 			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(Response{Type: "error", Message: "Lobby does not exist."})
 			return
 		}
-		// if lobby exists, do nothing so that the OK response can be sent to client.
+		// if lobby exists, make sure there isn't username conflict before the OK response is sent to client.
+		if conns, _ := lobbyConnections.Load(requestData.Lobby); conns != nil {
+			lobbyUsers := conns.([]*LobbyUser)
+			for _, lobbyUser := range lobbyUsers {
+				if lobbyUser.User == requestData.User {
+					log.Printf(`"%s" already joined this lobby.`, requestData.User)
+					w.WriteHeader(http.StatusConflict)
+					json.NewEncoder(w).Encode(Response{Type: "error", Message: "User already in lobby."})
+					return
+				}
+			}
+		}
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(Response{Type: "error", Message: "Invalid action."})

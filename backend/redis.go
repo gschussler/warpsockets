@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -13,10 +14,23 @@ var redisClient *redis.Client
 
 /* initialize Redis db for server */
 func initRedis() {
+	// Get Redis host and port from docker-compose.yaml environment variables (defaults to localhost when running dev build)
+	redisHost := os.Getenv("REDIS_HOST")
+	if redisHost == "" {
+		redisHost = "localhost"
+	}
+
+	redisPort := os.Getenv("REDIS_PORT")
+	if redisPort == "" {
+		redisPort = "6379"
+	}
+
+	redisAddr := redisHost + ":" + redisPort
+
 	redisClient = redis.NewClient(&redis.Options{
-		Addr:     "redis:6379", // port 6379 is redis default port
-		Password: "",           // not caring about a password at the moment
-		DB:       0,            // again default database
+		Addr:     redisAddr, // port 6379 is redis default port
+		Password: "",        // not caring about a password at the moment
+		DB:       0,         // again default database
 	})
 
 	// ping server to check for successful connection
