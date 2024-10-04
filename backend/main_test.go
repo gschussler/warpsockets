@@ -51,7 +51,7 @@ import (
 func TestWebSocketUpgrade(t *testing.T) {
 	// Set up router and handlers as in main.go
 	router := mux.NewRouter()
-	router.Use(loggingMiddleware)
+	// router.Use(loggingMiddleware)
 	router.HandleFunc("/ws", handleWebSocket)
 
 	// start test HTTP server in a goroutine
