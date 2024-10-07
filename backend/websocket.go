@@ -272,7 +272,7 @@ func removeUserFromLobby(lobby string, user string, conn *websocket.Conn) {
 	for i, lobbyUser := range lobbyUsers {
 		if lobbyUser.Conn == conn {
 			lobbyUsers = append(lobbyUsers[:i], lobbyUsers[i+1:]...)
-			log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, user, lobby)
+			// log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, user, lobby)
 			break
 		}
 	}
