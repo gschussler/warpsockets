@@ -213,6 +213,23 @@
   height: 67%;
 }
 
+.invalid {
+  border: 1px solid rgb(171, 32, 32, 0.41);
+  animation: pulse-red 700ms alternate;
+}
+
+@keyframes pulse-red {
+  0% {
+    outline: 2px solid transparent;
+  }
+  50% {
+    outline: 2px solid rgb(171, 32, 32, 0.41);
+  }
+  100% {
+    outline: 2px solid transparent;
+  }
+}
+
 .app-enter-container {
   display: flex;
   justify-content: space-evenly;
