@@ -12,7 +12,6 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 )
 
 // declare a channel to receive signals for graceful shutdown (ctrl + c)
@@ -60,12 +59,12 @@ func main() {
 		// close WebSocket connections to prevent errors
 		lobbyConnections.Range(func(key, value interface{}) bool {
 			lobby := key.(string)
-			connections := value.([]*websocket.Conn)
+			users := value.([]LobbyUser)
 
 			// log.Printf("Closing connections for lobby: %s", lobby)
-			for _, conn := range connections {
-				if err := conn.Close(); err != nil {
-					log.Printf("Error closing connection: %v", err)
+			for _, user := range users {
+				if err := user.Conn.Close(); err != nil {
+					log.Printf("Error closing connection for user %s: %v", user.User, err)
 				}
 			}
 			lobbyConnections.Delete(lobby)
