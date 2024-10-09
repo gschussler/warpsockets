@@ -119,55 +119,15 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
     }
   }
 
-  const allowedChars = new Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ ");
-
-  const sanitizeInput = (e, setState, setIsValid) => {
-    const value = e.target.value;
-
-    // Check if the input contains any invalid characters
-    const isValid = [...value].every(char => allowedChars.has(char));
-  
-    // Set state only if valid
-    if (isValid) {
-      if(setIsValid === setIsValidUser) {
-        setState(value.trimStart())
-      } else {
-        setState(value.toLowerCase().trimStart());
-      }
-    } else {
-      // keep the last valid state?
-      // setState(prevValue);
-    }
-  
-    // Update visual feedback
-    const inputField = e.target;
-    if (!isValid) {
-      inputField.classList.add('invalid'); // Add error class if invalid
-      setTimeout(() => {
-        inputField.classList.remove('invalid');
-      }, 701);
-    } else {
-      inputField.classList.remove('invalid'); // Remove error class if valid
-    }
-
-    setIsValid(isValid);
+  const cleanInput = (e, setState) => {
+    let value = e.target.value;
+    // Trim leading/trailing spaces and convert to lowercase
+    value = value.toLowerCase().trimStart()
+    // Prevent double-space
+    value = value.replace(/\s+/g, ' ');
+    
+    setState(value);
   };
-
-  // // 'Enter' should only be used for trying to enter a lobby
-  // useEffect(() => {
-  //   const handleKeyPress = (e) => {
-  //     if(e && e.key === 'Enter') {
-  //       e.preventDefault();
-  //       joinLobby();
-  //     }
-  //   };
-
-  //   document.addEventListener('keypress', handleKeyPress);
-
-  //   return () => {
-  //     document.removeEventListener('keypress', handleKeyPress);
-  //   };
-  // }, [joinLobby])
 
   return (
     <div className='Welcome'>
@@ -193,9 +153,9 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
             <div className='container-user'>
               <p className='label-user'>user</p>
               <textarea
-                className={`app-textarea ${!isValidUser ? 'invalid' : ''}`}
+                className='app-textarea'
                 value={user}
-                onChange={(e) => sanitizeInput(e, setUser, setIsValidUser)}
+                onChange={(e) => cleanInput(e, setUser)}
                 onKeyDown={handleEnterKeyDown}
                 placeholder='pilot'
                 maxLength={maxLength}
@@ -213,9 +173,9 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
             <div className='container-lobby'>
               <p className='label-lobby'>lobby</p>
               <textarea
-                className={`app-textarea ${!isValidLobby ? 'invalid' : ''}`}
+                className='app-textarea'
                 value={lobby}
-                onChange={(e) => sanitizeInput(e, setLobby, setIsValidLobby)}
+                onChange={(e) => cleanInput(e, setLobby)}
                 onKeyDown={handleEnterKeyDown}
                 placeholder='terra incognita'
                 maxLength={maxLength}
