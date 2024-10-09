@@ -184,7 +184,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 					broadcastMessage(lobby, systemMessage, nil)
 				}
 
-				log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, user, lobby)
+				// log.Printf(`"%s" disconnected from Lobby "%s" -- Socket closed`, user, lobby)
 				return
 			}
 

@@ -29,6 +29,8 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
   const [playEnter] = useSound(Enter, {volume: muted ? 0: 0.1});
   const [playClick] = useSound(Click, {volume: muted ? 0: 0.2});
   const [joinError, setJoinError] = useState(false);
+  const [isValidUser, setIsValidUser] = useState(true);
+  const [isValidLobby, setIsValidLobby] = useState(true);
   const maxLength = 20;
   const navigate = useNavigate();
 
@@ -117,21 +119,15 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
     }
   }
 
-  // // 'Enter' should only be used for trying to enter a lobby
-  // useEffect(() => {
-  //   const handleKeyPress = (e) => {
-  //     if(e && e.key === 'Enter') {
-  //       e.preventDefault();
-  //       joinLobby();
-  //     }
-  //   };
-
-  //   document.addEventListener('keypress', handleKeyPress);
-
-  //   return () => {
-  //     document.removeEventListener('keypress', handleKeyPress);
-  //   };
-  // }, [joinLobby])
+  const cleanInput = (e, setState) => {
+    let value = e.target.value;
+    // Trim leading/trailing spaces and convert to lowercase
+    value = value.toLowerCase().trimStart()
+    // Prevent double-space
+    value = value.replace(/\s+/g, ' ');
+    
+    setState(value);
+  };
 
   return (
     <div className='Welcome'>
@@ -159,7 +155,7 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
               <textarea
                 className='app-textarea'
                 value={user}
-                onChange={(e) => setUser(e.target.value)}
+                onChange={(e) => cleanInput(e, setUser)}
                 onKeyDown={handleEnterKeyDown}
                 placeholder='pilot'
                 maxLength={maxLength}
@@ -179,7 +175,7 @@ const Welcome = ({ connectWebSocket, loading, setLoading, action, setAction, use
               <textarea
                 className='app-textarea'
                 value={lobby}
-                onChange={(e) => setLobby(e.target.value)}
+                onChange={(e) => cleanInput(e, setLobby)}
                 onKeyDown={handleEnterKeyDown}
                 placeholder='terra incognita'
                 maxLength={maxLength}
