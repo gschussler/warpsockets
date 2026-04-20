@@ -30,7 +30,7 @@ const App = () => {
     // console.log(action, user, lobby)
     // `https://${process.env.EXT_IP}/check-lobby`
     const checkPath = process.env.NODE_ENV === 'production'
-      ? `https://warpsockets.xyz/check-lobby`
+      ? `https://warpsockets.grantschussler.dev/check-lobby`
       : `http://localhost:8085/check-lobby`;
   
     const response = await fetch(checkPath, {
@@ -68,7 +68,7 @@ const App = () => {
           // add .env to your `.gitignore` to avoid pushing it to GitHub
         // `ws://${process.env.EXT_IP}/ws` <-- old way to expose server
         const wsPath = process.env.NODE_ENV === 'production'
-        ? `wss://warpsockets.xyz/ws` // registered a domain and configured with nginx
+        ? `wss://warpsockets.grantschussler.dev/ws` // registered a domain and configured with nginx
         : `ws://localhost:8085/ws`;
 
         // console.log("Creating new WebSocket connection...")

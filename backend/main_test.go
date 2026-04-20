@@ -114,7 +114,7 @@ func TestWebSocketUpgrade(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	// Gracefully close WebSocket connection from 'client-side'
-	conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	err = conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 	if err != nil {
 		t.Fatalf("Failed to close WebSocket connection: %v", err)
 	}

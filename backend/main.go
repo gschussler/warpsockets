@@ -59,7 +59,7 @@ func main() {
 		// close WebSocket connections to prevent errors
 		lobbyConnections.Range(func(key, value interface{}) bool {
 			lobby := key.(string)
-			users := value.([]LobbyUser)
+			users := value.([]*LobbyUser)
 
 			// log.Printf("Closing connections for lobby: %s", lobby)
 			for _, user := range users {

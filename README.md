@@ -6,7 +6,7 @@ Try warpsockets out, see how fast communication can be.
 - Chat with whoever, just enter the same lobby!
 - When no one is left in a lobby, its messages are deleted permanently.
 
-Give it a try! Just head to **[warpsockets.xyz](https://warpsockets.xyz)**
+Give it a try! Just head to **[warpsockets.grantschussler.dev](https://warpsockets.grantschussler.dev)**
 
 ### License
 This project is licensed under the MIT License.
